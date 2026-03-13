@@ -1,342 +1,294 @@
-# Análisis de lógica de negocio – Sistema SCV (Ventas, Caseta y Almacén)
+# Análisis de Lógica de Negocio – Proyecto GreenPoint (Laravel 10 + Vue 3)
 
-## 1. Contexto general y tipos de sucursal
-
-El sistema SCV administra **ventas y salidas de materiales de construcción** con dos perfiles operativos definidos por la sucursal activa en `ConfiguracionEmpresa`:
-
-- **Sucursal tipo `venta` (Villahermosa)**  
-  - Genera ventas normales con ticket y QR.  
-  - No maneja inventario físico local (no descuenta stock en `productos`).  
-  - Flujo: venta directa en mostrador → ticket/QR → el material se despacha en otra unidad (almacén).
-
-- **Sucursal tipo `venta_almacen` (Macuspana)**  
-  - Opera como **caseta (Vigilante)** y **oficina central (Caja/Oficina)**.  
-  - Controla inventario físico (stock) y salidas de material.  
-  - Flujo principal:
-    1. Caseta genera/escanea QRs y toma fotos de evidencias.
-    2. Oficina valida pedidos, registra pagos (incluyendo donativos) y genera tickets definitivos.
-    3. Entregas parciales controlan el material realmente despachado.
-
-> La sucursal activa se obtiene con `ConfiguracionEmpresa::obtenerConfiguracion()->sucursal` y el front deriva de ella el `perfilInterfaz` (`VENTA` o `VENTA_ALMACEN`) para mostrar/ocultar módulos.
+> Comentario: Este archivo resume la lógica de negocio actual (backend y frontend) para facilitar la modificación o eliminación de módulos.
 
 ---
 
-## 2. Ventas y pagos (módulo común)
+## 1. Visión general
 
-### 2.1 Creación de ventas (`VentaController::store`)
+- **Backend (Laravel 10)**  
+  - Autenticación vía Sanctum y roles/permisos con Spatie.  
+  - API de administración protegida bajo `auth:sanctum`.  
+  - API pública para el sitio web bajo `/api/public/*`.  
+  - Lógica de archivos centralizada en `ImageService` y servicios específicos para módulos.
 
-- Si no se envía `sucursal_id`, se usa la sucursal configurada en `ConfiguracionEmpresa`.
-- Cliente por defecto: `Cliente::clienteMostrador()` cuando `cliente_id` es nulo.
-- Campos clave:
-  - `tipo`: `'venta'` o `'donativo'`.
-  - `es_donativo` (bool) y `observaciones` (texto).
-  - `estatus`: enum (`pendiente`, `pendiente_pago`, `pagado`, `parcial`, `entregado`, `cancelado`).
-  - `total` calculado como suma de `precio_unitario * cantidad_pedida` por detalle.
-
-### 2.2 Regla de inventario por sucursal
-
-- **Sucursal tipo `venta` (Villahermosa)**:
-  - **No descuenta stock** al crear la venta (`reducirStock` no se llama).
-  - La venta representa un pedido/compromiso, pero el stock real se controla en el almacén.
-
-- **Sucursal tipo `venta_almacen` (Macuspana)**:
-  - **Siempre descuenta stock** al crear ventas o importar pedidos.  
-    - Implementado en `VentaController::store` e `importarPedido` llamando a `Producto::reducirStock($cantidad)`.
-  - Aplica tanto para ventas normales como para **donativos** (los donativos también consumen inventario).
-
-### 2.3 Pagos divididos (`PagoDetalle`) y donativos
-
-- Tabla `pago_detalles`:
-  - `venta_id`, `metodo_pago` (`efectivo`, `tarjeta`, `transferencia`, `credito`, ...), `monto`, `referencia_pago`.
-  - Relación en `Venta`: `$venta->pagos()`.
-
-- **Ventas normales (ingreso)**:
-  - En `store`:
-    - Se acepta `pagos[]` y se valida que la **suma de montos sea igual al total** de la venta.
-  - En `registrarPagos` (flujo Oficina Macuspana):
-    - De nuevo se exige que la suma de pagos coincida con `venta.total`.
-    - Los pagos existentes se reemplazan por los nuevos.
-    - La venta pasa a `estatus = 'pagado'` y se asegura tener `qr_payload` generado.
-
-- **Donativos**:
-  - Una venta es donativo si:
-    - `tipo === 'donativo'` o `es_donativo = true`.
-  - Regla de negocio:
-    - **Observaciones son obligatorias** (justificación del donativo) tanto en `store` como en `registrarPagos`.
-    - Puede no llevar pagos (`pagos` vacío) y, por tanto, no genera ingresos monetarios.
-    - **Sí descuenta inventario** en sucursales `venta_almacen`.
-    - En reportes y caja **no se suman a ingresos**, pero sí se contabiliza el valor del material despachado como “donativos”.
-
-### 2.4 Inventario y movimientos
-
-- **Modelo `Producto`**:
-  - Campos relevantes para inventario: `precio_unitario`, `stock_actual`, `stock_minimo`, `unidad_medida`, `unidad_medida_id`, `activo`.
-  - En sucursal `venta_almacen` los flujos de **venta**, **importación de pedido** e **importación silenciosa** siempre llaman a `Producto::reducirStock($cantidad)` cuando corresponde.
-- **Historial `inventario_movimientos`**:
-  - Tabla `inventario_movimientos` registra cada impacto de inventario:
-    - `producto_id`, `tipo` (`ajuste`, `venta`, `donativo`, `cancelacion`, etc.), `cantidad`, `stock_anterior`, `stock_nuevo`, `motivo`, `usuario_id`.
-  - Se generan movimientos automáticamente en:
-    - `VentaController::store` (salida por venta/donativo en Macuspana).
-    - `VentaController::importarPedido` (salida por importar pedido desde QR).
-    - `EntregaController::importarPedidoSilencio` (salida por importación silenciosa de QR externo).
-    - `VentaController::cancelar` (entrada por devolución al cancelar ventas en Macuspana).
-  - Los **ajustes manuales** de stock (`InventarioController::ajustar`) también escriben en `inventario_movimientos` con tipo `ajuste` y motivo obligatorio.
+- **Frontend (Vue 3, Composition API)**  
+  - Panel admin (rutas protegidas con permisos).  
+  - Sitio público (rutas sin auth, consumen `/api/public/*`).  
+  - Repositorios en `resources/js/src/repositories/`.  
+  - Composables en `resources/js/src/composables/`.
 
 ---
 
-## 3. Flujo Caseta → Oficina (solo Macuspana)
+## 2. Backend – Módulos y responsabilidades
 
-### 3.1 Generación de pedido en caseta (`VentaController::generarQrVigilanteLocal`)
+### 2.1 Autenticación, usuarios y roles
 
-- Requisitos:
-  - Sucursal configurada y de tipo `venta_almacen`.
-  - Se recibe `producto_id`, opcionalmente `venta_id` y `numero_viajes`.
-- **Restricción de productos (sucursal venta_almacen)**:
-  - Cuando la sucursal activa es tipo `venta_almacen`, **solo se permiten** los productos: **Polvo**, **Rezaga** y **Balastre** para generar nuevos tickets/pedidos locales.
-  - La validación se delega a `CasetaService::isProductAllowedForLocalQr(Producto)`.
-  - Si el producto no está permitido, se retorna **422** con mensaje claro en español indicando los productos permitidos.
-  - **No aplica** a `validarQrVigilante` ni a `EntregaController::validarYRegistrarAcceso`: el vigilante puede **escanear y procesar cualquier material** que venga en un QR externo (Villahermosa) mediante la importación silenciosa.
-- Comportamiento:
-  - Si se indica `venta_id`, se actualiza o fija `viajes_permitidos` en la venta.
-  - Si no hay `venta_id`:
-    - Se crea una nueva `Venta` con:
-      - `estatus = 'pendiente_pago'` (pendiente de cobro en Oficina).
-      - `tipo = 'venta'`.
-      - `viajes_permitidos = numero_viajes`, `viajes_usados = 0`.
-  - Se genera un registro en `vigilante_qrs` (`VigilanteQr`) con:
-    - `venta_id`, `uuid`, sucursal origen/local, `viajes_permitidos/usados`, `estatus = 'activo'`.
-  - Se construye el payload plano del QR:
-    - `uuid|idSucursal|idProd|cant|idUnidad|...`  
-    - En el flujo local “cant” representa el número de viajes autorizados.
+- **Controladores**
+  - `app/Http/Controllers/TokenController.php`  
+    - `createToken`: login, valida email/password, genera token Sanctum y devuelve:
+      - `token` (string)  
+      - `user` con `id`, `name`, `email`, `roles`, `permissions`.  
+    - `expire`: expira tokens (logout).  
+    - Flujo de recuperación de contraseña (`createResetPW`, `saveResetPW`, `getUserUuid`).
+  - `app/Http/Controllers/UserController.php`  
+    - CRUD de usuarios, actualización de perfil y contraseña.
+  - `app/Http/Controllers/RoleController.php`  
+    - Listado de roles y permisos, asignación de permisos a roles.
 
-> La foto de evidencia en caseta no se guarda en esta acción, sino al registrar el primer acceso mediante `EntregaController::validarYRegistrarAcceso`.
+- **Modelos / permisos**
+  - `app/Models/User.php` + migraciones base (`create_users_table`, `add_estatus_to_users_table`).  
+  - Permisos y roles gestionados por Spatie (`create_permission_tables.php`).
+  - Seeder `database/seeders/RolesAndPermissionsSeeder.php`:
+    - Rol **Administrador** con todos los permisos.  
+    - Rol **Capturista** con permisos de catálogos, módulos administrables y solo lectura de formularios de contacto.  
+    - Usuario admin por defecto `admin@greenpoint.com`.
 
-### 3.2 Escaneo de QR y registro de accesos (`VentaController::validarQrVigilante` + `EntregaController::validarYRegistrarAcceso`)
+- **Rutas API**
+  - `routes/api.php`  
+    - `/api/registro` (registro usuario).  
+    - `/api/tokens/*` (login/reset/logout/permissions).  
+    - Grupo `auth:sanctum` para `/users/*` y `/roles/*` protegido con `permission:administracion.usuarios` y `permission:administracion.roles`.
 
-- **Validación del QR (VentaController::validarQrVigilante)**:
-  - Soporta payloads `uuid:sucursal|...` o `uuid|sucursal|...`.
-  - Distingue si el QR es:
-    - **Local** (origen Macuspana) → se usa `VigilanteQr` para controlar `viajes_permitidos/usados`.
-    - **Externo** (p.ej. Villahermosa) → se crea registro `VigilanteQr` importado la primera vez.
-  - Incrementa `viajes_usados` a nivel de **pedido (venta)** cuando `venta_id` está asociado, marcando `estatus = 'agotado'` cuando se consumen todos los viajes.
-
-- **Registro de acceso con foto (EntregaController::validarYRegistrarAcceso)**:
-  - Solo disponible en sucursal `venta_almacen`.
-  - Recibe:
-    - `qr_payload`, `cantidad_viaje` (opcional) y `foto` (obligatoria para evidencias).
-  - Parseo del payload:
-    - Obtiene `uuid`, `sucursal_origen_id`, `producto_id`, `cantidadTotal`, `unidad_id`.
-  - **Importación automática (“importación silenciosa”)**:
-    - Si el QR es externo (idSucursal ≠ Macuspana) y no hay venta local asociada a ese `uuid`, se crea una venta local:
-      - Usa método privado `importarPedidoSilencio()`:
-        - Crea `Venta` con detalles mapeando productos, descuenta stock y genera `qr_payload`.
-      - La venta queda lista para seguimiento y reporte, sin intervención manual de “Importar pedido”.
-  - Control de remanente/cantidad:
-    - Si hay venta ligada por `VigilanteQr.venta_id`, los viajes se controlan a nivel de pedido.
-    - Crea un registro `Entrega` con:
-      - `venta_id` (si existe), `uuid_qr`, `numero_viaje`, `cantidad_despachada`, `foto_path`.
-  - Bloqueos:
-    - No permite más viajes si la venta está en `estatus` `'entregado'` o `'cancelado'`.
-
-### 3.3 Cobro en Oficina Central (Validación de pedidos)
-
-- Endpoint `VentaController::pedidosPendientesPago`:
-  - Sucursal debe ser `venta_almacen`.
-  - Lista ventas con `estatus = 'pendiente_pago'` de esa sucursal, con relaciones `detalles` y `pagos`.
-- Endpoint `VentaController::registrarPagos`:
-  - Recibe `pagos[]`, opcional `es_donativo` y `observaciones`.
-  - Para ventas normales:
-    - Exige al menos un pago y que la suma de montos sea igual al total.
-  - Para donativos:
-    - No exige pagos, pero **sí observaciones**; marca la venta como `tipo = 'donativo'`, `es_donativo = true`.
-  - En ambos casos:
-    - Cambia `estatus` a `'pagado'`.
-    - Genera `qr_payload` definitivo si no existía.
-
-> La UI `cajas/validar-pedidos.vue` consume estos endpoints y permite múltiples métodos de pago, así como marcar ventas como donativo con su observación.
+**Qué modificar/eliminar**  
+- Si se cambia el sistema de roles/permisos:
+  - Ajustar `RolesAndPermissionsSeeder`, `RoleController` y los middlewares `permission:*` en `routes/api.php`.  
+- Si se elimina la gestión de usuarios/roles desde el panel:
+  - Eliminar/ajustar rutas `/users/*`, `/roles/*` y las vistas admin de usuarios/roles (frontend).
 
 ---
 
-## 4. Entregas parciales y seguimiento de pedidos
+### 2.2 Catálogos (Servicios, Clientes, Galería, Banners, Contactos, Redes Sociales)
 
-- Controlador `EntregaController`:
-  - `registrar` (para ventas con detalle):
-    - Valida que `cantidad_despachada` no exceda el restante (`cantidad_pedida - cantidad_entregada`).
-    - Crea `Entrega` ligada a `venta_id` y `venta_detalle_id`.
-    - `Entrega::booted` actualiza `cantidad_entregada` en `venta_detalles` y el `estatus` de la `Venta`:
-      - `'parcial'` si hay algún detalle sin completar.
-      - `'entregado'` si todos los detalles están completamente entregados.
-  - `validarYRegistrarAcceso` (ver sección 3.2) maneja entregas asociadas a QRs (locales o externos) mediante `uuid_qr`.
+- **Modelos**
+  - `Servicio` (`app/Models/Servicio.php`) – tabla `servicios`.  
+  - `Cliente` (`app/Models/Cliente.php`) – tabla `clientes`.  
+  - `Galeria` (`app/Models/Galeria.php`) – tabla `galeria`.  
+  - `Banner` (`app/Models/Banner.php`) – tabla `banners`.  
+  - `Contacto` (`app/Models/Contacto.php`) – tabla `contactos`.  
+  - `RedSocial` (`app/Models/RedSocial.php`) – tabla `redes_sociales`.
 
----
+- **Controladores**
+  - `ServicioController`, `ClienteController`, `GaleriaController`, `BannerController`, `ContactoController`, `RedSocialController`.  
+  - Métodos: `index` (paginado), `store`, `show`, `update`, `destroy`.  
+  - Subida de imágenes (donde aplica) delegada a `ImageService`.
 
-## 5. Caja y corte X/Z
+- **FormRequests**
+  - `Store/UpdateServicioRequest`, `Store/UpdateClienteRequest`, `Store/UpdateGaleriaRequest`, `Store/UpdateBannerRequest`, `Store/UpdateContactoRequest`, `Store/UpdateRedSocialRequest`.
 
-- `CajaController::apertura`:
-  - Una sola caja `estatus = 'abierta'` por sucursal.
-  - Guarda `monto_inicial` y marca fecha de apertura.
+- **Rutas API admin (todas bajo `auth:sanctum`)**
+  - `Route::apiResource('servicios', ServicioController::class)->middleware('permission:catalogos.servicios');`  
+  - `Route::apiResource('clientes', ClienteController::class)->middleware('permission:catalogos.clientes');`  
+  - `Route::apiResource('galeria', GaleriaController::class)->middleware('permission:catalogos.galeria');`  
+  - `Route::apiResource('banners', BannerController::class)->middleware('permission:catalogos.banners');`  
+  - `Route::apiResource('contactos', ContactoController::class)->middleware('permission:catalogos.contactos');`  
+  - `Route::apiResource('redes-sociales', RedSocialController::class)->middleware('permission:catalogos.redes_sociales');`
 
-- `CajaController::corte`:
-  - Cierra caja (`estatus = 'cerrada'`, `fecha_cierre`, `monto_final`).
-  - Obtiene ventas del período (`created_at` entre apertura/cierre, `estatus != 'cancelado'`).
-  - Separa:
-    - **Ventas de ingreso**: ventas no donativo (`tipo != 'donativo'` y `es_donativo = false`).
-    - **Donativos**: ventas donde `tipo = 'donativo'` o `es_donativo = true`.
-  - Calcula:
-    - `total_ventas_ingreso` = suma de `total` de ventas de ingreso.
-    - `total_donativos` = suma de `total` de donativos (valor referencial).
-    - Usa `PagoDetalle` para:
-      - `total_cobrado` (suma de pagos solo de ventas no donativo del período).
-      - `pagos_por_metodo` (efectivo, tarjeta, transferencia, etc.).
-  - Diferencia de caja:
-    - `diferencia = (monto_inicial + totalEfectivo) - totalGastos - monto_final_reportado`.
-    - **Solo el efectivo** afecta el cuadre físico, los donativos no distorsionan este cálculo.
-  - Devuelve:
-    - `reporte_x` (informe del período).
-    - `reporte_z` (cierre definitivo).
-    - Incluyen `total_ventas_ingreso`, `total_donativos`, `total_cobrado`, `pagos_por_metodo`.
+**Qué modificar/eliminar**  
+- Para desactivar un catálogo completo:
+  - Eliminar rutas apiResource correspondientes en `routes/api.php`.  
+  - Eliminar/ajustar controlador y modelo si ya no se usan.  
+  - Quitar repositorio + composable + vistas Vue relacionadas (ver secciones 3 y 4).
 
 ---
 
-## 6. Reportes y Dashboard
+### 2.3 Configuración general y formularios de contacto
 
-### 6.1 Dashboard y estadísticas de boletos
+- **Modelos**
+  - `Configuracion` (`configuracion`): clave-valor.  
+  - `FormularioContacto` (`formularios_contacto`): mensajes recibidos desde el sitio público.
 
-- **Dashboard unificado (cualquier sucursal)**:
-  - El front consume **`GET /api/dashboard/estadisticas`**, que delega en `ReporteController::dashboardEstadisticas`.
-  - El backend detecta la sucursal activa y el tipo (`venta` o `venta_almacen`) y devuelve un payload adaptado al perfil:
-    - Siempre incluye estadísticas de **boletos** (total, pendientes, utilizados, cancelados, series por día, salidas_hoy, etc.).
-    - Incluye estadísticas de **ventas** filtradas por sucursal activa (total_ventas, cantidad_ventas, series por día).
-    - Para sucursales tipo `venta_almacen` añade métricas de inventario y operaciones:
-      - `donativos_total` (valor monetario de donativos).
-      - `alertas_inventario` (productos con `stock_actual <= 0`).
-      - `productos_stock_bajo` (productos con `stock_minimo > 0` y `stock_actual < stock_minimo`).
-      - `valor_inventario` (suma de `precio_unitario * stock_actual` de productos activos).
-      - `pendientes_cobro` (ventas con `estatus = 'pendiente_pago'` en la sucursal).
-      - `entregas_hoy` y `volumen_entregado_hoy` (viajes y m³ despachados en el día).
-  - De esta forma el dashboard carga correctamente para usuarios de Villahermosa y Macuspana sin 403, y muestra datos relevantes según el perfil de sucursal.
-- **Reportes de salidas (boletos legacy)**:
-  - Las rutas **`/api/reportes/salidas`**, **`/api/reportes/estadisticas`** y **`/api/reportes/exportar-csv`** están bajo middleware **`sucursal.tipo:venta_almacen`**.
-  - Trabajan sobre la tabla `boletos` (flujo legacy de camión/volteo).
-  - Usan relaciones `usuarioGenerador` y `usuarioValidador`.
-  - El módulo de salidas solo se muestra en sucursales `venta_almacen`.
+- **Controladores**
+  - `ConfiguracionController`:
+    - `index`: lista todas las claves/valores.  
+    - `update`: actualiza múltiples claves mediante `items: [{ clave, valor }, ...]`.  
+  - `FormularioContactoController` (admin):
+    - `index`: listado paginado, ordenado por `leido` y `created_at`.  
+    - `show`: detalle.  
+    - `update`: marcar como leído (`leido` boolean).
 
-### 6.2 Reportes de ventas (estadísticas y exportación)
+- **Rutas API**
+  - `GET/PUT /api/configuracion` (admin, `administracion.configuracion_critica`).  
+  - `/api/formularios-contacto/*` (admin, `formularios_contacto.ver`).
 
-- `ReporteController::estadisticasVentas`:
-  - Base: `ventas` con `estatus != 'cancelado'` y dentro del rango de fechas.
-  - Para estadísticas de ingreso:
-    - Considera solo **ventas no donativo** (`tipo != 'donativo'` y `es_donativo = false`).
-    - Devuelve:
-      - `por_dia`, `por_sucursal`, `series_por_sucursal`.
-      - `total_ventas` (solo ingresos monetarios).
-      - `cantidad_ventas`.
-
-- `exportarVentasExcel`:
-  - Incluye columnas:
-    - `Folio,Sucursal,Usuario,Total,Estatus,Tipo,Observaciones,Fecha,Creado`.
-  - `Tipo`:
-    - `"Donativo"` si la venta es donativo; `"Venta"` en caso contrario.
-  - `Observaciones`:
-    - Texto plano sin saltos de línea (para compatibilidad con CSV/Excel).
-
-- `exportarVentasPdf` (`reportes.ventas-pdf`):
-  - Tabla con columnas:
-    - Folio, Sucursal, Usuario, Total, Estatus, Tipo, Observaciones, Fecha.
-  - Pie del reporte:
-    - Resume:
-      - Total de ventas de ingreso (cantidad y suma).
-      - Total de salidas por donativo (cantidad y suma referencial de material donado).
-
-- `exportarTicketsVillahermosaExcel`:
-  - Reporte de tickets originados en Villahermosa (`ticket_origen_uuid`, `estatus = 'entregado'`) con URLs de fotos de entregas asociadas.
+**Qué modificar/eliminar**  
+- Si cambian las claves de configuración:  
+  - Solo ajustar lógica de frontend que las usa y, si se desea, documentar las nuevas claves en la vista de configuración.  
+- Para desactivar la bandeja de mensajes:
+  - Eliminar rutas `formularios-contacto` y la vista admin correspondiente; el endpoint público de envío puede mantenerse o no según necesidades.
 
 ---
 
-## 7. Productos (catálogo)
+### 2.4 Módulos administrables (Nosotros, Historia, Tecnología, Aviso)
 
-- **Tabla `productos`**:
-  - Campos relevantes: `nombre`, `codigo` (opcional, slug por producto), `precio_unitario`, `stock_actual`, `unidad_medida`, `unidad_medida_id`, `activo`.
-- **Seeders**:
-  - **ProductSeeder**: catálogo base con los 12 nombres (Polvo, Rezaga, Balastre, Tortuguero, Granzón, Revestimiento, Grava de 3/4, Grava de 1/2, Gravón de 6", Finos, Piedra Braza, Roca Maya). Usa `updateOrCreate` por `nombre` para evitar duplicados.
-  - **ProductoMacuspanaSeeder**: los 3 productos con IDs fijos (1 Polvo, 2 Rezaga, 3 Balastre) para alinear con el sistema Villahermosa al importar pedidos por QR.
-- **Restricción en caseta (backend)**: `CasetaService::getAllowedProductNamesForLocalQr()` devuelve `['Polvo', 'Rezaga', 'Balastre']`; solo esos se aceptan en `generarQrVigilanteLocal` cuando la sucursal es `venta_almacen`.
+- **Modelos**  
+  - Nosotros: `PaginaNosotros`, `PaginaNosotrosImagen`, `PaginaNosotrosProgreso`.  
+  - Historia: `PaginaHistoria`, `PaginaHistoriaEvento`, `PaginaHistoriaImagen`.  
+  - Tecnología: `PaginaTecnologia`, `PaginaTecnologiaSeccion`.  
+  - Aviso: `PaginaAviso`, `PaginaAvisoSeccion`, `PaginaAvisoLista`.
 
----
+- **Servicios**
+  - `PaginaNosotrosService`: sincroniza campos de `pagina_nosotros` + hijos (imágenes, progreso) a partir de un payload completo.
+  - *Planes similares* para Historia, Tecnología y Aviso (según se implementen).
 
-## 8. Visibilidad de módulos por tipo de sucursal (front-end)
+- **Controladores admin**
+  - `PaginaNosotrosController`:
+    - `show`: devuelve la única fila de `pagina_nosotros` con `imagenes` y `progreso`.  
+    - `update`: recibe estructura completa y delega a `PaginaNosotrosService`.
+  - (Controllers para Historia/Tecnología/Aviso se implementan con el mismo patrón).
 
-Basado en `perfilInterfaz` almacenado en Vuex:
+- **Rutas API admin**
+  - `GET/PUT /api/pagina-nosotros` (`modulos.nosotros`).  
+  - `GET/PUT /api/pagina-historia` (`modulos.historia`).  
+  - `GET/PUT /api/pagina-tecnologia` (`modulos.tecnologia`).  
+  - `GET/PUT /api/pagina-aviso` (`modulos.aviso`).
 
-- **Perfil `VENTA` (Villahermosa)**:
-  - Menú:
-    - `Ventas`:
-      - `Nueva venta` (pagos múltiples).
-      - `Productos`, `Clientes`.
-    - `Reportes`:
-      - Solo **Ventas**.
-  - Oculto:
-    - `Entregas`, `Vigilante`, `Inventario`, `Reportes de salidas`, `Validación de pedidos` (Oficina).
-
-- **Perfil `VENTA_ALMACEN` (Macuspana)**:
-  - Menú:
-    - `Ventas`:
-      - `Entregas`.
-      - `Control de acceso (Vigilante)`.
-    - `Inventario`:
-      - `Gestión de inventario` (listado de existencias, ajuste manual de stock con observación obligatoria y acceso a historial de movimientos).
-      - `Alertas de stock` (productos con stock por debajo de un umbral).
-    - `Caja`:
-      - `Caja y gastos`.
-      - `Validación de pedidos` (Oficina Central para cobros/donativos).
-    - `Reportes`:
-      - `Salidas (boletos)` y `Ventas`.
-  - Opción manual de **“Importar pedido (QR)”** se oculta del menú; la importación es automática al escanear en Vigilante.
-
-- **Filtro de productos en Caseta (front)**:
-  - Cuando `perfilInterfaz === 'VENTA_ALMACEN'`, el selector de productos en la sección **"Generar QR local"** (Vigilante) solo muestra **Polvo**, **Rezaga** y **Balastre**.
-  - La sección **"Escanear QR"** y el registro de acceso **no** aplican este filtro: se puede procesar cualquier material recibido vía QR (local o externo).
-  - Implementado en `VigilanteAcceso.vue` y `VigilanteScanner.vue` con `productosParaGenerar` (computed que filtra por nombre según perfil).
+**Qué modificar/eliminar**  
+- Para desactivar un módulo:
+  - Eliminar rutas correspondientes en `routes/api.php`.  
+  - Dejar o eliminar modelos y servicios según se requiera (si no se usará más).  
+  - Quitar vistas admin y públicas asociadas (frontend).
 
 ---
 
-## 9. Diagrama de flujo resumido
+### 2.5 API pública del sitio
 
-```text
-Villahermosa (VENTA):
-  [VentaController::store]
-    → Venta (tipo venta, sin descuento de stock local)
-    → Ticket + QR (Venta::generarQrPayload)
-    → Reportes de ventas (ingresos)
+- **Controlador** `PublicSiteController`
+  - `home`: devuelve `banners` activos y `servicios` activos.  
+  - `serviciosIndex` / `serviciosShow`: listado y detalle de servicios.  
+  - `clientesIndex`: clientes activos.  
+  - `galeriaIndex`: galería activa.  
+  - `contactosIndex`: contactos ordenados.  
+  - `paginaNosotros`, `paginaHistoria`, `paginaTecnologia`, `paginaAviso`: devuelven estructuras completas de las páginas administrables.  
+  - `enviarFormularioContacto`: valida y guarda un mensaje en `formularios_contacto`.
 
-Macuspana (VENTA_ALMACEN):
+- **Rutas API públicas (`routes/api.php`)**
+  - `/api/public/home`  
+  - `/api/public/servicios`, `/api/public/servicios/{servicio}`  
+  - `/api/public/clientes`  
+  - `/api/public/galeria`  
+  - `/api/public/contactos`  
+  - `/api/public/pagina-nosotros`  
+  - `/api/public/pagina-historia`  
+  - `/api/public/pagina-tecnologia`  
+  - `/api/public/pagina-aviso`  
+  - `POST /api/public/formulario-contacto` (con `throttle`).
 
-  Caseta (Vigilante):
-    - Generar pedido local:
-        generarQrVigilanteLocal (solo productos Polvo/Rezaga/Balastre si venta_almacen)
-        → Venta(estatus=pendiente_pago, viajes_permitidos)
-        → VigilanteQr (uuid + viajes)
-    - Escanear QR (local o externo):
-        validarQrVigilante → valida UUID / viajes
-        validarYRegistrarAcceso → Entrega + foto (y, si es externo y nuevo, importarPedidoSilencio → Venta local)
+**Qué modificar/eliminar**  
+- Para cambiar el contenido mostrado públicamente sin tocar el panel:
+  - Modificar la lógica de consulta en `PublicSiteController` (por ejemplo, filtros adicionales).  
+- Para desactivar una sección pública:
+  - Eliminar o cambiar las rutas específicas (`/public/...`) y las vistas/composables del frontend que las consumen.
 
-  Oficina Central:
-    - Validar pedidos:
-        pedidosPendientesPago → lista de ventas pendiente_pago
-        registrarPagos → pagos múltiples o donativo (observaciones obligatorias)
-        → estatus = pagado, qr_payload definitivo
+---
 
-  Entregas:
-    - registrar → Entrega parcial ligada a detalle
-        → actualiza cantidad_entregada y estatus (pendiente/parcial/entregado)
+## 3. Frontend – Repositorios y composables (panel admin)
 
-Caja:
-    - apertura → caja abierta con monto_inicial
-    - corte → reporte X/Z
-        total_ventas_ingreso (ventas no donativo)
-        total_donativos (valor donado)
-        total_cobrado, pagos_por_metodo, diferencia basada en efectivo
-```
+### 3.1 Repositorios admin (`resources/js/src/repositories/`)
 
-Este documento resume la lógica de negocio **actual** del sistema, alineada con la estructura de datos, la distinción de sucursales (`venta` vs `venta_almacen`), los flujos de Caseta→Oficina, la restricción de productos en generación local de QR (Polvo, Rezaga, Balastre), los pagos múltiples, los donativos, el dashboard unificado por sucursal activa (con indicadores específicos para Macuspana) y la segregación correcta de ingresos y salidas de material en reportes, inventario y corte de caja.
+- Auth / administración:
+  - `AuthRepository.js`, `RoleRepository.js`, `UserRepository.js`.
+
+- Catálogos:
+  - `ServicioRepository.js` → `/api/servicios`.  
+  - `ClienteCatalogoRepository.js` → `/api/clientes`.  
+  - `GaleriaRepository.js` → `/api/galeria`.  
+  - `BannerRepository.js` → `/api/banners`.  
+  - `ContactoRepository.js` → `/api/contactos`.  
+  - `RedSocialRepository.js` → `/api/redes-sociales`.  
+  - `ConfiguracionRepository.js` → `/api/configuracion`.  
+  - `FormularioContactoRepository.js` → `/api/formularios-contacto/*`.
+
+- Módulos administrables:
+  - `PaginaNosotrosRepository.js` → `/api/pagina-nosotros`.  
+  - `PaginaHistoriaRepository.js` → `/api/pagina-historia`.  
+  - `PaginaTecnologiaRepository.js` → `/api/pagina-tecnologia`.  
+  - `PaginaAvisoRepository.js` → `/api/pagina-aviso`.
+
+**Qué modificar/eliminar**  
+- Eliminar un módulo de panel implica borrar el repositorio correspondiente y actualizar cualquier composable/vista que lo use.
+
+---
+
+### 3.2 Composables admin (`resources/js/src/composables/`)
+
+- Utilidades:
+  - `use-meta.js` (meta tags), `use-permissions.js` (carga y chequeo de permisos).
+
+- Catálogos:
+  - `useServicio.js`, `useCliente.js`, `useGaleria.js`, `useBanner.js`, `useContacto.js`, `useRedSocial.js`, `useFormularioContacto.js`.  
+  - Cada uno expone `items`, `currentItem`, `loading`, `error` y métodos `fetchList`, `fetchById`, `create`, `update`, `deleteItem` (o `markAsRead` en formularios).
+
+**Qué modificar/eliminar**  
+- Quitar un catálogo en el admin:
+  - Eliminar su composable, su repositorio y ajustar las vistas/router/menú que lo referencian.
+
+---
+
+## 4. Frontend – Repositorios y composables (sitio público)
+
+### 4.1 Repositorio público
+
+- `PublicSiteRepository.js`
+  - `getHome`, `getServicios`, `getServicioById`, `getClientes`, `getGaleria`, `getContactos`.  
+  - `getPaginaNosotros`, `getPaginaHistoria`, `getPaginaTecnologia`, `getPaginaAviso`.  
+  - `sendContacto` (POST a `/api/public/formulario-contacto`).
+
+### 4.2 Composables públicos
+
+- `usePublicHome.js` – Home (banners + servicios).  
+- `usePublicServicios.js` – lista y detalle de servicios.  
+- `usePublicClientes.js` – clientes.  
+- `usePublicGaleria.js` – galería.  
+- `usePublicContactos.js` – contactos.  
+- `usePublicNosotros.js`, `usePublicHistoria.js`, `usePublicTecnologia.js`, `usePublicAviso.js` – módulos administrables.
+
+**Qué modificar/eliminar**  
+- Para desactivar una sección pública:
+  - Eliminar o ajustar el método en `PublicSiteRepository`, el composable respectivo y la vista/ruta que lo consume.
+
+---
+
+## 5. Rutas Vue y vistas (estado actual)
+
+- **Router (`resources/js/src/router/index.js`)**  
+  - Rutas admin existentes:
+    - `/dashboard` (requiere permiso `dashboard.ver`).  
+    - `/auth/login` y rutas auth.  
+    - `/users/profile`, `/users/lista` (usuarios).  
+    - `/roles/lista` (roles).  
+  - Rutas públicas GreenPoint **pendientes de implementar**:
+    - Home, Nosotros, Historia, Servicios, Clientes, Galería, Tecnología, Contacto, Aviso de Privacidad.
+
+- **Vistas actuales relevantes**
+  - Auth: `views/auth/*.vue`.  
+  - Admin: `views/dashboard.vue`, `views/users/*.vue`, `views/roles/index.vue`.  
+  - Demo/base: `views/index.vue`, `views/index2.vue`, `views/widgets.vue`, `views/components/*.vue`.  
+  - Vistas específicas de GreenPoint (panel y público) aún deben crearse según las especificaciones de los prompts.
+
+**Qué modificar/eliminar**  
+- Cualquier cambio en la navegación del panel o del sitio público pasará por:
+  - Actualizar `router/index.js` y `components/layout/sidebar.vue` (panel).  
+  - Crear/editar un layout público (header/footer) y las vistas públicas en `views/public`.
+
+---
+
+## 6. Resumen para decidir qué modificar/eliminar
+
+1. **Eliminar completamente un módulo de negocio (catálogo o página):**
+   - Backend: modelo(s), controlador(es), service(s) y rutas asociadas en `routes/api.php`.  
+   - Frontend admin: repositorio, composable, vistas y entradas de menú/router.  
+   - Frontend público (si aplica): métodos en `PublicSiteRepository`, composables públicos y vistas/rutas.
+
+2. **Modificar únicamente el comportamiento o estructura de datos:**
+   - Ajustar migraciones futuras (nuevas), modelos y servicios correspondientes.  
+   - Actualizar controladores y repositorios que consumen esos modelos.  
+   - Alinear formularios Vue (admin/público) con los nuevos campos.
+
+3. **Ajustar permisos (qué rol ve qué cosa):**
+   - Editar `RolesAndPermissionsSeeder` (permisos asignados a roles).  
+   - Ajustar middlewares `permission:*` en `routes/api.php`.  
+   - Adaptar el menú del panel (`sidebar.vue`) para mostrar/ocultar entradas según `use-permissions`.
+
+Este archivo sirve como mapa de qué piezas de backend y frontend intervienen en cada área funcional (auth, catálogos, módulos, sitio público) para poder planear limpiezas o cambios de negocio sin romper el resto del sistema.+
 
