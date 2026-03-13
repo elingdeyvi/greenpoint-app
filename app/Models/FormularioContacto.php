@@ -5,21 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cliente extends Model
+class FormularioContacto extends Model
 {
     use HasFactory;
 
+    protected $table = 'formularios_contacto';
+
     protected $fillable = [
         'nombre',
-        'logo',
-        'enlace',
-        'orden',
-        'activo',
+        'email',
+        'telefono',
+        'mensaje',
+        'leido',
     ];
 
     protected $casts = [
-        'orden' => 'integer',
-        'activo' => 'boolean',
+        'leido' => 'boolean',
     ];
 }
 

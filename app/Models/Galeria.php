@@ -5,14 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cliente extends Model
+class Galeria extends Model
 {
     use HasFactory;
 
+    protected $table = 'galeria';
+
     protected $fillable = [
-        'nombre',
-        'logo',
-        'enlace',
+        'titulo',
+        'descripcion',
+        'imagen',
         'orden',
         'activo',
     ];

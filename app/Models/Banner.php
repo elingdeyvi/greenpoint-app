@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cliente extends Model
+class Banner extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'nombre',
-        'logo',
+        'titulo',
+        'imagen',
         'enlace',
         'orden',
         'activo',

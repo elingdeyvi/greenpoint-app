@@ -5,21 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cliente extends Model
+class Contacto extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'nombre',
-        'logo',
-        'enlace',
+        'ubicacion',
+        'direccion',
+        'telefono',
+        'email',
+        'mapa_url',
         'orden',
-        'activo',
     ];
 
     protected $casts = [
         'orden' => 'integer',
-        'activo' => 'boolean',
     ];
 }
 

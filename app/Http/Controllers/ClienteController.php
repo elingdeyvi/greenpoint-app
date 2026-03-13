@@ -2,91 +2,70 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreClienteRequest;
+use App\Http\Requests\UpdateClienteRequest;
 use App\Models\Cliente;
+use App\Services\ImageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class ClienteController extends Controller
 {
+    public function __construct(private readonly ImageService $imageService)
+    {
+        // Comentario: Middleware de permisos se puede aplicar aquí si es necesario.
+    }
+
     public function index(Request $request): JsonResponse
     {
-        if (! $request->user()->can('clientes.ver') && ! $request->user()->can('ventas.crear') && ! $request->user()->can('ventas.ver')) {
-            abort(403, 'No tiene permiso para ver clientes.');
-        }
+        $perPage = (int) ($request->get('per_page', 15));
 
-        $query = Cliente::query();
-        if ($request->has('activo') && $request->activo !== '') {
-            $query->where('activo', (bool) $request->activo);
-        } else {
-            $query->where('activo', true);
-        }
-        $clientes = $query->orderBy('es_mostrador', 'desc')->orderBy('nombre')->get();
+        $query = Cliente::query()->orderBy('orden')->orderBy('id');
 
-        return response()->json(['data' => $clientes], 200);
+        return response()->json(
+            $query->paginate($perPage),
+            JsonResponse::HTTP_OK
+        );
     }
 
-    public function show(Request $request, Cliente $cliente): JsonResponse
+    public function store(StoreClienteRequest $request): JsonResponse
     {
-        if (! $request->user()->can('clientes.ver')) {
-            abort(403, 'No tiene permiso para ver clientes.');
+        $data = $request->validated();
+
+        if ($request->hasFile('logo')) {
+            $data['logo'] = $this->imageService->storeImage($request->file('logo'), 'clientes');
         }
 
-        return response()->json(['data' => $cliente], 200);
+        $cliente = Cliente::create($data);
+
+        return response()->json($cliente, JsonResponse::HTTP_CREATED);
     }
 
-    public function store(Request $request): JsonResponse
+    public function show(Cliente $cliente): JsonResponse
     {
-        if (! $request->user()->can('clientes.administrar')) {
-            abort(403, 'No tiene permiso para administrar clientes.');
-        }
-
-        $validator = Validator::make($request->all(), [
-            'nombre' => ['required', 'string', 'max:255'],
-        ], ['nombre.required' => 'El nombre del cliente es obligatorio.']);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $cliente = Cliente::create([
-            'nombre' => $request->nombre,
-            'es_mostrador' => false,
-            'activo' => true,
-        ]);
-        return response()->json(['data' => $cliente, 'message' => 'Cliente creado.'], 201);
+        return response()->json($cliente, JsonResponse::HTTP_OK);
     }
 
-    public function update(Request $request, Cliente $cliente): JsonResponse
+    public function update(UpdateClienteRequest $request, Cliente $cliente): JsonResponse
     {
-        if ($cliente->es_mostrador) {
-            return response()->json([
-                'errors' => ['cliente' => ['No se puede editar el cliente mostrador.']],
-            ], 422);
+        $data = $request->validated();
+
+        if ($request->hasFile('logo')) {
+            $this->imageService->deleteImage($cliente->logo);
+            $data['logo'] = $this->imageService->storeImage($request->file('logo'), 'clientes');
         }
-        $validator = Validator::make($request->all(), [
-            'nombre' => ['sometimes', 'string', 'max:255'],
-            'activo' => ['sometimes', 'boolean'],
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-        $cliente->update($request->only(['nombre', 'activo']));
-        return response()->json(['data' => $cliente, 'message' => 'Cliente actualizado.'], 200);
+
+        $cliente->update($data);
+
+        return response()->json($cliente->refresh(), JsonResponse::HTTP_OK);
     }
 
-    public function destroy(Request $request, Cliente $cliente): JsonResponse
+    public function destroy(Cliente $cliente): JsonResponse
     {
-        if (! $request->user()->can('clientes.administrar')) {
-            abort(403, 'No tiene permiso para administrar clientes.');
-        }
-
-        if ($cliente->es_mostrador) {
-            return response()->json([
-                'errors' => ['cliente' => ['No se puede eliminar el cliente mostrador.']],
-            ], 422);
-        }
+        $this->imageService->deleteImage($cliente->logo);
         $cliente->delete();
-        return response()->json(['message' => 'Cliente eliminado.'], 200);
+
+        return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }
+

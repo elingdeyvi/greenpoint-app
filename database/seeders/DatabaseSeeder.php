@@ -12,15 +12,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Seed inicial del sistema GreenPoint: roles, permisos, usuario administrador y contenido demo.
         $this->call([
-            UnidadMedidaSeeder::class,
-            ClienteSeeder::class,
-            SucursalSeeder::class,
-            ConfiguracionEmpresaSeeder::class,
-            ProductSeeder::class,
+            RolesAndPermissionsSeeder::class,
+            DemoContentSeeder::class,
         ]);
-        // Productos: ejecutar solo el seeder de la sucursal que corresponda:
-        // php artisan db:seed --class=ProductoMacuspanaSeeder   (sistema Macuspana)
-        // php artisan db:seed --class=ProductoVillahermosaSeeder (sistema Villahermosa)
     }
 }

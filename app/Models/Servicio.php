@@ -5,14 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cliente extends Model
+class Servicio extends Model
 {
     use HasFactory;
 
+    // Campos asignables en masa (snake_case en BD)
     protected $fillable = [
         'nombre',
-        'logo',
-        'enlace',
+        'descripcion',
+        'imagen',
         'orden',
         'activo',
     ];

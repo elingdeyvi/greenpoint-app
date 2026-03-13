@@ -5,21 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cliente extends Model
+class RedSocial extends Model
 {
     use HasFactory;
 
+    protected $table = 'redes_sociales';
+
     protected $fillable = [
         'nombre',
-        'logo',
-        'enlace',
+        'url',
+        'icono',
         'orden',
-        'activo',
     ];
 
     protected $casts = [
         'orden' => 'integer',
-        'activo' => 'boolean',
     ];
 }
 

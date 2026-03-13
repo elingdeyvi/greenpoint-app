@@ -26,10 +26,18 @@ class TokenController extends Controller
         $params= $request->only('email', 'password');
         $params['estatus']='activo';
         if (Auth::once($params)) {
-            $token = $request->user()->createToken($request->user()->name);
+            $user = $request->user()->load(['roles', 'permissions']);
+            $token = $user->createToken($user->name);
 
             return response()->json([
-                'data' => $token->plainTextToken,
+                'token' => $token->plainTextToken,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'roles' => $user->getRoleNames(),
+                    'permissions' => $user->getAllPermissions()->pluck('name'),
+                ],
             ], JsonResponse::HTTP_OK);
         }
 
