@@ -1,0 +1,138 @@
+﻿📄 Ficha Técnica del Proyecto: Sistema de Control de Salidas de Volteos (SCV)
+
+
+
+
+I. Propuesta de Valor: Digitalización y Seguridad
+
+
+Objetivo Principal
+	Beneficios Clave
+	
+
+Digitalizar, automatizar y auditar el proceso de registro y autorización de salidas de camiones de volteo.
+
+
+	1. Cero Fraudes: Prevención de reutilización de boletos.
+
+
+	
+
+	2. Evidencia Fotográfica: Registro visual irrefutable de cada salida.
+
+
+	
+
+	3. Trazabilidad Total: Auditoría de cada paso del proceso.
+
+
+	
+
+II. El Proceso SCV en 3 Pasos (Flujo Operativo)
+
+
+El sistema garantiza que cada camión cumpla con el protocolo antes de la generación y validación de su boleto de salida.
+
+
+Paso 1: Posicionamiento y Evidencia Visual
+
+
+El camión de volteo ingresa al área de captura designada6. El Despachador inicia la generación del boleto.
+
+
+* El sistema interactúa con la Cámara IP para capturar una foto (snapshot) del volteo.
+
+* La foto se almacena en la nube/servidor y queda ligada de forma permanente al registro del boleto.
+
+________________
+
+
+Paso 2: Generación y Código QR
+
+
+Tras la captura exitosa de la foto, el sistema genera el boleto.
+   * Se crea un Número de Folio Único.
+
+   * Se genera un Código QR irrepetible para la verificación.
+
+   * El Despachador imprime el boleto en una impresora térmica.
+
+________________
+
+
+Paso 3: Verificación y Salida Segura
+
+
+El Vigilante en el punto de control asegura la salida.
+      * El Vigilante utiliza una interfaz optimizada para escanear el Código QR o ingresar el folio manualmente.
+
+      * El sistema valida instantáneamente que el boleto esté "Pendiente de Usar".
+
+      * Una vez validado, el estatus cambia a "Utilizado" para evitar cualquier reutilización.
+
+________________
+________________
+
+
+III. Componentes del Sistema (Módulos)
+
+
+Módulo
+	Usuario Principal
+	Función Clave
+	Operaciones
+	Despachador, Vigilante
+
+
+	Generación de boletos con foto integrada y el panel de validación de salidas.
+
+
+	Administración
+	Administrador
+
+
+	Gestión de Usuarios y Permisos. Configuración CRÍTICA de los parámetros de la Cámara IP y las impresoras.
+
+
+	Reportes
+	Administrador
+	
+
+Trazabilidad Completa, filtros por fecha/folio/estatus y Exportación de reportes (Excel/PDF).
+
+
+	________________
+
+
+IV. Resumen de Tecnología y Hardware
+
+
+
+
+A. Stack Tecnológico
+
+
+La plataforma es una Aplicación Web Moderna y Robusta.
+
+
+         * Backend: Laravel 9+ (PHP) – Proporciona la lógica de negocio, la seguridad y la gestión de la base de datos (MySQL/PostgreSQL).
+
+         * Frontend: Vue 3 – Garantiza una interfaz de usuario rápida, reactiva y funcional en cualquier dispositivo (Responsive).
+
+         * Interacción: API RESTful y librerías especializadas (Guzzle) para la comunicación con la cámara IP.
+
+
+
+B. Especificaciones Clave de la Cámara IP
+
+
+La cámara debe ser seleccionada para garantizar una integración fácil y un rendimiento fiable.
+
+
+            * Tipo: IP Bullet o Domo para Exteriores (IP66+).
+
+            * Resolución: Mínimo 2.0 Megapíxeles (1080p) para calidad de auditoría.
+
+            * Alimentación: PoE (Power over Ethernet) para instalación simplificada.
+
+            * Integración: Debe soportar HTTP Snapshot (URL directa para captura de imagen), que es el método esencial para la comunicación con el backend de Laravel.

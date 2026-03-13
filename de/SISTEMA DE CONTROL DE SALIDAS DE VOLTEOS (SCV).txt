@@ -1,0 +1,166 @@
+﻿DESCRIPCIÓN DEL PROYECTO: SISTEMA DE CONTROL DE SALIDAS DE VOLTEOS (SCV)
+
+
+
+
+1. Introducción
+
+
+
+
+1.1 Objetivo del Proyecto
+
+
+El objetivo principal del Sistema de Control de Salidas de Volteos (SCV) es digitalizar, automatizar y auditar el proceso de registro y autorización de la salida de camiones de volteo de un recinto. El sistema busca reemplazar el control manual por un flujo de trabajo ágil, seguro, y que incorpore un registro fotográfico de cada vehículo.
+
+
+1.2 Alcance del Sistema
+
+
+El SCV es una aplicación web que abarca desde la generación del boleto de salida, ligada a la captura fotográfica del vehículo, hasta la verificación final en el punto de control, asegurando que cada boleto sea único y no pueda ser reutilizado.
+________________
+
+
+2. Requerimientos Funcionales (Módulos)
+
+
+El sistema se compone de tres módulos principales y un flujo de operación centralizado.
+
+
+2.1 Módulo de Operaciones: Generación y Verificación
+
+
+Componente
+	Descripción y Requerimientos
+	Flujo de Generación de Boleto (Despachador)
+	Formulario intuitivo para ingresar la información de la salida. El sistema debe asignar automáticamente un Número de Folio Único y generar un Código QR asociado. El botón de "Generar/Imprimir Boleto" debe permanecer inhabilitado hasta que se cumpla la validación fotográfica.
+	Integración de Cámara IP
+	CRÍTICO: El sistema debe interactuar con una cámara IP configurada para tomar una fotografía (snapshot) del volteo. La foto debe ser almacenada y la ruta del archivo ligada al registro del boleto. Debe mostrarse una vista previa de la foto capturada en la interfaz del Despachador.
+	Requisito de Posicionamiento
+	Se debe definir un área física específica donde el volteo debe estar posicionado para que el sistema pueda capturar la foto de manera correcta. El Despachador es responsable de verificar la posición antes de activar la captura.
+	Impresión de Boleto
+	Capacidad de imprimir el boleto de salida inmediatamente en una impresora de tickets (térmica) configurada, incluyendo el Número de Folio y el Código QR.
+	Panel de Verificación de Salida (Vigilante)
+	Interfaz optimizada para el Vigilante con un feedback visual rápido (luz verde/roja). Debe permitir la verificación del boleto por dos métodos: Escaneo del Código QR (mediante cámara o escáner) y Ingreso Manual del Número de Folio.
+	Validación de Boleto
+	Al verificar, el sistema debe validar instantáneamente: 1) Que el folio existe. 2) Que el boleto está en estatus "Pendiente de Usar". 3) Tras la validación, el sistema debe cambiar automáticamente el estatus del boleto a "Utilizado" para prevenir su doble uso.
+	
+
+2.2 Módulo de Administración (Core)
+
+
+Componente
+	Descripción y Requerimientos
+	Gestión de Usuarios, Roles y Permisos
+	Creación, edición y desactivación de usuarios. Configuración de permisos detallados para cada rol (Administrador, Despachador, Vigilante).
+	Configuración de Empresa
+	Campos para ingresar el nombre de la empresa, logo (para reportes), dirección y cualquier dato fiscal requerido en el boleto.
+	Configuración de Hardware
+	CRÍTICO: Formulario para configurar los parámetros de conexión de la Cámara IP: IP/URL, Puerto, Usuario y Contraseña. También debe permitir configurar las impresoras de tickets.
+	Catálogos
+	Creación y gestión de catálogos necesarios para el formulario de generación de boleto (ej. Tipos de Carga, Destinos, Placas frecuentes, etc.).
+	
+
+2.3 Módulo de Reportes y Auditoría
+
+
+Componente
+	Descripción y Requerimientos
+	Reporte de Salidas
+	Vista tabular con todos los boletos generados. Debe contar con filtros por: rango de fechas, usuario generador, estatus del boleto ("Utilizado", "Pendiente"), y folio.
+	Trazabilidad Completa
+	Cada registro de boleto debe permitir visualizar: la información de la salida, el historial de estatus, quién lo generó, quién lo validó y la Foto del Volteo asociada.
+	Exportación de Datos
+	Opción para exportar los reportes filtrados a formatos estándar como Excel (CSV) y PDF.
+	________________
+
+
+3. Roles de Usuario
+
+
+El sistema contemplará los siguientes roles iniciales, con capacidad de personalización de permisos por parte del Administrador:
+Rol
+	Funciones Principales
+	Acceso a Módulos
+	Administrador
+	Gestión total de la plataforma (usuarios, roles, configuración de cámara/impresoras). Acceso completo a Operaciones y Reportes.
+	Todos los Módulos
+	Despachador
+	Generación de boletos, Captura fotográfica, Impresión. Consulta solo de sus boletos generados.
+	Operaciones (Generación), Reportes (Consulta propia)
+	Vigilante
+	Verificación y validación de boletos en el punto de salida (Escaneo QR o Folio manual).
+	Operaciones (Verificación)
+	________________
+
+
+4. Requerimientos Técnicos y de Plataforma
+
+
+
+
+4.1 Stack Tecnológico Propuesto
+
+
+Componente
+	Especificación
+	Justificación
+	Backend / Framework
+	Laravel 9+ (PHP)
+	Robustez, amplio soporte, seguridad y estructura de código limpio (MVC). Ideal para una API RESTful.
+	Frontend / Interfaz
+	Vue 3 (Composition API)
+	Framework progresivo, moderno y reactivo. Permite una experiencia de usuario rápida y optimizada para el panel de verificación.
+	Base de Datos
+	MySQL o PostgreSQL
+	Bases de datos relacionales estables y escalables, ideales para manejar la integridad de datos de folios y estatus.
+	Comunicación
+	API RESTful
+	Comunicación estándar y eficiente entre el Frontend y el Backend.
+	Cliente HTTP
+	Guzzle HTTP Client (o cURL)
+	Librería estándar de Laravel para realizar la petición HTTP/HTTPS al endpoint de la Cámara IP para la captura del snapshot.
+	Diseño
+	Responsive (Adaptativo)
+	La interfaz debe ser funcional en cualquier dispositivo (PC, Tablet o Móvil), especialmente el Panel de Verificación.
+	________________
+
+
+5. Especificaciones de Integración de la Cámara IP
+
+
+
+
+5.1 Requerimiento de Hardware (Cámara IP)
+
+
+Para asegurar una integración exitosa y un rendimiento confiable, se recomienda una cámara con las siguientes características:
+Característica
+	Especificación Recomendada
+	Tipo de Cámara
+	IP Bullet o Domo, apta para exteriores (certificación IP66 o superior).
+	Resolución
+	Mínimo 2.0 Megapíxeles (1080p) para calidad de auditoría.
+	Protocolo de Captura
+	Debe soportar la obtención de un snapshot o imagen estática a través de una URL de API/CGI simple (ej. http://[IP]/snapshot.cgi). Esto es crítico para la integración con Laravel.
+	Alimentación
+	PoE (Power over Ethernet) preferiblemente, para simplificar la instalación.
+	Autenticación
+	Soporte para Autenticación Básica HTTP (Usuario y Contraseña) para asegurar el endpoint de captura.
+	Visibilidad
+	Función de amplio rango dinámico (WDR) y visión infrarroja (IR) para operar en distintas condiciones de luz ambiental.
+	
+
+5.2 Lógica de Integración (Backend - Laravel)
+
+
+1. URL de Captura Dinámica: Laravel debe construir la URL de captura (ej. http://usuario:contrasena@IP_CAM/snapshot.cgi) utilizando la configuración almacenada en el Módulo de Administración.
+2. Manejo de Errores: El sistema debe gestionar las excepciones (timeouts, errores de conexión, credenciales incorrectas) y notificar al Despachador que la foto no pudo ser tomada, impidiendo la generación del boleto.
+3. Ruta de Almacenamiento: Las fotos deben guardarse con un nombre de archivo único (ej. usando el folio y un timestamp) en el sistema de archivos de Laravel (storage/app/public/volteos/), y el campo ruta_foto en la base de datos debe almacenar la ruta relativa a este archivo.
+
+
+5.3 Requerimiento de Instalación (Área Específica)
+
+
+* Delimitación Física: El lugar exacto de captura debe estar claramente demarcado en el piso (pintura o señalización).
+* Encaje Visual: La cámara debe estar montada a una altura y ángulo que asegure que todo el camión de volteo (incluyendo cabina y caja) esté dentro del marco de la foto cuando esté detenido en el área delimitada.

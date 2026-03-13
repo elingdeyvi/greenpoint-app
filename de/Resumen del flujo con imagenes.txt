@@ -1,0 +1,32 @@
+﻿Flujo Operativo del SCV: Caseta y Salida
+
+
+Paso 1: Posicionamiento y Captura de Evidencia (Despachador en Caseta)
+El camión de volteo llega a la caseta de control. El Despachador, dentro de la caseta, accede al Módulo de Operaciones en la aplicación web.
+* Acción: El Despachador ingresa los datos de la carga (ej. Destino, Material, Identificador de Volteo).
+* Seguridad: Antes de generar el boleto, el Despachador activa la función de "Captura de Snapshot". La Cámara IP, instalada estratégicamente fuera de la caseta, toma una foto del camión. Esta foto se liga automáticamente e inmutablemente al registro del boleto.
+* Tecnología: La aplicación (Vue/Laravel) utiliza una petición API RESTful a la URL de la Cámara IP para obtener la imagen, garantizando que la evidencia visual sea parte del proceso de generación.
+  
+
+Paso 2: Generación e Impresión del Boleto Único (Despachador en Caseta)
+Una vez que la foto ha sido registrada y los datos de la carga están completos, el sistema finaliza la generación del boleto.
+* Acción: El sistema genera un Número de Folio Único y un Código QR irrepetible que contiene la información esencial del viaje. El estatus inicial del boleto se establece como "Pendiente de Usar".
+* Impresión: El Despachador imprime el boleto en la impresora térmica dentro de la caseta y lo entrega al conductor.
+* Evidencia en Boleto: El boleto impreso contiene el folio, el código QR y una versión pequeña de la evidencia fotográfica, sirviendo como respaldo físico y visual.
+
+
+  
+
+
+
+
+
+Paso 3: Verificación Rápida en la Salida (Vigilante en el Acceso)
+
+
+El conductor se dirige a la barrera de salida final donde está el Vigilante.
+* Acción: El Vigilante accede al panel de validación (Módulo de Operaciones) a través de una tablet o dispositivo móvil.
+* Validación: El Vigilante escanea el Código QR del boleto o ingresa manualmente el folio único.
+* Resultado: El sistema realiza una consulta instantánea para verificar dos puntos críticos:
+   1. Que el Folio exista.
+   2. Que el estatus sea "Pendiente de Usar".

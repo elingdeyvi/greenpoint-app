@@ -1,0 +1,45 @@
+# Reglas de Proyecto: Laravel 10 + Vue 3 Architecture
+
+## 1. Contexto Tecnológico y Estructura
+- **Backend**: Laravel 10 (PHP 8.x) con arquitectura de Controladores, Modelos y Repositorios.
+- **Frontend**: Vue 3 (Composition API) ubicado en `resources/js/src/`.
+- **Comunicación API**:
+    - **JSON**: Usar siempre `@/services/ApiService` (instancia de Axios con interceptores).
+    - **Archivos**: Usar `@/services/ApiServiceFile` para subidas `multipart/form-data`.
+    - **Auth**: El token se gestiona mediante `localStorage.getItem("token")` en los interceptores.
+
+## 2. Estándares de Frontend (Vue 3)
+- **Carpetas Clave**:
+    - Componentes: `resources/js/src/components/`.
+    - Lógica de estado/reactividad: `resources/js/src/composables/`.
+    - Repositorios: `resources/js/src/repositories/`.
+- **Patrón de Repositorios JS (Imitar `ClienteRepository.js`)**:
+    - Importar `ApiService` de `@/services/ApiService`.
+    - Definir `const baseUrl = "nombre_recurso";` al inicio.
+    - Exportar funciones flecha constantes con `async/await`.
+    - Retornar siempre `response.data`.
+    - Métodos requeridos: `getAll`, `getById`, `create`, `update`, `delete`.
+- **Componentes**: Usar `<script setup>` y priorizar el uso de **Composables** para la lógica reactiva.
+
+## 3. Estándares de Backend (Laravel 10)
+- **Controladores**: Mantener controladores delgados (Skinny Controllers).
+- **Lógica**: Delegar procesos pesados a **Services** o **Repositories** en PHP.
+- **Validación**: Crear siempre un `FormRequest` específico para las acciones `store` y `update`.
+- **Modelos**: Definir propiedades `$fillable` y relaciones Eloquent explícitas.
+
+## 4. Estilo y Convenciones
+- **Nomenclatura**:
+    - JavaScript/Vue: `camelCase`.
+    - PHP/Base de Datos: `snake_case`.
+    - Componentes Vue: `PascalCase`.
+- **Idiomas**:
+    - Código (variables, funciones, clases): **Inglés**.
+    - Comentarios y explicaciones: **Español**.
+- **UI/Internacionalización**: Usar el sistema de `locales` mediante la función `$t()` en las plantillas.
+
+## 5. Instrucciones de Generación de Código
+Al solicitar una nueva funcionalidad o CRUD, generar siempre el flujo completo:
+1. Migración y Modelo (Laravel).
+2. Controlador y FormRequest (Laravel).
+3. Repositorio JS (siguiendo el patrón de `ApiService` y `baseUrl`).
+4. Composable y Vista de Vue (Componentes).
