@@ -13,7 +13,9 @@ Para poblar el sitio con imágenes del proyecto hermano `cotizaciones` (banners,
 
 1. Configure la ruta en `.env` (opcional): `COTIZACIONES_PATH=../cotizaciones` (por defecto se usa `../cotizaciones`).
 2. Ejecute: `php artisan app:import-cotizaciones-images`.
-3. El comando copia a `storage/app/public/` y crea el enlace `public/storage` si no existe. Los seeders que usan imágenes (por ejemplo `ServicioSeeder`) guardan rutas como `icons/icon-01.png`, `banners/banner-01.jpg`, etc.
+3. El comando copia a `storage/app/public/` y crea el enlace `public/storage` si no existe. Los seeders de catálogos (Servicio, Cliente, Banner, Galeria) guardan rutas como `icons/icon-01.png`, `banners/banner-01.jpg`, etc.
+
+**Seeders:** Para tener imágenes reales en los catálogos, ejecute el comando de importación *antes* de `php artisan db:seed`. Si no ejecuta el comando, las rutas en la BD son válidas pero los archivos no existirán hasta copiar las imágenes (o puede usar placeholders y actualizar después).
 
 ## About Laravel
 
