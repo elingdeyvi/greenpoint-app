@@ -30,15 +30,26 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue';
+import { onMounted, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePublicServicios } from '@/composables/usePublicServicios';
+import { usePublicMeta } from '@/composables/use-public-meta';
 
 const baseStorage = () => (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '') || window.location.origin;
 const storageUrl = (path) => (path && !path.startsWith('http') ? `${baseStorage()}/storage/${path}` : path) || '';
 
 const route = useRoute();
 const { servicio, loading, error, fetchServicio, fetchServicioBySlug } = usePublicServicios();
+
+usePublicMeta(computed(() => {
+  const s = servicio.value;
+  if (!s) return { title: 'Servicio' };
+  return {
+    title: s.nombre,
+    meta_descripcion: s.meta_descripcion || s.descripcion,
+    meta_keywords: s.meta_keywords,
+  };
+}));
 
 const loadServicio = () => {
   const idOrSlug = route.params.idOrSlug;

@@ -29,12 +29,20 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
 import { usePublicTecnologia } from '@/composables/usePublicTecnologia';
+import { usePublicMeta } from '@/composables/use-public-meta';
+
+const { pagina, loading, error, fetchPagina } = usePublicTecnologia();
+
+usePublicMeta(computed(() =>
+  pagina.value
+    ? { title: pagina.value.titulo, meta_descripcion: pagina.value.meta_descripcion, meta_keywords: pagina.value.meta_keywords }
+    : { title: 'Tecnología' }
+));
 
 const baseStorage = () => (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '') || window.location.origin;
 const storageUrl = (path) => (path && !path.startsWith('http') ? `${baseStorage()}/storage/${path}` : path) || '';
 
-const { pagina, loading, error, fetchPagina } = usePublicTecnologia();
 onMounted(() => fetchPagina());
 </script>

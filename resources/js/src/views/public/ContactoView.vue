@@ -60,13 +60,15 @@
 import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePublicContactos } from '@/composables/usePublicContactos';
+import { usePublicMeta } from '@/composables/use-public-meta';
 import PublicSiteRepository from '@/repositories/PublicSiteRepository';
 
 const route = useRoute();
 const slug = computed(() => route.meta.contactoSlug || 'tabasco');
-
 const titulos = { tabasco: 'Tabasco', veracruz: 'Veracruz', carmen: 'Cd. del Carmen' };
-const tituloUbicacion = computed(() => titulos[slug.value] || slug.value));
+const tituloUbicacion = computed(() => titulos[slug.value] || slug.value);
+
+usePublicMeta(computed(() => ({ title: `Contacto — ${tituloUbicacion.value}`, description: `Contacte a GreenPoint en ${tituloUbicacion.value}. Dirección, teléfono y formulario de contacto.` })));
 
 const { contactos, loading, fetchContactos } = usePublicContactos();
 const contacto = computed(() => {

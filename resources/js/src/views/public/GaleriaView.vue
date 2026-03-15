@@ -37,8 +37,15 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed, watch } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { usePublicGaleria } from '@/composables/usePublicGaleria';
+import { usePublicMeta } from '@/composables/use-public-meta';
+
+usePublicMeta({
+  title: 'Galería',
+  description: 'Galería de imágenes de GreenPoint - Proyectos y comunicaciones para el sector petrolero.',
+  keywords: 'galería, GreenPoint, proyectos, comunicaciones',
+});
 
 const baseStorage = () => (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '') || window.location.origin;
 const storageUrl = (path) => (path && !path.startsWith('http') ? `${baseStorage()}/storage/${path}` : path) || '';

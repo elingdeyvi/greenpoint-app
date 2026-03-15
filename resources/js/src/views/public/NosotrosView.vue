@@ -40,12 +40,20 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
 import { usePublicNosotros } from '@/composables/usePublicNosotros';
+import { usePublicMeta } from '@/composables/use-public-meta';
+
+const { pagina, loading, error, fetchPagina } = usePublicNosotros();
+
+usePublicMeta(computed(() =>
+  pagina.value
+    ? { title: pagina.value.titulo, meta_descripcion: pagina.value.meta_descripcion, meta_keywords: pagina.value.meta_keywords }
+    : { title: 'Nosotros' }
+));
 
 const baseStorage = () => (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '') || window.location.origin;
 const storageUrl = (path) => (path && !path.startsWith('http') ? `${baseStorage()}/storage/${path}` : path) || '';
 
-const { pagina, loading, error, fetchPagina } = usePublicNosotros();
 onMounted(() => fetchPagina());
 </script>

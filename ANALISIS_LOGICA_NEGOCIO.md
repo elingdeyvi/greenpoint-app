@@ -182,6 +182,22 @@
 
 ---
 
+### 2.6 Gestión de imágenes y archivos
+
+- **Servicio** `App\Services\ImageService`
+  - **Subida:** `storeImage(UploadedFile $file, string $directory): string` — guarda en disco `public` y devuelve la ruta relativa (ej. `banners/xyz.jpg`). Si en `config/image.php` están definidos `max_width` o `max_height` (vía `IMAGE_MAX_WIDTH` / `IMAGE_MAX_HEIGHT` en `.env`), las imágenes que superen esos tamaños se redimensionan (jpeg, png, gif, webp) antes de guardar.
+  - **Eliminación:** `deleteImage(?string $path): void` — borra el archivo del disco si existe. Se invoca al reemplazar una imagen (update) o al eliminar el registro (destroy).
+  - **URL pública:** `urlFor(?string $path): string` — devuelve la URL absoluta (opcional; el frontend suele construir la URL con la base + `/storage/` + path).
+
+- **Uso por módulo**
+  - **Catálogos:** `BannerController`, `ServicioController`, `ClienteController` (logo), `GaleriaController` — en store/update suben con `ImageService::storeImage`, en update (reemplazo) y destroy llaman `deleteImage`.
+  - **Módulos administrables:** `PaginaNosotrosService`, `PaginaHistoriaService`, `PaginaTecnologiaService` — imagen destacada e imágenes múltiples; al actualizar o eliminar items de imagen llaman `deleteImage` y guardan con `storeImage`.
+
+- **URLs utilizables desde el frontend**
+  - El API devuelve siempre la **ruta relativa** (ej. `galeria/abc.jpg`, `servicios/def.png`). El frontend debe construir la URL final como: `baseUrl + '/storage/' + path`, donde `baseUrl` es la raíz del backend (p. ej. `import.meta.env.VITE_API_URL` sin el sufijo `/api`, o `window.location.origin` si la app y el API comparten origen). El enlace simbólico `public/storage` → `storage/app/public` se crea con `php artisan storage:link`.
+
+---
+
 ## 3. Frontend – Repositorios y composables (panel admin)
 
 ### 3.1 Repositorios admin (`resources/js/src/repositories/`)

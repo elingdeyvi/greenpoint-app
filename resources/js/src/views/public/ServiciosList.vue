@@ -28,6 +28,13 @@
 <script setup>
 import { onMounted } from 'vue';
 import { usePublicServicios } from '@/composables/usePublicServicios';
+import { usePublicMeta } from '@/composables/use-public-meta';
+
+usePublicMeta({
+  title: 'Servicios',
+  description: 'GreenPoint - Servicios de internet satelital, conexión satelital, soluciones de comunicaciones para el sector petrolero en México.',
+  keywords: 'internet satelital, servicios satelitales, comunicaciones, sector petrolero',
+});
 
 const baseStorage = () => (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '') || window.location.origin;
 const storageUrl = (path) => (path && !path.startsWith('http') ? `${baseStorage()}/storage/${path}` : path) || '';

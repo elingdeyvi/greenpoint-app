@@ -86,6 +86,13 @@
 <script setup>
 import { onMounted } from 'vue';
 import { usePublicHome } from '@/composables/usePublicHome';
+import { usePublicMeta } from '@/composables/use-public-meta';
+
+usePublicMeta({
+  title: 'Inicio',
+  description: 'GreenPoint - Proveedor de internet satelital, broadband, internet services México. Líder en comunicaciones para el sector petrolero.',
+  keywords: 'internet satelital, broadband, comunicaciones, sector petrolero, México',
+});
 
 const baseStorage = () => (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '') || window.location.origin;
 const storageUrl = (path) => (path && !path.startsWith('http') ? `${baseStorage()}/storage/${path}` : path) || '';

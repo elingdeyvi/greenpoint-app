@@ -22,6 +22,13 @@
 <script setup>
 import { onMounted } from 'vue';
 import { usePublicClientes } from '@/composables/usePublicClientes';
+import { usePublicMeta } from '@/composables/use-public-meta';
+
+usePublicMeta({
+  title: 'Clientes',
+  description: 'GreenPoint - Conozca a nuestros clientes del sector petrolero y de comunicaciones en México.',
+  keywords: 'clientes, sector petrolero, comunicaciones, GreenPoint',
+});
 
 const baseStorage = () => (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '') || window.location.origin;
 const storageUrl = (path) => (path && !path.startsWith('http') ? `${baseStorage()}/storage/${path}` : path) || '';

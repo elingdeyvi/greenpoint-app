@@ -24,9 +24,17 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
 import { usePublicAviso } from '@/composables/usePublicAviso';
+import { usePublicMeta } from '@/composables/use-public-meta';
 
 const { pagina, loading, error, fetchPagina } = usePublicAviso();
+
+usePublicMeta(computed(() =>
+  pagina.value
+    ? { title: pagina.value.titulo, meta_descripcion: pagina.value.meta_descripcion, meta_keywords: pagina.value.meta_keywords }
+    : { title: 'Aviso de Privacidad' }
+));
+
 onMounted(() => fetchPagina());
 </script>
