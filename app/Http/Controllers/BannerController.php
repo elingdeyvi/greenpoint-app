@@ -6,12 +6,16 @@ use App\Http\Requests\StoreBannerRequest;
 use App\Http\Requests\UpdateBannerRequest;
 use App\Models\Banner;
 use App\Services\ImageService;
+use App\Services\PublicSiteCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BannerController extends Controller
 {
-    public function __construct(private readonly ImageService $imageService)
+    public function __construct(
+        private readonly ImageService $imageService,
+        private readonly PublicSiteCacheService $publicCache
+    )
     {
         // Comentario: Middleware de permisos se puede aplicar aquí si es necesario.
     }
@@ -37,6 +41,7 @@ class BannerController extends Controller
         }
 
         $banner = Banner::create($data);
+        $this->publicCache->invalidateBanners();
 
         return response()->json($banner, JsonResponse::HTTP_CREATED);
     }
@@ -56,6 +61,7 @@ class BannerController extends Controller
         }
 
         $banner->update($data);
+        $this->publicCache->invalidateBanners();
 
         return response()->json($banner->refresh(), JsonResponse::HTTP_OK);
     }
@@ -64,6 +70,7 @@ class BannerController extends Controller
     {
         $this->imageService->deleteImage($banner->imagen);
         $banner->delete();
+        $this->publicCache->invalidateBanners();
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }

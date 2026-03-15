@@ -6,12 +6,16 @@ use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
 use App\Models\Cliente;
 use App\Services\ImageService;
+use App\Services\PublicSiteCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ClienteController extends Controller
 {
-    public function __construct(private readonly ImageService $imageService)
+    public function __construct(
+        private readonly ImageService $imageService,
+        private readonly PublicSiteCacheService $publicCache
+    )
     {
         // Comentario: Middleware de permisos se puede aplicar aquí si es necesario.
     }
@@ -37,6 +41,7 @@ class ClienteController extends Controller
         }
 
         $cliente = Cliente::create($data);
+        $this->publicCache->invalidateClientes();
 
         return response()->json($cliente, JsonResponse::HTTP_CREATED);
     }
@@ -56,6 +61,7 @@ class ClienteController extends Controller
         }
 
         $cliente->update($data);
+        $this->publicCache->invalidateClientes();
 
         return response()->json($cliente->refresh(), JsonResponse::HTTP_OK);
     }
@@ -64,6 +70,7 @@ class ClienteController extends Controller
     {
         $this->imageService->deleteImage($cliente->logo);
         $cliente->delete();
+        $this->publicCache->invalidateClientes();
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }

@@ -2,149 +2,106 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Banner;
-use App\Models\Cliente;
-use App\Models\Contacto;
+use App\Http\Requests\StoreFormularioContactoRequest;
 use App\Models\FormularioContacto;
-use App\Models\Galeria;
-use App\Models\PaginaAviso;
-use App\Models\PaginaHistoria;
-use App\Models\PaginaNosotros;
-use App\Models\PaginaTecnologia;
+use App\Services\PublicSiteCacheService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
+/**
+ * API pública del sitio. Respuestas cacheadas (PublicSiteCacheService, TTL 10 min).
+ *
+ * SEO: Los endpoints devuelven los campos necesarios para meta tags y URLs amigables:
+ * - pagina-nosotros, pagina-historia, pagina-tecnologia, pagina-aviso: titulo, meta_descripcion, meta_keywords.
+ * - servicios (listado y detalle): nombre, slug (para URLs amigables), descripcion; slug también en GET /api/public/servicios/slug/{slug}.
+ * Estructura de respuesta: el recurso completo (incl. meta_* y slug) según el modelo.
+ */
 class PublicSiteController extends Controller
 {
+    public function __construct(private readonly PublicSiteCacheService $cache)
+    {
+    }
+
     public function home(): JsonResponse
     {
-        $banners = Cache::remember('public_banners', now()->addMinutes(10), function () {
-            return Banner::query()
-                ->where('activo', true)
-                ->orderBy('orden')
-                ->get();
-        });
-
-        $servicios = Cache::remember('public_servicios', now()->addMinutes(10), function () {
-            return \App\Models\Servicio::query()
-                ->where('activo', true)
-                ->orderBy('orden')
-                ->get();
-        });
-
         return response()->json([
-            'banners' => $banners,
-            'servicios' => $servicios,
+            'banners' => $this->cache->getBanners(),
+            'servicios' => $this->cache->getServicios(),
         ], JsonResponse::HTTP_OK);
     }
 
     public function serviciosIndex(): JsonResponse
     {
-        $servicios = \App\Models\Servicio::query()
-            ->where('activo', true)
-            ->orderBy('orden')
-            ->get();
+        return response()->json($this->cache->getServicios(), JsonResponse::HTTP_OK);
+    }
 
-        return response()->json($servicios, JsonResponse::HTTP_OK);
+    public function servicioBySlug(string $slug): JsonResponse
+    {
+        $servicio = \App\Models\Servicio::query()->where('slug', $slug)->where('activo', true)->first();
+        if (!$servicio) {
+            return response()->json(['message' => 'Not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+        $cached = $this->cache->getServicio($servicio->id);
+        return response()->json($cached ?? $servicio, JsonResponse::HTTP_OK);
     }
 
     public function serviciosShow(\App\Models\Servicio $servicio): JsonResponse
     {
-        if (!$servicio->activo) {
+        $cached = $this->cache->getServicio($servicio->id);
+        if (!$cached || !$cached->activo) {
             return response()->json(['message' => 'Not found'], JsonResponse::HTTP_NOT_FOUND);
         }
-
-        return response()->json($servicio, JsonResponse::HTTP_OK);
+        return response()->json($cached, JsonResponse::HTTP_OK);
     }
 
     public function clientesIndex(): JsonResponse
     {
-        $clientes = Cliente::query()
-            ->where('activo', true)
-            ->orderBy('orden')
-            ->get();
-
-        return response()->json($clientes, JsonResponse::HTTP_OK);
+        return response()->json($this->cache->getClientes(), JsonResponse::HTTP_OK);
     }
 
     public function galeriaIndex(): JsonResponse
     {
-        $items = Galeria::query()
-            ->where('activo', true)
-            ->orderBy('orden')
-            ->get();
-
-        return response()->json($items, JsonResponse::HTTP_OK);
+        return response()->json($this->cache->getGaleria(), JsonResponse::HTTP_OK);
     }
 
     public function contactosIndex(): JsonResponse
     {
-        $contactos = Contacto::query()
-            ->orderBy('orden')
-            ->get();
-
-        return response()->json($contactos, JsonResponse::HTTP_OK);
+        return response()->json($this->cache->getContactos(), JsonResponse::HTTP_OK);
     }
 
     public function paginaNosotros(): JsonResponse
     {
-        $pagina = PaginaNosotros::query()
-            ->with([
-                'imagenes' => fn ($q) => $q->orderBy('orden'),
-                'progreso' => fn ($q) => $q->orderBy('orden'),
-            ])
-            ->first();
-
-        return response()->json($pagina, JsonResponse::HTTP_OK);
+        return response()->json($this->cache->getPaginaNosotros(), JsonResponse::HTTP_OK);
     }
 
     public function paginaHistoria(): JsonResponse
     {
-        $pagina = PaginaHistoria::query()
-            ->with([
-                'eventos' => fn ($q) => $q->orderBy('orden'),
-                'imagenes' => fn ($q) => $q->orderBy('orden'),
-            ])
-            ->first();
-
-        return response()->json($pagina, JsonResponse::HTTP_OK);
+        return response()->json($this->cache->getPaginaHistoria(), JsonResponse::HTTP_OK);
     }
 
     public function paginaTecnologia(): JsonResponse
     {
-        $pagina = PaginaTecnologia::query()
-            ->with([
-                'secciones' => fn ($q) => $q->orderBy('orden'),
-            ])
-            ->first();
-
-        return response()->json($pagina, JsonResponse::HTTP_OK);
+        return response()->json($this->cache->getPaginaTecnologia(), JsonResponse::HTTP_OK);
     }
 
     public function paginaAviso(): JsonResponse
     {
-        $pagina = PaginaAviso::query()
-            ->with([
-                'secciones.listas' => fn ($q) => $q->orderBy('orden'),
-            ])
-            ->first();
-
-        return response()->json($pagina, JsonResponse::HTTP_OK);
+        return response()->json($this->cache->getPaginaAviso(), JsonResponse::HTTP_OK);
     }
 
-    public function enviarFormularioContacto(Request $request): JsonResponse
+    public function enviarFormularioContacto(StoreFormularioContactoRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'nombre' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-            'telefono' => ['nullable', 'string', 'max:255'],
-            'mensaje' => ['required', 'string'],
+        $validated = $request->validated();
+        $mensaje = $validated['mensaje'];
+        if (!empty($validated['asunto'] ?? '')) {
+            $mensaje = 'Asunto: ' . $validated['asunto'] . "\n\n" . $mensaje;
+        }
+        $formulario = FormularioContacto::create([
+            'nombre' => $validated['nombre'],
+            'email' => $validated['email'],
+            'telefono' => $validated['telefono'] ?? null,
+            'mensaje' => $mensaje,
+            'leido' => false,
         ]);
-
-        $formulario = FormularioContacto::create($validated + ['leido' => false]);
-
-        // Comentario: Aquí se podría enviar un correo de notificación usando Mail::to(...)->send(...)
 
         return response()->json([
             'success' => true,
@@ -152,4 +109,3 @@ class PublicSiteController extends Controller
         ], JsonResponse::HTTP_CREATED);
     }
 }
-

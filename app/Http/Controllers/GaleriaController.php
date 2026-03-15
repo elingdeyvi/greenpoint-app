@@ -6,12 +6,16 @@ use App\Http\Requests\StoreGaleriaRequest;
 use App\Http\Requests\UpdateGaleriaRequest;
 use App\Models\Galeria;
 use App\Services\ImageService;
+use App\Services\PublicSiteCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class GaleriaController extends Controller
 {
-    public function __construct(private readonly ImageService $imageService)
+    public function __construct(
+        private readonly ImageService $imageService,
+        private readonly PublicSiteCacheService $publicCache
+    )
     {
         // Comentario: Middleware de permisos se puede aplicar aquí si es necesario.
     }
@@ -37,6 +41,7 @@ class GaleriaController extends Controller
         }
 
         $galeria = Galeria::create($data);
+        $this->publicCache->invalidateGaleria();
 
         return response()->json($galeria, JsonResponse::HTTP_CREATED);
     }
@@ -56,6 +61,7 @@ class GaleriaController extends Controller
         }
 
         $galeria->update($data);
+        $this->publicCache->invalidateGaleria();
 
         return response()->json($galeria->refresh(), JsonResponse::HTTP_OK);
     }
@@ -64,6 +70,7 @@ class GaleriaController extends Controller
     {
         $this->imageService->deleteImage($galeria->imagen);
         $galeria->delete();
+        $this->publicCache->invalidateGaleria();
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }

@@ -5,11 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreContactoRequest;
 use App\Http\Requests\UpdateContactoRequest;
 use App\Models\Contacto;
+use App\Services\PublicSiteCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ContactoController extends Controller
 {
+    public function __construct(private readonly PublicSiteCacheService $publicCache)
+    {
+    }
+
     public function index(Request $request): JsonResponse
     {
         $perPage = (int) ($request->get('per_page', 15));
@@ -25,6 +30,7 @@ class ContactoController extends Controller
     public function store(StoreContactoRequest $request): JsonResponse
     {
         $contacto = Contacto::create($request->validated());
+        $this->publicCache->invalidateContactos();
 
         return response()->json($contacto, JsonResponse::HTTP_CREATED);
     }
@@ -37,6 +43,7 @@ class ContactoController extends Controller
     public function update(UpdateContactoRequest $request, Contacto $contacto): JsonResponse
     {
         $contacto->update($request->validated());
+        $this->publicCache->invalidateContactos();
 
         return response()->json($contacto->refresh(), JsonResponse::HTTP_OK);
     }
@@ -44,6 +51,7 @@ class ContactoController extends Controller
     public function destroy(Contacto $contacto): JsonResponse
     {
         $contacto->delete();
+        $this->publicCache->invalidateContactos();
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }

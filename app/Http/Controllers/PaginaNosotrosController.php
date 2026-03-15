@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdatePaginaNosotrosRequest;
 use App\Models\PaginaNosotros;
 use App\Services\PaginaNosotrosService;
+use App\Services\PublicSiteCacheService;
 use Illuminate\Http\JsonResponse;
 
 class PaginaNosotrosController extends Controller
 {
-    public function __construct(private readonly PaginaNosotrosService $service)
+    public function __construct(
+        private readonly PaginaNosotrosService $service,
+        private readonly PublicSiteCacheService $publicCache
+    )
     {
         // Comentario: Se puede aplicar middleware de permisos para modulos.nosotros.
     }
@@ -46,6 +50,7 @@ class PaginaNosotrosController extends Controller
         }
 
         $paginaActualizada = $this->service->updateFromRequest($pagina, $request);
+        $this->publicCache->invalidatePaginaNosotros();
 
         return response()->json($paginaActualizada, JsonResponse::HTTP_OK);
     }

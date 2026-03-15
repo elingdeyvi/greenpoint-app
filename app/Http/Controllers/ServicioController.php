@@ -6,12 +6,16 @@ use App\Http\Requests\StoreServicioRequest;
 use App\Http\Requests\UpdateServicioRequest;
 use App\Models\Servicio;
 use App\Services\ImageService;
+use App\Services\PublicSiteCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ServicioController extends Controller
 {
-    public function __construct(private readonly ImageService $imageService)
+    public function __construct(
+        private readonly ImageService $imageService,
+        private readonly PublicSiteCacheService $publicCache
+    )
     {
         // Comentario: Se puede aplicar middleware de permisos a nivel controlador si se desea.
     }
@@ -38,6 +42,7 @@ class ServicioController extends Controller
         }
 
         $servicio = Servicio::create($data);
+        $this->publicCache->invalidateServicios();
 
         return response()->json($servicio, JsonResponse::HTTP_CREATED);
     }
@@ -57,6 +62,7 @@ class ServicioController extends Controller
         }
 
         $servicio->update($data);
+        $this->publicCache->invalidateServicio($servicio->id);
 
         return response()->json($servicio->refresh(), JsonResponse::HTTP_OK);
     }
@@ -65,6 +71,7 @@ class ServicioController extends Controller
     {
         $this->imageService->deleteImage($servicio->imagen);
         $servicio->delete();
+        $this->publicCache->invalidateServicios();
 
         return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }

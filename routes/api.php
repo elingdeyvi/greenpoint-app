@@ -36,6 +36,7 @@ Route::post('/registro', [UserController::class, 'registro']);
 Route::prefix('public')->group(function (): void {
     Route::get('/home', [PublicSiteController::class, 'home']);
     Route::get('/servicios', [PublicSiteController::class, 'serviciosIndex']);
+    Route::get('/servicios/slug/{slug}', [PublicSiteController::class, 'servicioBySlug']);
     Route::get('/servicios/{servicio}', [PublicSiteController::class, 'serviciosShow']);
     Route::get('/clientes', [PublicSiteController::class, 'clientesIndex']);
     Route::get('/galeria', [PublicSiteController::class, 'galeriaIndex']);
