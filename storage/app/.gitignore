@@ -1,3 +1,7 @@
 *
 !public/
+!public/banners/
+!public/clientes/
+!public/galeria/
+!public/icons/
 !.gitignore

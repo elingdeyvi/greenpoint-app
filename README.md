@@ -7,6 +7,14 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## GreenPoint – Imágenes desde cotizaciones
+
+Para poblar el sitio con imágenes del proyecto hermano `cotizaciones` (banners, clientes, galería, iconos de servicios):
+
+1. Configure la ruta en `.env` (opcional): `COTIZACIONES_PATH=../cotizaciones` (por defecto se usa `../cotizaciones`).
+2. Ejecute: `php artisan app:import-cotizaciones-images`.
+3. El comando copia a `storage/app/public/` y crea el enlace `public/storage` si no existe. Los seeders que usan imágenes (por ejemplo `ServicioSeeder`) guardan rutas como `icons/icon-01.png`, `banners/banner-01.jpg`, etc.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

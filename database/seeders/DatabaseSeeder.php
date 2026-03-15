@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         // Seed inicial del sistema GreenPoint: roles, permisos, usuario administrador y contenido demo.
         $this->call([
             RolesAndPermissionsSeeder::class,
+            ServicioSeeder::class,
             DemoContentSeeder::class,
         ]);
     }

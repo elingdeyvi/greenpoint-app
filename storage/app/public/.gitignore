@@ -1,6 +1,6 @@
-*
+
 !.gitignore
-!banners/
-!clientes/
-!galeria/
-!icons/
+!banners/*
+!clientes/*
+!galeria/*
+!icons/*
