@@ -1,2 +1,6 @@
 *
-#!.gitignore
+!.gitignore
+!banners/
+!clientes/
+!galeria/
+!icons/
