@@ -3,10 +3,25 @@ import { createRouter, createWebHistory } from 'vue-router';
 import store from '../store';
 
 const routes = [
-  { 
-    path: '/', 
-    name: 'Home', 
-    component: () => import('../views/index.vue'),
+  // Sitio público (sin auth)
+  {
+    path: '/',
+    component: () => import('@/layouts/public-layout.vue'),
+    meta: { public: true },
+    children: [
+      { path: '', name: 'PublicHome', component: () => import('@/views/public/HomeView.vue') },
+      { path: 'nosotros', name: 'PublicNosotros', component: () => import('@/views/public/NosotrosView.vue') },
+      { path: 'historia', name: 'PublicHistoria', component: () => import('@/views/public/HistoriaView.vue') },
+      { path: 'aviso', name: 'PublicAviso', component: () => import('@/views/public/AvisoView.vue') },
+      { path: 'servicios', name: 'PublicServicios', component: () => import('@/views/public/ServiciosList.vue') },
+      { path: 'servicios/:idOrSlug', name: 'PublicServicioDetalle', component: () => import('@/views/public/ServicioDetalleView.vue') },
+      { path: 'clientes', name: 'PublicClientes', component: () => import('@/views/public/ClientesView.vue') },
+      { path: 'galeria', name: 'PublicGaleria', component: () => import('@/views/public/GaleriaView.vue') },
+      { path: 'tecnologia', name: 'PublicTecnologia', component: () => import('@/views/public/TecnologiaView.vue') },
+      { path: 'contacto/tabasco', name: 'PublicContactoTabasco', component: () => import('@/views/public/ContactoView.vue'), meta: { contactoSlug: 'tabasco' } },
+      { path: 'contacto/veracruz', name: 'PublicContactoVeracruz', component: () => import('@/views/public/ContactoView.vue'), meta: { contactoSlug: 'veracruz' } },
+      { path: 'contacto/carmen', name: 'PublicContactoCarmen', component: () => import('@/views/public/ContactoView.vue'), meta: { contactoSlug: 'carmen' } },
+    ],
   },
   {
     path: '/dashboard',
@@ -152,17 +167,35 @@ const router = new createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const token = window.localStorage.getItem("token");
-  
-  if (to.meta && to.meta.layout && to.meta.layout == 'auth') {
+
+  // Rutas públicas: sin auth, layout public
+  if (to.meta && to.meta.public) {
+    store.commit('setLayout', 'public');
+    if (to.name === 'PublicHome' && token) {
+      try {
+        const { usePermissions } = await import('@/composables/use-permissions');
+        const { loadPermissions, hasPermission } = usePermissions();
+        await loadPermissions();
+        if (hasPermission('dashboard.ver')) {
+          next({ name: 'Dashboard', replace: true });
+          return;
+        }
+      } catch (e) { /* ignore */ }
+    }
+    next();
+    return;
+  }
+
+  if (to.meta && to.meta.layout && to.meta.layout === 'auth') {
     store.commit('setLayout', 'auth');
   } else {
     store.commit('setLayout', 'app');
   }
 
   if (to.name !== 'login-route' && to.name !== 'registro-route' && !token) {
-    next('/auth/login')
+    next('/auth/login');
     return;
-  } else if (token && to.name == 'login-route') {
+  } else if (token && to.name === 'login-route') {
     store.commit('setLayout', 'app');
     next("/");
     return;
@@ -187,7 +220,7 @@ router.beforeEach(async (to, from, next) => {
       
       if (!hasAccess) {
         // Redirigir a home si no tiene permisos
-        next({ name: 'Home', replace: true });
+        next({ name: 'Dashboard', replace: true });
         return;
       }
     } catch (error) {
@@ -196,8 +229,8 @@ router.beforeEach(async (to, from, next) => {
     }
   }
   
-  // Si intenta acceder a Home y tiene permiso de dashboard, redirigir al dashboard
-  if (to.name === 'Home' && token) {
+  // Si intenta acceder al home público y tiene permiso de dashboard, redirigir al dashboard
+  if (to.name === 'PublicHome' && token) {
     try {
       const { usePermissions } = await import('@/composables/use-permissions');
       const { loadPermissions, hasPermission } = usePermissions();

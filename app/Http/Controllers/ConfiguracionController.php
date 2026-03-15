@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateConfiguracionRequest;
 use App\Models\Configuracion;
+use App\Services\PublicSiteCacheService;
 use Illuminate\Http\JsonResponse;
 
 class ConfiguracionController extends Controller
 {
+    public function __construct(private readonly PublicSiteCacheService $publicCache)
+    {
+    }
     public function index(): JsonResponse
     {
         // Comentario: Devuelve todas las claves de configuración como arreglo.
@@ -32,6 +36,8 @@ class ConfiguracionController extends Controller
         $updated = Configuracion::whereIn('clave', collect($items)->pluck('clave'))
             ->orderBy('clave')
             ->get(['id', 'clave', 'valor']);
+
+        $this->publicCache->invalidateConfiguracion();
 
         return response()->json($updated, JsonResponse::HTTP_OK);
     }

@@ -17,6 +17,14 @@ Para poblar el sitio con imágenes del proyecto hermano `cotizaciones` (banners,
 
 **Seeders:** Para tener imágenes reales en los catálogos, ejecute el comando de importación *antes* de `php artisan db:seed`. Si no ejecuta el comando, las rutas en la BD son válidas pero los archivos no existirán hasta copiar las imágenes (o puede usar placeholders y actualizar después).
 
+### Sitio público (Vue)
+
+El frontend incluye un sitio público (rutas `/`, `/nosotros`, `/historia`, `/aviso`, `/servicios`, `/clientes`, `/galeria`, `/tecnologia`, `/contacto/tabasco`, etc.) con layout propio (Header/Footer), paleta #f3663f / #24C373. Dependencias usadas:
+
+- **Carrusel del banner (Home):** Bootstrap 5 Carousel (ya incluido en el proyecto).
+- **Galería:** Lightbox mediante modal de Bootstrap 5 (sin librería adicional).
+- **Animaciones al scroll:** Opcionales; se pueden añadir luego (p. ej. AOS o similar) en las secciones del sitio público.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

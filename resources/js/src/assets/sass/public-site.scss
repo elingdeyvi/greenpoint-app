@@ -1,0 +1,40 @@
+/**
+ * Sitio público GreenPoint – Paleta cotizaciones
+ * Primario: #f3663f | Secundario: #24C373
+ */
+:root {
+  --gp-primary: #f3663f;
+  --gp-primary-rgb: 243, 102, 63;
+  --gp-secondary: #24C373;
+  --gp-secondary-rgb: 36, 195, 115;
+}
+
+.gp-bg-primary { background-color: var(--gp-primary) !important; }
+.gp-bg-secondary { background-color: var(--gp-secondary) !important; }
+.gp-text-primary { color: var(--gp-primary) !important; }
+.gp-text-secondary { color: var(--gp-secondary) !important; }
+.gp-btn-primary {
+  background-color: var(--gp-primary);
+  border-color: var(--gp-primary);
+  color: #fff;
+}
+.gp-btn-primary:hover {
+  background-color: #e05a35;
+  border-color: #e05a35;
+  color: #fff;
+}
+.gp-btn-secondary {
+  background-color: var(--gp-secondary);
+  border-color: var(--gp-secondary);
+  color: #fff;
+}
+.gp-btn-secondary:hover {
+  background-color: #1fb366;
+  border-color: #1fb366;
+  color: #fff;
+}
+a.gp-link { color: var(--gp-secondary); }
+a.gp-link:hover { color: var(--gp-primary); }
+
+.gp-site { min-height: 100vh; display: flex; flex-direction: column; }
+.gp-site main { flex: 1; }

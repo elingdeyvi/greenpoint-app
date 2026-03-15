@@ -34,6 +34,7 @@ Route::post('/registro', [UserController::class, 'registro']);
 
 // API pública para el sitio (sin auth)
 Route::prefix('public')->group(function (): void {
+    Route::get('/configuracion', [PublicSiteController::class, 'configuracion']);
     Route::get('/home', [PublicSiteController::class, 'home']);
     Route::get('/servicios', [PublicSiteController::class, 'serviciosIndex']);
     Route::get('/servicios/slug/{slug}', [PublicSiteController::class, 'servicioBySlug']);

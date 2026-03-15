@@ -10,6 +10,7 @@ use App\Models\PaginaAviso;
 use App\Models\PaginaHistoria;
 use App\Models\PaginaNosotros;
 use App\Models\PaginaTecnologia;
+use App\Models\Configuracion;
 use App\Models\Servicio;
 use Illuminate\Support\Facades\Cache;
 
@@ -31,6 +32,26 @@ class PublicSiteCacheService
     private const KEY_PAGINA_HISTORIA = 'public_pagina_historia';
     private const KEY_PAGINA_TECNOLOGIA = 'public_pagina_tecnologia';
     private const KEY_PAGINA_AVISO = 'public_pagina_aviso';
+    private const KEY_CONFIGURACION = 'public_configuracion';
+
+    /** Claves de configuración expuestas al sitio público (footer, WhatsApp, etc.) */
+    private const PUBLIC_CONFIG_KEYS = [
+        'telefono_general',
+        'email_general',
+        'whatsapp_url',
+        'direccion_matriz',
+        'footer_texto_empresa',
+    ];
+
+    public function getConfiguracionPublic(): array
+    {
+        return Cache::remember(self::KEY_CONFIGURACION, now()->addMinutes(self::TTL_MINUTES), function () {
+            $rows = Configuracion::query()
+                ->whereIn('clave', self::PUBLIC_CONFIG_KEYS)
+                ->get(['clave', 'valor']);
+            return $rows->pluck('valor', 'clave')->toArray();
+        });
+    }
 
     public function getBanners(): \Illuminate\Database\Eloquent\Collection
     {
@@ -175,6 +196,11 @@ class PublicSiteCacheService
         Cache::forget(self::KEY_PAGINA_AVISO);
     }
 
+    public function invalidateConfiguracion(): void
+    {
+        Cache::forget(self::KEY_CONFIGURACION);
+    }
+
     public function invalidateAll(): void
     {
         $this->invalidateBanners();
@@ -186,5 +212,6 @@ class PublicSiteCacheService
         $this->invalidatePaginaHistoria();
         $this->invalidatePaginaTecnologia();
         $this->invalidatePaginaAviso();
+        $this->invalidateConfiguracion();
     }
 }

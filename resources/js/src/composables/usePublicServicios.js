@@ -31,6 +31,18 @@ export const usePublicServicios = () => {
     }
   };
 
+  const fetchServicioBySlug = async (slug) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      servicio.value = await PublicSiteRepository.getServicioBySlug(slug);
+    } catch (e) {
+      error.value = e;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     servicios,
     servicio,
@@ -38,6 +50,7 @@ export const usePublicServicios = () => {
     error,
     fetchServicios,
     fetchServicio,
+    fetchServicioBySlug,
   };
 };
 

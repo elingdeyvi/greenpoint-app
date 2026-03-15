@@ -21,6 +21,11 @@ class PublicSiteController extends Controller
     {
     }
 
+    public function configuracion(): JsonResponse
+    {
+        return response()->json($this->cache->getConfiguracionPublic(), JsonResponse::HTTP_OK);
+    }
+
     public function home(): JsonResponse
     {
         return response()->json([

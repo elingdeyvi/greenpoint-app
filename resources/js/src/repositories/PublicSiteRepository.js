@@ -2,6 +2,11 @@ import ApiService from '@/services/ApiService';
 
 const baseUrl = 'public';
 
+const getConfiguracionPublic = async () => {
+  const response = await ApiService.get(`${baseUrl}/configuracion`);
+  return response.data;
+};
+
 const getHome = async () => {
   const response = await ApiService.get(`${baseUrl}/home`);
   return response.data;
@@ -14,6 +19,11 @@ const getServicios = async () => {
 
 const getServicioById = async (id) => {
   const response = await ApiService.get(`${baseUrl}/servicios/${id}`);
+  return response.data;
+};
+
+const getServicioBySlug = async (slug) => {
+  const response = await ApiService.get(`${baseUrl}/servicios/slug/${slug}`);
   return response.data;
 };
 
@@ -58,9 +68,11 @@ const sendContacto = async (data) => {
 };
 
 export default {
+  getConfiguracionPublic,
   getHome,
   getServicios,
   getServicioById,
+  getServicioBySlug,
   getClientes,
   getGaleria,
   getContactos,
