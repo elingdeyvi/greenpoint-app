@@ -11,7 +11,7 @@ const routes = [
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import('../views/dashboard.vue'),
+    component: () => import('@/views/admin/DashboardGreenPoint.vue'),
     meta: { permission: 'dashboard.ver' },
   },
 
@@ -57,6 +57,82 @@ const routes = [
     name: 'roles-lista-router',
     component: () => import('@/views/roles/index.vue'),
     meta: { permission: 'administracion.roles' },
+  },
+  // Catálogos
+  {
+    path: '/catalogos/servicios',
+    name: 'catalogos-servicios',
+    component: () => import('@/views/admin/catalogos/ServiciosList.vue'),
+    meta: { permission: 'catalogos.servicios' },
+  },
+  {
+    path: '/catalogos/clientes',
+    name: 'catalogos-clientes',
+    component: () => import('@/views/admin/catalogos/ClientesList.vue'),
+    meta: { permission: 'catalogos.clientes' },
+  },
+  {
+    path: '/catalogos/galeria',
+    name: 'catalogos-galeria',
+    component: () => import('@/views/admin/catalogos/GaleriaList.vue'),
+    meta: { permission: 'catalogos.galeria' },
+  },
+  {
+    path: '/catalogos/banners',
+    name: 'catalogos-banners',
+    component: () => import('@/views/admin/catalogos/BannersList.vue'),
+    meta: { permission: 'catalogos.banners' },
+  },
+  {
+    path: '/catalogos/contactos',
+    name: 'catalogos-contactos',
+    component: () => import('@/views/admin/catalogos/ContactosList.vue'),
+    meta: { permission: 'catalogos.contactos' },
+  },
+  {
+    path: '/catalogos/redes-sociales',
+    name: 'catalogos-redes-sociales',
+    component: () => import('@/views/admin/catalogos/RedesSocialesList.vue'),
+    meta: { permission: 'catalogos.redes_sociales' },
+  },
+  // Configuración general
+  {
+    path: '/configuracion',
+    name: 'configuracion',
+    component: () => import('@/views/admin/ConfiguracionView.vue'),
+    meta: { permission: 'administracion.configuracion_critica' },
+  },
+  // Formularios de contacto
+  {
+    path: '/formularios-contacto',
+    name: 'formularios-contacto',
+    component: () => import('@/views/admin/FormulariosContactoList.vue'),
+    meta: { permission: 'formularios_contacto.ver' },
+  },
+  // Módulos administrables
+  {
+    path: '/modulos/nosotros',
+    name: 'modulos-nosotros',
+    component: () => import('@/views/admin/modulos/NosotrosView.vue'),
+    meta: { permission: 'modulos.nosotros' },
+  },
+  {
+    path: '/modulos/historia',
+    name: 'modulos-historia',
+    component: () => import('@/views/admin/modulos/HistoriaView.vue'),
+    meta: { permission: 'modulos.historia' },
+  },
+  {
+    path: '/modulos/tecnologia',
+    name: 'modulos-tecnologia',
+    component: () => import('@/views/admin/modulos/TecnologiaView.vue'),
+    meta: { permission: 'modulos.tecnologia' },
+  },
+  {
+    path: '/modulos/aviso',
+    name: 'modulos-aviso',
+    component: () => import('@/views/admin/modulos/AvisoView.vue'),
+    meta: { permission: 'modulos.aviso' },
   },
 ];
 
