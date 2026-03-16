@@ -13,7 +13,7 @@ body {
     overflow: auto;
     margin: 0;
     padding: 0;
-    background: #fff;
+    background: #0b1120;
 }
 
 .auth-cover {
@@ -290,4 +290,18 @@ body {
             }
         }
     }
+}
+
+// Estilos adicionales para el login Rediseñado (gp-auth-page)
+.gp-auth-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.gp-auth-logo-img {
+    max-height: 40px;
+    width: auto;
+    display: block;
 }

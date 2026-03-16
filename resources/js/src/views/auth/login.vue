@@ -2,7 +2,9 @@
   <div class="gp-auth-page">
     <div class="gp-auth-card">
       <header class="gp-auth-header">
-        <div class="gp-auth-logo">GreenPoint</div>
+        <div class="gp-auth-logo">
+          <img src="/assets/images/logo.png" alt="GreenPoint" class="gp-auth-logo-img" />
+        </div>
         <p class="gp-auth-subtitle">Acceso al panel administrativo</p>
       </header>
 

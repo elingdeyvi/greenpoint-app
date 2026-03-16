@@ -6,11 +6,11 @@
                 <ul class="navbar-item theme-brand flex-row text-center">
                     <li class="nav-item theme-logo">
                         <router-link to="/">
-                            <img src="/assets/images/logo.svg" class="navbar-logo" alt="logo" />
+                            <img src="/assets/images/logo.png" class="navbar-logo" alt="GreenPoint" />
                         </router-link>
                     </li>
                     <li class="nav-item theme-text">
-                        <router-link to="/" class="nav-link"> SCV - Sistema de Control de Salidas </router-link>
+                        <router-link to="/" class="nav-link"> GreenPoint </router-link>
                     </li>
                 </ul>
                 <div class="d-none horizontal-menu">
@@ -261,7 +261,7 @@
         if (!permissionsLoaded.value) return true;
         return hasPermission(permission);
     };
-    
+
     const canAny = (permissions) => {
         if (!permissionsLoaded.value) return true;
         return hasAnyPermission(permissions);
@@ -276,7 +276,7 @@
         if (!permissionsLoaded.value) return true;
         return can('ventas.crear') || can('ventas.ver') || can('entregas.registrar') || can('productos.ver') || can('clientes.ver');
     });
-    
+
     const canHeaderAdministracion = computed(() => {
         if (!permissionsLoaded.value) return true;
         return can('administracion.usuarios') || can('administracion.roles') || can('administracion.configuracion_hardware') || can('administracion.catalogos');
