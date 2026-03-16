@@ -3,26 +3,19 @@ import { createRouter, createWebHistory } from 'vue-router';
 import store from '../store';
 
 const routes = [
-  // Sitio público (sin auth)
-  {
-    path: '/',
-    component: () => import('@/layouts/public-layout.vue'),
-    meta: { public: true },
-    children: [
-      { path: '', name: 'PublicHome', component: () => import('@/views/public/HomeView.vue') },
-      { path: 'nosotros', name: 'PublicNosotros', component: () => import('@/views/public/NosotrosView.vue') },
-      { path: 'historia', name: 'PublicHistoria', component: () => import('@/views/public/HistoriaView.vue') },
-      { path: 'aviso', name: 'PublicAviso', component: () => import('@/views/public/AvisoView.vue') },
-      { path: 'servicios', name: 'PublicServicios', component: () => import('@/views/public/ServiciosList.vue') },
-      { path: 'servicios/:idOrSlug', name: 'PublicServicioDetalle', component: () => import('@/views/public/ServicioDetalleView.vue') },
-      { path: 'clientes', name: 'PublicClientes', component: () => import('@/views/public/ClientesView.vue') },
-      { path: 'galeria', name: 'PublicGaleria', component: () => import('@/views/public/GaleriaView.vue') },
-      { path: 'tecnologia', name: 'PublicTecnologia', component: () => import('@/views/public/TecnologiaView.vue') },
-      { path: 'contacto/tabasco', name: 'PublicContactoTabasco', component: () => import('@/views/public/ContactoView.vue'), meta: { contactoSlug: 'tabasco' } },
-      { path: 'contacto/veracruz', name: 'PublicContactoVeracruz', component: () => import('@/views/public/ContactoView.vue'), meta: { contactoSlug: 'veracruz' } },
-      { path: 'contacto/carmen', name: 'PublicContactoCarmen', component: () => import('@/views/public/ContactoView.vue'), meta: { contactoSlug: 'carmen' } },
-    ],
-  },
+  // Sitio público (sin auth) - rutas directas, el layout público se resuelve vía Vuex (App.vue)
+  { path: '/', name: 'PublicHome', meta: { public: true }, component: () => import('@/views/public/HomeView.vue') },
+  { path: '/nosotros', name: 'PublicNosotros', meta: { public: true }, component: () => import('@/views/public/NosotrosView.vue') },
+  { path: '/historia', name: 'PublicHistoria', meta: { public: true }, component: () => import('@/views/public/HistoriaView.vue') },
+  { path: '/aviso', name: 'PublicAviso', meta: { public: true }, component: () => import('@/views/public/AvisoView.vue') },
+  { path: '/servicios', name: 'PublicServicios', meta: { public: true }, component: () => import('@/views/public/ServiciosList.vue') },
+  { path: '/servicios/:idOrSlug', name: 'PublicServicioDetalle', meta: { public: true }, component: () => import('@/views/public/ServicioDetalleView.vue') },
+  { path: '/clientes', name: 'PublicClientes', meta: { public: true }, component: () => import('@/views/public/ClientesView.vue') },
+  { path: '/galeria', name: 'PublicGaleria', meta: { public: true }, component: () => import('@/views/public/GaleriaView.vue') },
+  { path: '/tecnologia', name: 'PublicTecnologia', meta: { public: true }, component: () => import('@/views/public/TecnologiaView.vue') },
+  { path: '/contacto/tabasco', name: 'PublicContactoTabasco', meta: { public: true, contactoSlug: 'tabasco' }, component: () => import('@/views/public/ContactoView.vue') },
+  { path: '/contacto/veracruz', name: 'PublicContactoVeracruz', meta: { public: true, contactoSlug: 'veracruz' }, component: () => import('@/views/public/ContactoView.vue') },
+  { path: '/contacto/carmen', name: 'PublicContactoCarmen', meta: { public: true, contactoSlug: 'carmen' }, component: () => import('@/views/public/ContactoView.vue') },
   {
     path: '/dashboard',
     name: 'Dashboard',

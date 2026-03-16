@@ -11,7 +11,6 @@
 
     import { useMeta } from "./composables/use-meta";
     import { useStore } from "vuex";
-    import * as ConfiguracionEmpresaRepository from "@/repositories/ConfiguracionEmpresaRepository";
 
     useMeta({ title: "Sales Admin" });
 
@@ -35,24 +34,6 @@
             }
         }
         return classes;
-    });
-
-    // Cargar sucursal activa una sola vez al iniciar la app y definir perfil de interfaz
-    onMounted(async () => {
-        try {
-            const res = await ConfiguracionEmpresaRepository.getSucursal();
-            const suc = res?.data ?? res;
-            const tipo = suc?.tipo_sucursal || null;
-            let perfil = null;
-            if (tipo === "venta") {
-                perfil = "VENTA";
-            } else if (tipo === "venta_almacen") {
-                perfil = "VENTA_ALMACEN";
-            }
-            store.commit("setSucursalPerfil", { tipo, perfil });
-        } catch (e) {
-            store.commit("setSucursalPerfil", { tipo: null, perfil: null });
-        }
     });
 </script>
 <script>

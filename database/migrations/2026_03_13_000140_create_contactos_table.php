@@ -14,7 +14,7 @@ return new class extends Migration
             $table->text('direccion')->nullable();
             $table->string('telefono');
             $table->string('email')->nullable();
-            $table->string('mapa_url')->nullable();
+            $table->text('mapa_url')->nullable();
             $table->integer('orden')->default(0);
             $table->timestamps();
         });
