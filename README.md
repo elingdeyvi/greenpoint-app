@@ -1,29 +1,145 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# GreenPoint
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sitio web corporativo y panel de administración para GreenPoint (comunicaciones, internet satelital). Backend Laravel 10 + API; frontend Vue 3 (sitio público y panel admin).
 
-## GreenPoint – Imágenes desde cotizaciones
+---
 
-Para poblar el sitio con imágenes del proyecto hermano `cotizaciones` (banners, clientes, galería, iconos de servicios):
+## Requisitos
 
-1. Configure la ruta en `.env` (opcional): `COTIZACIONES_PATH=../cotizaciones` (por defecto se usa `../cotizaciones`).
-2. Ejecute: `php artisan app:import-cotizaciones-images`.
-3. El comando copia a `storage/app/public/` y crea el enlace `public/storage` si no existe. Los seeders de catálogos (Servicio, Cliente, Banner, Galeria) guardan rutas como `icons/icon-01.png`, `banners/banner-01.jpg`, etc.
+- **PHP** 8.1 o superior (extensions: bcmath, ctype, fileinfo, json, mbstring, openssl, pdo, tokenizer, xml)
+- **Laravel** 10.x
+- **Node.js** 16+ y **npm** (o yarn/pnpm) para el frontend
+- **MySQL** 5.7+ o **MariaDB** 10.3+
+- **Composer** 2.x
 
-**Seeders:** Para tener imágenes reales en los catálogos, ejecute el comando de importación *antes* de `php artisan db:seed`. Si no ejecuta el comando, las rutas en la BD son válidas pero los archivos no existirán hasta copiar las imágenes (o puede usar placeholders y actualizar después).
+---
 
-### Sitio público (Vue)
+## Instalación
 
-El frontend incluye un sitio público (rutas `/`, `/nosotros`, `/historia`, `/aviso`, `/servicios`, `/clientes`, `/galeria`, `/tecnologia`, `/contacto/tabasco`, etc.) con layout propio (Header/Footer), paleta #f3663f / #24C373. Dependencias usadas:
+1. **Clonar / entrar al proyecto**
+   ```bash
+   cd greenpoint-app
+   ```
 
-- **Carrusel del banner (Home):** Bootstrap 5 Carousel (ya incluido en el proyecto).
-- **Galería:** Lightbox mediante modal de Bootstrap 5 (sin librería adicional).
-- **Animaciones al scroll:** Opcionales; se pueden añadir luego (p. ej. AOS o similar) en las secciones del sitio público.
+2. **Dependencias PHP**
+   ```bash
+   composer install
+   ```
+
+3. **Variables de entorno**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+   Editar `.env`: configurar `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, `APP_URL`. Opcional: `VITE_API_URL` (ej. `http://localhost:8000/api`) para el frontend.
+
+4. **Base de datos**
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
+   El seeder crea roles (Administrador, Capturista), permisos y usuario admin por defecto (`admin@greenpoint.com` / ver seeders).
+
+5. **Enlace de storage (imágenes)**
+   ```bash
+   php artisan storage:link
+   ```
+
+6. **Dependencias frontend**
+   ```bash
+   npm install
+   ```
+
+7. **(Opcional) Imágenes desde cotizaciones**  
+   Para poblar banners, galería, clientes e iconos desde la carpeta `cotizaciones`:
+   - En `.env`: `COTIZACIONES_PATH=../cotizaciones` (o la ruta correcta).
+   - Ejecutar **antes** de seed si quiere rutas ya usadas por los seeders:  
+     `php artisan app:import-cotizaciones-images`  
+   Luego `php artisan db:seed`. Si no se ejecuta el comando, las rutas en BD pueden ser placeholders hasta subir imágenes por el panel.
+
+---
+
+## Ejecución
+
+- **API (backend)**  
+  ```bash
+  php artisan serve
+  ```
+  Por defecto: `http://localhost:8000`. La API está bajo `/api` (p. ej. `/api/tokens/create` para login, `/api/public/home` para el sitio público).
+
+- **Frontend (dev)**  
+  ```bash
+  npm run dev
+  ```
+  Vite sirve el frontend (por defecto en otro puerto, p. ej. 5173). Asegurar que `VITE_API_URL` en `.env` apunte a la URL base del backend (ej. `http://localhost:8000/api`).
+
+- **Build para producción**
+  ```bash
+  npm run build
+  php artisan serve
+  ```
+  Los assets compilados se sirven desde `public/`.
+
+---
+
+## Documentación de referencia
+
+- **Arquitectura y reglas de código:** [.cursorrules](.cursorrules)
+- **Lógica de negocio y mapa de módulos:** [ANALISIS_LOGICA_NEGOCIO.md](ANALISIS_LOGICA_NEGOCIO.md)
+- **Alcance y tiempos:** ver `cotizaciones/COTIZACION_LARAVEL_VUE.md`
+
+---
+
+## Estructura de módulos (resumen)
+
+- **Catálogos (panel admin):** Servicios, Clientes, Galería, Banners, Contactos, Redes sociales. CRUD vía API con permisos `catalogos.*`.
+- **Módulos administrables:** Nosotros, Historia, Tecnología, Aviso de Privacidad. Edición por estructura completa (show/update) con permisos `modulos.nosotros`, `modulos.historia`, etc.
+- **API pública (sin auth):** `/api/public/*` — home, servicios, clientes, galería, contactos, páginas (nosotros, historia, tecnologia, aviso), configuración pública, formulario de contacto.
+- **Configuración y formularios:** Configuración general (clave-valor), bandeja de mensajes de contacto (permiso `formularios_contacto.ver`).
+
+Roles: **Administrador** (todos los permisos), **Capturista** (catálogos, módulos, solo lectura de formularios de contacto; sin usuarios ni configuración crítica).
+
+---
+
+## Sitio público (Vue) y paleta
+
+El frontend incluye un sitio público en las rutas `/`, `/nosotros`, `/historia`, `/aviso`, `/servicios`, `/clientes`, `/galeria`, `/tecnologia`, `/contacto/tabasco`, `/contacto/veracruz`, `/contacto/carmen`, con layout propio (Header/Footer).
+
+**Paleta de colores (referencia cotizaciones):**
+
+| Uso           | Valor     |
+|---------------|-----------|
+| Color primario   | `#f3663f` |
+| Color secundario | `#24C373` |
+
+Clases CSS del tema: `.gp-btn-primary`, `.gp-btn-secondary`, `.gp-text-primary`, `.gp-text-secondary`, variables en `resources/js/src/assets/sass/public-site.scss`.
+
+- **Carrusel (Home):** Bootstrap 5 Carousel.
+- **Galería:** Lightbox con modal Bootstrap 5.
+- **Animaciones al scroll:** opcionales (p. ej. AOS).
+
+---
+
+## Imágenes desde cotizaciones (detalle)
+
+Para usar imágenes del proyecto hermano `cotizaciones` (banners, clientes, galería, iconos de servicios):
+
+1. En `.env`: `COTIZACIONES_PATH=../cotizaciones` (por defecto se usa `../cotizaciones`).
+2. Ejecutar: `php artisan app:import-cotizaciones-images`.
+3. El comando copia a `storage/app/public/` y crea el enlace `public/storage` si no existe. Los seeders guardan rutas como `banners/banner-01.jpg`, `icons/icon-01.png`, etc.
+
+Para tener imágenes reales en los catálogos, ejecute el comando **antes** de `php artisan db:seed`. Si no, las rutas en BD pueden ser válidas pero los archivos no existirán hasta copiarlos o subirlos por el panel.
+
+---
+
+## Tests
+
+```bash
+php artisan test
+```
+Los tests Feature usan SQLite en memoria (`phpunit.xml`). Ver `tests/Feature/ModulosAdministrablesApiTest.php`, `PublicEndpointsApiTest.php`, `PermissionsApiTest.php`.
+
+---
 
 ## About Laravel
 
