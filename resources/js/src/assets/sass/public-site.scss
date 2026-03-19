@@ -38,3 +38,132 @@ a.gp-link:hover { color: var(--gp-primary); }
 
 .gp-site { min-height: 100vh; display: flex; flex-direction: column; }
 .gp-site main { flex: 1; }
+
+/* Corrección + estilos del sitio público (header overlay) */
+:root {
+  --gp-primary: #f3663f;
+  --gp-primary-rgb: 243, 102, 63;
+  --gp-secondary: #24C373;
+  --gp-secondary-rgb: 36, 195, 115;
+  --gp-public-header-height: 72px;
+}
+
+.gp-public-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  height: var(--gp-public-header-height);
+  /* Arriba (scroll=0): casi totalmente transparente (~90%) */
+  background: rgba(0, 0, 0, 0.10);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gp-public-main {
+  /* Arriba: el contenido va "encima" del header */
+  padding-top: 0;
+}
+
+.gp-public-main--padded {
+  padding-top: var(--gp-public-header-height);
+}
+
+.gp-public-header .navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.gp-public-header .nav-link,
+.gp-public-header .dropdown-toggle.btn.btn-link {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.gp-public-header .nav-link.active {
+  color: var(--gp-primary) !important;
+}
+
+.gp-public-header .dropdown-menu {
+  background: rgba(17, 24, 39, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.gp-public-header .dropdown-item {
+  color: rgba(255, 255, 255, 0.95) !important;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.gp-public-header .dropdown-item:hover,
+.gp-public-header .dropdown-item:focus {
+  background: rgba(243, 102, 63, 0.18) !important;
+  color: #fff !important;
+}
+
+.gp-public-header .navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.gp-public-header .navbar-toggler-icon {
+  filter: invert(1);
+}
+
+.gp-public-header .gp-public-whatsapp-btn {
+  border-radius: 999px;
+  padding: 0.45rem 1.15rem;
+}
+
+.gp-public-header .gp-public-whatsapp-btn:hover {
+  filter: brightness(1.04);
+}
+
+.gp-public-header .gp-public-login-btn {
+  border-radius: 999px;
+  padding: 0.45rem 1.15rem;
+  white-space: nowrap;
+}
+
+.gp-public-header.is-scrolled .gp-public-login-btn {
+  color: #fff !important;
+}
+
+/* Estado scrolleado: header sólido blanco */
+.gp-public-header.is-scrolled {
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.gp-public-header.is-scrolled .nav-link,
+.gp-public-header.is-scrolled .dropdown-toggle.btn.btn-link {
+  color: rgba(0, 0, 0, 0.68) !important;
+}
+
+.gp-public-header.is-scrolled .nav-link.active {
+  color: var(--gp-primary) !important;
+}
+
+.gp-public-header.is-scrolled .dropdown-menu {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.gp-public-header.is-scrolled .dropdown-item {
+  color: rgba(0, 0, 0, 0.78) !important;
+}
+
+.gp-public-header.is-scrolled .dropdown-item:hover,
+.gp-public-header.is-scrolled .dropdown-item:focus {
+  background: rgba(243, 102, 63, 0.15) !important;
+  color: #111 !important;
+}
+
+.gp-public-header.is-scrolled .navbar-toggler-icon {
+  filter: none;
+}

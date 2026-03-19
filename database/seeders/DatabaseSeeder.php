@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RolesAndPermissionsSeeder::class,
+            CleanupLegacyGmailUsersAndRolesSeeder::class,
             // Catálogos desde cotizaciones (orden: sin dependencia de imágenes → con rutas de imágenes)
             ConfiguracionSeeder::class,
             RedSocialSeeder::class,

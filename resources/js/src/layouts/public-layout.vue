@@ -1,8 +1,14 @@
 <template>
   <div class="gp-site">
     <header
-      class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm"
       role="banner"
+      :class="[
+        'gp-public-header',
+        'navbar',
+        'navbar-expand-lg',
+        isScrolled ? 'navbar-light' : 'navbar-dark',
+        { 'is-scrolled': isScrolled },
+      ]"
     >
       <div class="container-fluid px-lg-4 px-xl-5">
         <router-link to="/" class="navbar-brand d-flex align-items-center">
@@ -12,7 +18,6 @@
             class="me-2"
             style="height: 40px"
           />
-          <span class="fw-bold gp-text-primary">GreenPoint</span>
         </router-link>
 
         <button
@@ -122,13 +127,13 @@
             </li>
           </ul>
 
-          <div class="d-flex ms-lg-3 mt-3 mt-lg-0 align-items-center">
+          <div class="d-flex ms-lg-3 mt-3 mt-lg-0 align-items-center gap-2">
             <a
               v-if="whatsappUrl"
               :href="whatsappUrl"
               target="_blank"
               rel="noopener"
-              class="btn gp-btn-secondary btn-sm"
+              class="btn gp-btn-primary btn-sm gp-public-whatsapp-btn"
             >
               WhatsApp
             </a>
@@ -139,12 +144,20 @@
             >
               Contacto
             </router-link>
+
+            <router-link
+              to="/auth/login"
+              class="btn gp-btn-primary btn-sm gp-public-login-btn"
+              aria-label="Iniciar sesión en el panel administrativo"
+            >
+              Iniciar sesión
+            </router-link>
           </div>
         </nav>
       </div>
     </header>
 
-    <main>
+    <main class="gp-public-main" :class="{ 'gp-public-main--padded': isScrolled }">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
@@ -229,9 +242,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onBeforeUnmount, onMounted } from 'vue';
 import PublicSiteRepository from '@/repositories/PublicSiteRepository';
 import logoInner from '@/assets/images/logo-inner.png';
+
+const isScrolled = ref(false);
 
 const whatsappUrl = ref('');
 const telefonoGeneral = ref('');
@@ -263,6 +278,21 @@ onMounted(async () => {
     footerTexto.value =
       'Proveedor de internet satelital, broadband, internet services México.';
   }
+});
+
+const handleScroll = () => {
+  // Cuando la página está arriba (scroll ~0), mostramos el header casi transparente y
+  // dejamos que el contenido quede "encima" (sin padding-top).
+  isScrolled.value = window.scrollY > 5;
+};
+
+onMounted(() => {
+  handleScroll();
+  window.addEventListener('scroll', handleScroll, { passive: true });
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
 });
 </script>
 
