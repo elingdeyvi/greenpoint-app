@@ -90,7 +90,7 @@
     import { useMeta } from "../composables/use-meta";
     import { usePermissions } from '@/composables/use-permissions';
     
-    useMeta({ title: "Bienvenido - SCV" });
+    useMeta({ title: "Bienvenido a GreenPoint" });
     
     const { loadPermissions, hasPermission, hasAnyPermission } = usePermissions();
     const permissionsLoaded = ref(false);

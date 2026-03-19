@@ -530,7 +530,7 @@
     import Loading from 'vue-loading-overlay';
     import 'vue-loading-overlay/dist/css/index.css';
 
-    useMeta({ title: "Dashboard - SCV" });
+    useMeta({ title: "Dashboard - GreenPoint" });
 
     const store = useStore();
     const isLoading = ref(false);

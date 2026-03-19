@@ -6,11 +6,13 @@
                 <ul class="navbar-item theme-brand flex-row text-center">
                     <li class="nav-item theme-logo">
                         <router-link to="/">
-                            <img src="/assets/images/logo.png" class="navbar-logo" alt="GreenPoint" />
+                            <img
+                                :src="logoInner"
+                                class="navbar-logo"
+                                alt="GreenPoint"
+                                style="height: 40px; width: auto; object-fit: contain;"
+                            />
                         </router-link>
-                    </li>
-                    <li class="nav-item theme-text">
-                        <router-link to="/" class="nav-link"> GreenPoint </router-link>
                     </li>
                 </ul>
                 <div class="d-none horizontal-menu">
@@ -41,7 +43,7 @@
                     </div>
                     <div class="dropdown nav-item user-profile-dropdown btn-group">
                         <a href="javascript:;" id="ddluser" data-bs-toggle="dropdown" aria-expanded="false" class="btn dropdown-toggle btn-icon-only user nav-link">
-                            <img src="/assets/images/user-avtar.svg" alt="avatar" />
+                            <img :src="userAvatar" alt="avatar" />
                         </a>
                         <ul class="dropdown-menu dropdown-menu-right m-0" aria-labelledby="ddluser">
                             <li role="presentation" class="dropdown-header" v-if="currentUser">
@@ -113,7 +115,7 @@
             </header>
         </div>
         <!--  END NAVBAR  -->
-        <!--  BEGIN NAVBAR  -->
+        <!--  BEGIN SUB-HEADER (breadcrumb + sidebar toggle) -->
         <div class="sub-header-container">
             <header class="header navbar navbar-expand-sm">
                 <a href="javascript:void(0);" class="sidebarCollapse" data-placement="bottom" @click="$store.commit('toggleSideBar', !$store.state.is_show_sidebar)">
@@ -138,96 +140,112 @@
                 <div id="breadcrumb" class="vue-portal-target"></div>
             </header>
         </div>
-        <!--  END NAVBAR  -->
-        <!--  BEGIN TOPBAR  -->
-                <div class="topbar-nav header navbar" role="banner">
-            <nav class="topbar">
-                <ul class="list-unstyled menu-categories" id="topAccordion">
+        <!--  END SUB-HEADER  -->
+        <!--  BEGIN TOPBAR (navegación de alto nivel para GreenPoint) -->
+        <div class="topbar-nav header navbar" role="banner">
+            <nav class="topbar w-100">
+                <ul class="list-unstyled menu-categories mb-0 d-flex align-items-center" id="topAccordion">
+                    <!-- Dashboard -->
                     <li class="menu single-menu" v-if="can('dashboard.ver')">
-                        <a href="javascript:;" class="dropdown-toggle autodroprown">
-                            <div class=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Inicio</span></div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </a>
-                        <ul class="collapse submenu list-unstyled">
-                            <li><router-link to="/dashboard">Dashboard</router-link></li>
-                        </ul>
-                    </li>
-
-                    <li class="menu single-menu" v-if="canHeaderVentas">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <div class=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-shopping-cart"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span>Ventas</span></div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </a>
-                        <ul class="collapse submenu list-unstyled">
-                            <!-- Perfil VENTA (Villahermosa): Nueva venta. Si no hay caja abierta, redirige a Caja y avisa que debe abrirla. -->
-                            <li v-if="esPerfilVenta && (can('ventas.crear') || can('ventas.ver'))">
-                                <router-link v-if="cajaAbierta" to="/ventas">Nueva venta</router-link>
-                                <router-link
-                                    v-else
-                                    to="/cajas"
-                                    class="text-warning"
-                                    title="Debe abrir la caja para realizar ventas"
-                                >
-                                    Nueva venta (abrir caja)
-                                </router-link>
-                            </li>
-
-                            <!-- Perfil VENTA_ALMACEN (Macuspana): Entregas y Vigilante. Sin \"Importar pedido\" manual. -->
-                            <li v-if="esPerfilVentaAlmacen && (can('entregas.registrar') || can('ventas.ver'))"><router-link to="/entregas">Entregas</router-link></li>
-                            <li v-if="esPerfilVentaAlmacen && (can('entregas.registrar') || can('ventas.ver'))"><router-link to="/entregas/vigilante">Control de acceso (Vigilante)</router-link></li>
-
-                            <!-- Catálogos disponibles en ambos perfiles -->
-                            <li v-if="can('productos.ver')"><router-link to="/productos/lista">Productos</router-link></li>
-                            <li v-if="can('clientes.ver')"><router-link to="/clientes/lista">Clientes</router-link></li>
-                        </ul>
-                    </li>
-
-                    <li class="menu single-menu" v-if="esPerfilVentaAlmacen && (can('inventario.consultar') || can('inventario.ajustar'))">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <div class=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-package"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg><span>Inventario</span></div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </a>
-                        <ul class="collapse submenu list-unstyled">
-                            <li><router-link to="/inventario">Gestión de inventario</router-link></li>
-                            <li><router-link to="/inventario/alertas">Alertas de stock</router-link></li>
-                        </ul>
-                    </li>
-
-                    <li class="menu single-menu" v-if="can('cajas.abrir_cerrar') || can('gastos.registrar')">
-                        <router-link to="/cajas">
-                            <div class=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-briefcase"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg><span>Caja</span></div>
+                        <router-link to="/dashboard">
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-home">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span>Dashboard</span>
+                            </div>
                         </router-link>
                     </li>
 
-                    <li class="menu single-menu" v-if="canAny(['reportes.consultar', 'reportes.consultar_propios'])">
+                    <!-- Contenido (Catálogos + Módulos) -->
+                    <li class="menu single-menu" v-if="canCatalogos || canModulos">
                         <a href="javascript:;" class="dropdown-toggle">
-                            <div class=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg><span>Reportes</span></div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-layers">
+                                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                    <polyline points="2 17 12 22 22 17"></polyline>
+                                    <polyline points="2 12 12 17 22 12"></polyline>
+                                </svg>
+                                <span>Contenido</span>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-chevron-down">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
                         </a>
                         <ul class="collapse submenu list-unstyled">
-                            <li v-if="esPerfilVentaAlmacen"><router-link to="/reportes/salidas">Salidas (boletos)</router-link></li>
-                            <li><router-link to="/reportes/ventas">Ventas</router-link></li>
+                            <li v-if="canCatalogos">
+                                <router-link to="/catalogos/servicios">Catálogos</router-link>
+                            </li>
+                            <li v-if="canModulos">
+                                <router-link to="/modulos/nosotros">Módulos administrables</router-link>
+                            </li>
                         </ul>
                     </li>
 
+                    <!-- Formularios de contacto -->
+                    <li class="menu single-menu" v-if="can('formularios_contacto.ver')">
+                        <router-link to="/formularios-contacto">
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-mail">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                                <span>Mensajes</span>
+                            </div>
+                        </router-link>
+                    </li>
+
+                    <!-- Configuración -->
+                    <li class="menu single-menu" v-if="can('administracion.configuracion_critica')">
+                        <router-link to="/configuracion">
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-sliders">
+                                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                                </svg>
+                                <span>Configuración</span>
+                            </div>
+                        </router-link>
+                    </li>
+
+                    <!-- Administración (usuarios / roles) -->
                     <li class="menu single-menu" v-if="canHeaderAdministracion">
                         <a href="javascript:;" class="dropdown-toggle">
-                            <div class=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-settings"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Administración</span></div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-shield">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                                <span>Administración</span>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feather feather-chevron-down">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
                         </a>
                         <ul class="collapse submenu list-unstyled">
-                            <li v-if="can('administracion.usuarios')"><router-link to="/users/lista">Usuarios</router-link></li>
-                            <li v-if="can('administracion.roles')"><router-link to="/roles/lista">Roles y permisos</router-link></li>
-                            <li v-if="can('administracion.configuracion_hardware')"><router-link to="/configuracion-hardware/lista">Config. hardware</router-link></li>
+                            <li v-if="can('administracion.usuarios')">
+                                <router-link to="/users/lista">Usuarios</router-link>
+                            </li>
+                            <li v-if="can('administracion.roles')">
+                                <router-link to="/roles/lista">Roles y permisos</router-link>
+                            </li>
                         </ul>
                     </li>
                 </ul>
             </nav>
         </div>
         <loading
-            v-model:active="isLoading"
+            :active="isLoading"
             :can-cancel="false"
             :is-full-page="true"
+            @update:active="isLoading = $event"
         />
         <!--  END TOPBAR  -->
     </div>
@@ -240,7 +258,8 @@
     import * as AuthRepository from "@/repositories/AuthRepository";
     import * as UserRepository from "@/repositories/UserRepository";
     import { usePermissions } from '@/composables/use-permissions';
-    import { useCaja } from '@/composables/useCaja';
+    import logoInner from '@/assets/images/logo-inner.png';
+    import userAvatar from '@/assets/images/user-avtar.svg';
     import Loading from "vue-loading-overlay";
     import "vue-loading-overlay/dist/css/index.css";
     const store = useStore();
@@ -248,7 +267,6 @@
     const isLoading = ref(false);
     const currentUser = ref(null);
     const { loadPermissions, hasPermission, hasAnyPermission } = usePermissions();
-    const { cajaAbierta, loadCajaAbierta } = useCaja();
     const permissionsLoaded = ref(false);
 
     const selectedLang = ref(null);
@@ -267,19 +285,14 @@
         return hasAnyPermission(permissions);
     };
 
-    const perfilInterfaz = computed(() => store.getters.perfilInterfaz || null);
-    // Si no hay perfil definido aún, asumimos perfil VENTA para no dejar el menú vacío.
-    const esPerfilVenta = computed(() => !perfilInterfaz.value || perfilInterfaz.value === 'VENTA');
-    const esPerfilVentaAlmacen = computed(() => perfilInterfaz.value === 'VENTA_ALMACEN');
-
-    const canHeaderVentas = computed(() => {
+    const canCatalogos = computed(() => {
         if (!permissionsLoaded.value) return true;
-        return can('ventas.crear') || can('ventas.ver') || can('entregas.registrar') || can('productos.ver') || can('clientes.ver');
+        return hasAnyPermission(['catalogos.servicios', 'catalogos.clientes', 'catalogos.galeria', 'catalogos.banners', 'catalogos.contactos', 'catalogos.redes_sociales']);
     });
 
     const canHeaderAdministracion = computed(() => {
         if (!permissionsLoaded.value) return true;
-        return can('administracion.usuarios') || can('administracion.roles') || can('administracion.configuracion_hardware') || can('administracion.catalogos');
+        return can('administracion.usuarios') || can('administracion.roles');
     });
 
     const loadCurrentUser = async () => {
@@ -301,7 +314,6 @@
             await loadCurrentUser();
             await loadPermissions();
             permissionsLoaded.value = true;
-            await loadCajaAbierta();
         } finally {
             isLoading.value = false;
         }

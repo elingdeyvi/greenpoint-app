@@ -12,5 +12,5 @@ export const usePageTitle = (pageTitle) =>
     );
 
 export const useMeta = (data) => {
-    return useHead({ ...data, title: `${data.title} | SCV - Sistema de Control de Salidas` });
+    return useHead({ ...data, title: `${data.title} | GreenPoint` });
 };

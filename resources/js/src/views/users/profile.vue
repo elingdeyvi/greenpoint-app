@@ -332,7 +332,7 @@
     import 'vue-loading-overlay/dist/css/index.css';
     import axios from "axios";
 
-    useMeta({ title: 'Mi Perfil - SCV' });
+    useMeta({ title: 'Mi Perfil - GreenPoint' });
 
     const isLoading = ref(false);
     const is_entrada = ref(false);

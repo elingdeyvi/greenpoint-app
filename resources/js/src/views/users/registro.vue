@@ -10,6 +10,7 @@
                                     :src="defaultLogo"
                                     class="navbar-logo"
                                     alt="logo"
+                                    style="height: 40px; width: auto; object-fit: contain;"
                                 />
                                 <h1>Registro de cliente</h1>
                             </div>
@@ -196,7 +197,7 @@ import "@/assets/sass/scrollspyNav.scss";
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 
-useMeta({ title: 'SCV' });
+useMeta({ title: 'Registro de cliente - GreenPoint' });
 
 //modales
 let avisoModalPricipal = ref(null);

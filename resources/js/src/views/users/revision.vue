@@ -446,7 +446,7 @@ import "@/assets/sass/scrollspyNav.scss";
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 
-useMeta({ title: 'SCV' });
+useMeta({ title: 'Revisión de usuarios - GreenPoint' });
 
 const store = useAuthStore();
 const storeState = useStateStore();

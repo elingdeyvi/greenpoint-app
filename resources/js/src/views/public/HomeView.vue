@@ -99,7 +99,10 @@ const storageUrl = (path) => (path && !path.startsWith('http') ? `${baseStorage(
 
 const { banners, servicios, loading, fetchHome } = usePublicHome();
 
-const servicioLink = (s) => (s.slug ? { name: 'PublicServicioDetalle', params: { idOrSlug: s.slug } } : { name: 'PublicServicioDetalle', params: { idOrSlug: String(s.id) } });
+const servicioLink = (s) => ({
+  name: 'PublicServicioDetalle',
+  params: { id: s.slug || String(s.id) },
+});
 
 onMounted(() => fetchHome());
 </script>

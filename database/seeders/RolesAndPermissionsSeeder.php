@@ -69,17 +69,63 @@ class RolesAndPermissionsSeeder extends Seeder
         $capturistaRole->syncPermissions($capturistaPermissions);
 
         // Usuario administrador por defecto
+        $defaultPassword = Hash::make('12345678'); // Cambiar en producción
+
         $admin = User::firstOrCreate(
             ['email' => 'admin@greenpoint.com'],
             [
                 'name' => 'Administrador GreenPoint',
-                'password' => Hash::make('admin123456'), // Cambiar en producción
+                'password' => $defaultPassword,
                 'estatus' => 'activo',
             ]
         );
 
+        // Asegurar que el admin siempre tenga el rol Administrador y la misma contraseña base
+        $admin->update(['password' => $defaultPassword]);
         if (!$admin->hasRole($adminRole->name)) {
             $admin->assignRole($adminRole);
+        }
+
+        // Usuarios operativos por defecto con dominio @greenpoint.com
+        $operativos = [
+            [
+                'name' => 'Capturista General',
+                'email' => 'capturista@greenpoint.com',
+                'role' => $capturistaRole,
+            ],
+            [
+                'name' => 'Contacto Tabasco',
+                'email' => 'tabasco@greenpoint.com',
+                'role' => $capturistaRole,
+            ],
+            [
+                'name' => 'Contacto Veracruz',
+                'email' => 'veracruz@greenpoint.com',
+                'role' => $capturistaRole,
+            ],
+            [
+                'name' => 'Contacto Carmen',
+                'email' => 'carmen@greenpoint.com',
+                'role' => $capturistaRole,
+            ],
+        ];
+
+        foreach ($operativos as $op) {
+            $user = User::firstOrCreate(
+                ['email' => $op['email']],
+                [
+                    'name' => $op['name'],
+                    'password' => $defaultPassword,
+                    'estatus' => 'activo',
+                ]
+            );
+
+            // Homologar contraseña en cada seed
+            $user->update(['password' => $defaultPassword]);
+
+            if (!$user->hasRole($op['role']->name)) {
+                $user->assignRole($op['role']);
+            }
         }
     }
 }

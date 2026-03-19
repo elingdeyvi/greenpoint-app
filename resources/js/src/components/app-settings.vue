@@ -16,7 +16,7 @@
             <perfect-scrollbar class="sidbarchat p-3" tag="div">
                 <a class="btn-close" href="javascript:;" @click="isOpen = !isOpen"> </a>
                 <div class="text-center">
-                    <img src="/assets/images/features_overview.svg" alt="..." class="img-fluid" />
+                    <img :src="featuresOverview" alt="..." class="img-fluid" />
                 </div>
                 <h5 class="mb-0 text-center">TEMPLATE CUSTOMIZER</h5>
                 <p class="text-center">Set preferences that will be cookied for your live preview demonstration.</p>
@@ -134,6 +134,7 @@
 
 <script setup>
     import { onMounted, ref } from "vue";
+    import featuresOverview from "@/assets/images/features_overview.svg";
 
     import { useStore } from "vuex";
     const store = useStore();

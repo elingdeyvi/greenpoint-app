@@ -4,16 +4,24 @@ const baseUrl = "tokens";
 
 export const createTokens = async (params) => {
   try {
-    const response = await ApiService.post(`${baseUrl}/create`, params);
+    const { data } = await ApiService.post(`${baseUrl}/create`, params);
+    // Backend devuelve { token, user } en 200,
+    // pero mantenemos fallback por compatibilidad si en algún caso viene anidado.
+    const token =
+      data?.token ??
+      data?.data?.token ??
+      null;
+    const user =
+      data?.user ??
+      data?.data?.user ??
+      null;
     return {
-      token: response.data.data,
-      success: true,
+      token,
+      user,
     };
   } catch (error) {
-    return {
-      error: error.response.data.errors,
-      success: false,
-    };
+    // Repropagar para que el caller maneje errores de validación (422) o auth (401)
+    throw error;
   }
 };
 
@@ -39,7 +47,8 @@ export const permissions = async () => {
     return response.data || { all: false, permissions: [] };
   } catch (error) {
     console.error('Error fetching permissions:', error);
-    return { all: false, permissions: [] };
+    // Propagar para que el caller pueda limpiar sesión si aplica (401)
+    throw error;
   }
 };
 

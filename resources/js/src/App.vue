@@ -12,7 +12,7 @@
     import { useMeta } from "./composables/use-meta";
     import { useStore } from "vuex";
 
-    useMeta({ title: "Sales Admin" });
+    useMeta({ title: "GreenPoint - Panel administrativo" });
 
     const store = useStore();
 

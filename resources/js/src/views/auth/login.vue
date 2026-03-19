@@ -3,7 +3,7 @@
     <div class="gp-auth-card">
       <header class="gp-auth-header">
         <div class="gp-auth-logo">
-          <img src="/assets/images/logo.png" alt="GreenPoint" class="gp-auth-logo-img" />
+          <img :src="logoInner" alt="GreenPoint" class="gp-auth-logo-img" />
         </div>
         <p class="gp-auth-subtitle">Acceso al panel administrativo</p>
       </header>
@@ -59,7 +59,6 @@
         </div>
 
         <div class="gp-actions">
-          <router-link to="/auth/pass-recovery-boxed" class="gp-link">¿Olvidaste tu contraseña?</router-link>
           <button type="submit" class="gp-btn-primary" :disabled="isLoading">
             <span v-if="!isLoading">Iniciar sesión</span>
             <span v-else>Cargando…</span>
@@ -75,9 +74,10 @@
     <div class="gp-auth-background"></div>
 
     <loading
-      v-model:active="isLoading"
+      :active="isLoading"
       :can-cancel="false"
       :is-full-page="true"
+      @update:active="isLoading = $event"
     />
   </div>
 </template>
@@ -89,6 +89,7 @@
     import { useMeta } from "../../composables/use-meta";
     import Loading from 'vue-loading-overlay';
     import 'vue-loading-overlay/dist/css/index.css';
+    import logoInner from '@/assets/images/logo-inner.png';
     useMeta({ title: "Iniciar sesión" });
 
     const passwordField = ref("password");
@@ -109,18 +110,27 @@
     const login = async () => {
         is_login.value = true;
         isLoading.value = true;
+        errors.value = {};
         try {
-            const response = await AuthRepository.createTokens(form.value);
-            if (!response.success) return (errors.value = response.error);
-            errors.value ={
-                email: null,
-                password: null,
+            // Evitar que quede un token inválido (por ejemplo "undefined") de intentos anteriores.
+            localStorage.removeItem('token');
+            const { token } = await AuthRepository.createTokens(form.value);
+            const tokenIsValid = typeof token === 'string' && token.trim() !== '' && token !== 'undefined';
+
+            if (!tokenIsValid) {
+                errors.value = { email: ['No se recibió token de autenticación.'] };
+                return;
             }
-            localStorage.setItem("token", response.token);
-            // store.commit('setLayout', 'app');
-            window.location.href = window.location.origin + window.location.pathname + '?nocache=' + Date.now();
+            localStorage.setItem("token", token);
+            // Redirigir directamente a la vista principal del panel
+            window.location.href = '/dashboard';
         } catch (error) {
-            console.log(error);
+            const apiErrors = error?.response?.data?.errors;
+            if (apiErrors) {
+                errors.value = apiErrors;
+            } else {
+                errors.value = { email: ['Credenciales inválidas o error de autenticación.'] };
+            }
         } finally {
             isLoading.value = false;
         }

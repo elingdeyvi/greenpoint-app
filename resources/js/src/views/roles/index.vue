@@ -107,7 +107,7 @@ import { useMeta } from "@/composables/use-meta";
 import * as RoleRepository from "@/repositories/RoleRepository";
 import Swal from "sweetalert2";
 
-useMeta({ title: 'Roles y Permisos - SCV' });
+useMeta({ title: 'Roles y Permisos - GreenPoint' });
 
 const roles = ref([]);
 const allPermissions = ref([]);

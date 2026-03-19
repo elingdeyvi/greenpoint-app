@@ -6,7 +6,7 @@
                     <div class="form-container">
                         <div class="form-content">
                             <div class="d-flex user-meta">
-                                <img src="/assets/images/profile-7.jpeg" class="usr-profile" alt="avatar" />
+                                <img :src="userAvatar" class="usr-profile" alt="avatar" />
                                 <div class="">
                                     <p class="">Shaun Park</p>
                                 </div>
@@ -71,6 +71,7 @@
 <script setup>
     import { ref } from "vue";
     import "../../assets/sass/authentication/auth-boxed.scss";
+    import userAvatar from "@/assets/images/user-avtar.svg";
 
     import { useMeta } from "../../composables/use-meta";
     useMeta({ title: "Lockscreen Boxed" });

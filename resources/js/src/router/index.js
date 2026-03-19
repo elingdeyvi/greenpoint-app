@@ -159,7 +159,8 @@ const router = new createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const token = window.localStorage.getItem("token");
+  const rawToken = window.localStorage.getItem("token");
+  const token = rawToken && rawToken !== 'undefined' && rawToken !== 'null' ? rawToken : '';
 
   // Rutas públicas: sin auth, layout public
   if (to.meta && to.meta.public) {

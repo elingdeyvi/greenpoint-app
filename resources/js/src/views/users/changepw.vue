@@ -10,6 +10,7 @@
                                     :src="defaultLogo"
                                     class="navbar-logo"
                                     alt="logo"
+                                    style="height: 40px; width: auto; object-fit: contain;"
                                 />
                                 <h1>Crea tu nueva contraseña</h1>
                             </div>
@@ -103,7 +104,7 @@ import "@/assets/sass/scrollspyNav.scss";
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 
-useMeta({ title: 'SCV' });
+useMeta({ title: 'Cambiar contraseña - GreenPoint' });
 
 const editedIndex = ref(-1);
 const formComponent = ref(null);

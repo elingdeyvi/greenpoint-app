@@ -3,16 +3,16 @@ import * as AuthRepository from '@/repositories/AuthRepository';
 
 const userPermissions = ref(null);
 const isLoading = ref(false);
+let inFlight = null;
 
 export const usePermissions = () => {
     const loadPermissions = async () => {
-        if (userPermissions.value !== null) {
-            return userPermissions.value;
-        }
+        if (inFlight) return inFlight;
 
         try {
             isLoading.value = true;
-            const response = await AuthRepository.permissions();
+            inFlight = AuthRepository.permissions();
+            const response = await inFlight;
             
             // Manejar diferentes formatos de respuesta
             if (response && typeof response === 'object') {
@@ -41,13 +41,20 @@ export const usePermissions = () => {
             return userPermissions.value;
         } catch (error) {
             console.error('Error loading permissions:', error);
-            userPermissions.value = {
-                all: false,
-                permissions: []
-            };
-            return userPermissions.value;
+            // Si está no autenticado, limpiar token para que el router redirija a login
+            if (error?.response?.status === 401) {
+                window.localStorage.removeItem('token');
+                userPermissions.value = null;
+            } else {
+                userPermissions.value = {
+                    all: false,
+                    permissions: []
+                };
+            }
+            return userPermissions.value || { all: false, permissions: [] };
         } finally {
             isLoading.value = false;
+            inFlight = null;
         }
     };
 

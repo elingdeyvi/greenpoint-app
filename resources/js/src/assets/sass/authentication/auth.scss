@@ -293,15 +293,221 @@ body {
 }
 
 // Estilos adicionales para el login Rediseñado (gp-auth-page)
+.gp-auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: radial-gradient(circle at top, rgba(36, 195, 115, 0.16), transparent 55%),
+                radial-gradient(circle at bottom, rgba(243, 102, 63, 0.18), transparent 55%),
+                #020617;
+    position: relative;
+}
+
+.gp-auth-background {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 0% 0%, rgba(243, 102, 63, 0.12), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(36, 195, 115, 0.12), transparent 55%);
+    opacity: 0.8;
+    z-index: 0;
+}
+
+.gp-auth-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    background: rgba(15, 23, 42, 0.96);
+    border-radius: 1.25rem;
+    box-shadow:
+        0 25px 50px -12px rgba(15, 23, 42, 0.85),
+        0 0 0 1px rgba(148, 163, 184, 0.18);
+    padding: 2.25rem 2rem 1.75rem;
+    color: #e5e7eb;
+    backdrop-filter: blur(18px);
+}
+
+@media (min-width: 576px) {
+    .gp-auth-card {
+        padding: 2.5rem 2.75rem 2rem;
+    }
+}
+
+.gp-auth-header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+
 .gp-auth-logo {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .gp-auth-logo-img {
-    max-height: 40px;
+    max-height: 44px;
     width: auto;
     display: block;
+}
+
+.gp-auth-subtitle {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #9ca3af;
+}
+
+.gp-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.gp-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.gp-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9ca3af;
+    margin-bottom: 0.35rem;
+}
+
+.gp-input-wrapper {
+    display: flex;
+    align-items: center;
+    background: rgba(15, 23, 42, 0.75);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(148, 163, 184, 0.45);
+    padding: 0.45rem 0.75rem 0.45rem 0.9rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.gp-input-wrapper:focus-within {
+    border-color: var(--gp-primary, #f3663f);
+    box-shadow: 0 0 0 1px rgba(243, 102, 63, 0.55);
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.gp-input-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(156, 163, 175, 0.95);
+    margin-right: 0.55rem;
+}
+
+.gp-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #e5e7eb;
+    font-size: 0.95rem;
+    width: 100%;
+}
+
+.gp-input::placeholder {
+    color: #6b7280;
+}
+
+.gp-toggle-pass {
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0 0 0 0.35rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.gp-toggle-pass:hover {
+    color: var(--gp-primary, #f3663f);
+}
+
+.gp-error-list {
+    margin: 0.35rem 0 0;
+    padding-left: 1.1rem;
+    color: #fecaca;
+    font-size: 0.78rem;
+}
+
+.gp-field.has-error .gp-input-wrapper {
+    border-color: #fca5a5;
+}
+
+.gp-actions {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.gp-link {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    text-decoration: none;
+}
+
+.gp-link:hover {
+    color: #e5e7eb;
+}
+
+.gp-btn-primary {
+    border: none;
+    border-radius: 999px;
+    padding: 0.55rem 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0f172a;
+    background: linear-gradient(135deg, #f97316, #f3663f);
+    box-shadow: 0 14px 30px rgba(248, 113, 22, 0.35);
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+}
+
+.gp-btn-primary:disabled {
+    opacity: 0.6;
+    cursor: default;
+    box-shadow: none;
+}
+
+.gp-btn-primary:not(:disabled):hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+}
+
+.gp-auth-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.gp-auth-copy {
+    margin: 0;
+    font-size: 0.78rem;
+    color: #6b7280;
+}
+
+@media (max-width: 575px) {
+    .gp-auth-card {
+        padding: 1.9rem 1.4rem 1.4rem;
+    }
+
+    .gp-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .gp-actions .gp-btn-primary {
+        width: 100%;
+        text-align: center;
+    }
 }

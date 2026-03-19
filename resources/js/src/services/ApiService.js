@@ -7,7 +7,11 @@ instance.defaults.headers.post["Content-Type"] = "application/json";
 instance.interceptors.request.use(
   (config) => {
     const token = window.localStorage.getItem("token");
-    if (config.headers) config.headers["Authorization"] = `Bearer ${token}`;
+    const cleanToken = token && token !== 'undefined' && token !== 'null' ? token : '';
+    if (config.headers) {
+      if (cleanToken) config.headers["Authorization"] = `Bearer ${cleanToken}`;
+      else delete config.headers["Authorization"];
+    }
     return config;
   },
   (error) => Promise.reject(error)
