@@ -1,0 +1,75 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'admin-lte/dist/css/adminlte.min.css';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+/* Utilidades ligeras para formularios Breeze que aún usan clases utilitarias */
+.block { display: block; }
+.w-full { width: 100%; }
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.mb-4 { margin-bottom: 1rem; }
+.ms-2 { margin-left: 0.5rem; }
+.ms-4 { margin-left: 1rem; }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.justify-end { justify-content: flex-end; }
+.text-sm { font-size: 0.875rem; }
+.text-gray-600 { color: #6c757d; }
+.text-green-600 { color: #198754; }
+.font-medium { font-weight: 500; }
+.underline { text-decoration: underline; }
+
+/* Ajustes plantilla */
+body {
+    font-family: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.app-brand-text {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.small-box .icon > i {
+    font-size: 70px;
+}
+
+.sidebar-menu .nav-link.active {
+    font-weight: 600;
+}
+
+.login-page,
+.register-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 45%, #1d4ed8 100%);
+}
+
+.login-box,
+.register-box {
+    width: 400px;
+    max-width: 94vw;
+}
+
+.auth-brand {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 1.25rem;
+}
+
+.auth-brand h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.auth-brand p {
+    opacity: 0.85;
+    margin: 0.35rem 0 0;
+}
+
+.table-actions .btn {
+    padding: 0.15rem 0.45rem;
+}

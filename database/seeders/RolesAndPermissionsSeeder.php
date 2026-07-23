@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
@@ -15,30 +16,22 @@ class RolesAndPermissionsSeeder extends Seeder
      */
     public function run(): void
     {
-        // Limpiar cache de permisos (buena práctica al sembrar)
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Permisos de administración de usuarios/roles/configuración crítica
         $permissions = [
             'administracion.usuarios',
             'administracion.roles',
             'administracion.configuracion_critica',
-
-            // Catálogos
             'catalogos.servicios',
             'catalogos.clientes',
             'catalogos.galeria',
             'catalogos.banners',
             'catalogos.contactos',
             'catalogos.redes_sociales',
-
-            // Módulos administrables
             'modulos.nosotros',
             'modulos.historia',
             'modulos.tecnologia',
             'modulos.aviso',
-
-            // Formularios de contacto
             'formularios_contacto.ver',
         ];
 
@@ -46,11 +39,9 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
-        // Rol Administrador: todos los permisos
         $adminRole = Role::firstOrCreate(['name' => 'Administrador', 'guard_name' => 'web']);
         $adminRole->syncPermissions(Permission::all());
 
-        // Rol Capturista: solo catálogos, módulos administrables y lectura de formularios_contacto
         $capturistaPermissions = [
             'catalogos.servicios',
             'catalogos.clientes',
@@ -68,19 +59,33 @@ class RolesAndPermissionsSeeder extends Seeder
         $capturistaRole = Role::firstOrCreate(['name' => 'Capturista', 'guard_name' => 'web']);
         $capturistaRole->syncPermissions($capturistaPermissions);
 
-        // Usuario administrador por defecto
-        $admin = User::firstOrCreate(
-            ['email' => 'admin@greenpoint.com'],
+        $admins = [
             [
+                'email' => 'admin@greenpoint.com',
                 'name' => 'Administrador GreenPoint',
-                'password' => Hash::make('admin123456'), // Cambiar en producción
-                'estatus' => 'activo',
-            ]
-        );
+                'password' => 'admin123456',
+            ],
+            [
+                'email' => 'admin@admin.com',
+                'name' => 'Administrador',
+                'password' => 'password',
+            ],
+        ];
 
-        if (!$admin->hasRole($adminRole->name)) {
-            $admin->assignRole($adminRole);
+        foreach ($admins as $adminData) {
+            $admin = User::query()->updateOrCreate(
+                ['email' => $adminData['email']],
+                [
+                    'name' => $adminData['name'],
+                    'password' => Hash::make($adminData['password']),
+                    'estatus' => 'activo',
+                    'email_verified_at' => now(),
+                ]
+            );
+
+            if (! $admin->hasRole($adminRole->name)) {
+                $admin->assignRole($adminRole);
+            }
         }
     }
 }
-
