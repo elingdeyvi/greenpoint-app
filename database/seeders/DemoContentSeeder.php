@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Banner;
 use App\Models\Cliente;
+use App\Models\Configuracion;
 use App\Models\Contacto;
 use App\Models\Galeria;
 use App\Models\PaginaAviso;
@@ -17,6 +18,7 @@ use App\Models\PaginaNosotrosImagen;
 use App\Models\PaginaNosotrosProgreso;
 use App\Models\PaginaTecnologia;
 use App\Models\PaginaTecnologiaSeccion;
+use App\Models\RedSocial;
 use App\Models\Servicio;
 use Illuminate\Database\Seeder;
 
@@ -24,19 +26,46 @@ class DemoContentSeeder extends Seeder
 {
     /**
      * Seed de contenido de ejemplo para el sitio público GreenPoint.
-     * Comentario: Usa rutas de imagen placeholder; se pueden reemplazar por assets reales al desplegar.
      */
     public function run(): void
     {
+        $this->seedConfiguracion();
         $this->seedServicios();
         $this->seedClientes();
         $this->seedGaleria();
         $this->seedBanners();
         $this->seedContactos();
+        $this->seedRedesSociales();
         $this->seedPaginaNosotros();
         $this->seedPaginaHistoria();
         $this->seedPaginaTecnologia();
         $this->seedPaginaAviso();
+    }
+
+    protected function seedConfiguracion(): void
+    {
+        $defaults = [
+            'sitio_nombre' => 'GreenPoint',
+            'empresa_descripcion' => 'Nuestro servicio tiene un profundo conocimiento del mercado interior y exterior de petróleo y gas de México.',
+            'telefono_principal' => '(+52) 993 358 1890',
+            'email_principal' => 'info@greenpoint.com.mx',
+            'direccion_matriz' => 'Villahermosa, Tabasco, México.',
+            'whatsapp' => '529933581890',
+            'horario_lunes_viernes' => '09:00 AM - 06:00 PM',
+            'horario_sabado' => '10:00 AM - 03:00 PM',
+            'horario_domingo' => 'Cerrado',
+            'home_servicios_titulo' => 'Internet Satelital',
+            'home_servicios_subtitulo' => 'Expertos en comunicaciones',
+            'home_cta_titulo' => 'Greenpoint: Servicios Satelitales',
+            'home_cta_texto' => 'Escríbenos y con gusto te asesoraremos sobre la mejor solución de comunicación satelital para tu operación.',
+        ];
+
+        foreach ($defaults as $clave => $valor) {
+            Configuracion::query()->updateOrCreate(
+                ['clave' => $clave],
+                ['valor' => $valor],
+            );
+        }
     }
 
     protected function seedServicios(): void
@@ -47,22 +76,22 @@ class DemoContentSeeder extends Seeder
 
         $servicios = [
             [
-                'nombre' => 'Recolección de residuos',
-                'descripcion' => 'Servicio integral de recolección y manejo de residuos industriales y urbanos.',
-                'imagen' => 'images/demo/servicios/recoleccion.jpg',
+                'nombre' => 'Conexión Satelital',
+                'descripcion' => 'Conectividad satelital de alta velocidad, segura y confiable para operaciones en tierra y costa afuera.',
+                'imagen' => 'images/demo/servicios/gestion-ambiental.jpg',
                 'orden' => 1,
                 'activo' => true,
             ],
             [
-                'nombre' => 'Gestión ambiental',
-                'descripcion' => 'Asesoría en cumplimiento normativo y planes de gestión ambiental.',
-                'imagen' => 'images/demo/servicios/gestion-ambiental.jpg',
+                'nombre' => 'Soluciones',
+                'descripcion' => 'Diseño e integración de soluciones de comunicación adaptadas al sector petrolero y energético.',
+                'imagen' => 'images/demo/servicios/recoleccion.jpg',
                 'orden' => 2,
                 'activo' => true,
             ],
             [
-                'nombre' => 'Transporte especializado',
-                'descripcion' => 'Transporte seguro de materiales y residuos con flota especializada.',
+                'nombre' => 'Hardware Satelital y Redes WAN',
+                'descripcion' => 'Suministro, instalación y soporte de hardware satelital y redes WAN empresariales.',
                 'imagen' => 'images/demo/servicios/transporte.jpg',
                 'orden' => 3,
                 'activo' => true,
@@ -116,23 +145,23 @@ class DemoContentSeeder extends Seeder
 
         $banners = [
             [
-                'titulo' => 'Compromiso con el medio ambiente',
+                'titulo' => 'Líder en comunicaciones para el sector Petrolero',
                 'imagen' => 'images/demo/banners/banner1.jpg',
                 'enlace' => '/nosotros',
                 'orden' => 1,
                 'activo' => true,
             ],
             [
-                'titulo' => 'Soluciones integrales en residuos',
+                'titulo' => 'Comunicaciones Marítimas ROBUSTAS',
                 'imagen' => 'images/demo/banners/banner2.jpg',
                 'enlace' => '/servicios',
                 'orden' => 2,
                 'activo' => true,
             ],
             [
-                'titulo' => 'Confianza de nuestros clientes',
+                'titulo' => 'Servicios de Conexión SATELITAL',
                 'imagen' => 'images/demo/banners/banner3.jpg',
-                'enlace' => '/clientes',
+                'enlace' => '/contacto',
                 'orden' => 3,
                 'activo' => true,
             ],
@@ -145,39 +174,76 @@ class DemoContentSeeder extends Seeder
 
     protected function seedContactos(): void
     {
-        if (Contacto::query()->exists()) {
-            return;
-        }
-
         $contactos = [
             [
                 'ubicacion' => 'Tabasco',
-                'direccion' => 'Parque Industrial, Villahermosa, Tabasco.',
-                'telefono' => '993 000 0000',
-                'email' => 'tabasco@greenpoint.com',
+                'direccion' => 'Francisco Sarabia #126, Col. Gil y Saenz, CP 86080, Villahermosa, Tabasco.',
+                'telefono' => '(993) 161 6064',
+                'email' => 'villahermosa@greenpoint.com.mx',
                 'mapa_url' => null,
                 'orden' => 1,
             ],
             [
                 'ubicacion' => 'Veracruz',
-                'direccion' => 'Zona Industrial, Coatzacoalcos, Veracruz.',
-                'telefono' => '921 000 0000',
-                'email' => 'veracruz@greenpoint.com',
+                'direccion' => 'Sandoval #174, Fracc. Reforma, CP 91919, Veracruz.',
+                'telefono' => '(229) 000 0000',
+                'email' => 'veracruz@greenpoint.com.mx',
                 'mapa_url' => null,
                 'orden' => 2,
             ],
             [
-                'ubicacion' => 'Carmen',
-                'direccion' => 'Área Industrial, Ciudad del Carmen, Campeche.',
-                'telefono' => '938 000 0000',
-                'email' => 'carmen@greenpoint.com',
+                'ubicacion' => 'Cd. del Carmen',
+                'direccion' => 'Calle 53 #74, Col. Morelos, Ciudad del Carmen, Campeche.',
+                'telefono' => '(938) 160 4654',
+                'email' => 'cdcarmen@greenpoint.com.mx',
                 'mapa_url' => null,
                 'orden' => 3,
             ],
         ];
 
         foreach ($contactos as $contacto) {
-            Contacto::create($contacto);
+            Contacto::query()->updateOrCreate(
+                ['ubicacion' => $contacto['ubicacion']],
+                $contacto,
+            );
+        }
+    }
+
+    protected function seedRedesSociales(): void
+    {
+        if (RedSocial::query()->exists()) {
+            return;
+        }
+
+        $redes = [
+            [
+                'nombre' => 'Facebook',
+                'url' => 'https://www.facebook.com/',
+                'icono' => 'fa-brands fa-facebook-f',
+                'orden' => 1,
+            ],
+            [
+                'nombre' => 'Twitter',
+                'url' => 'https://twitter.com/',
+                'icono' => 'fa-brands fa-twitter',
+                'orden' => 2,
+            ],
+            [
+                'nombre' => 'YouTube',
+                'url' => 'https://www.youtube.com/',
+                'icono' => 'fa-brands fa-youtube',
+                'orden' => 3,
+            ],
+            [
+                'nombre' => 'LinkedIn',
+                'url' => 'https://www.linkedin.com/',
+                'icono' => 'fa-brands fa-linkedin-in',
+                'orden' => 4,
+            ],
+        ];
+
+        foreach ($redes as $red) {
+            RedSocial::create($red);
         }
     }
 
@@ -188,14 +254,14 @@ class DemoContentSeeder extends Seeder
         }
 
         $pagina = PaginaNosotros::create([
-            'titulo' => 'Quiénes somos',
-            'subtitulo' => 'GreenPoint, soluciones ambientales integrales',
-            'texto_descriptivo' => 'Somos una empresa especializada en la gestión integral de residuos y soluciones ambientales para la industria.',
-            'texto_adicional' => 'Trabajamos con estándares de calidad y seguridad, alineados a la normatividad vigente.',
+            'titulo' => 'Quiénes Somos',
+            'subtitulo' => 'Greenpoint',
+            'texto_descriptivo' => 'Greenpoint le ayuda a que toda esta tecnología se ponga a trabajar para usted. Contamos con la red satelital más moderna a nivel mundial. Nuestro Telepuerto HUB Satelital iDirect, interconectado con la red corporativa de Pemex, nos permite entregar micros y segmentos de red de Pemex previamente autorizados y supervisados por ellos.',
+            'texto_adicional' => 'Ofrecemos conexión a Internet de alta velocidad, segura y confiable para operaciones en el sector petrolero y energético.',
             'url_video' => null,
             'imagen_destacada' => 'images/demo/nosotros/destacada.jpg',
-            'meta_descripcion' => 'Conoce la historia, misión y valores de GreenPoint.',
-            'meta_keywords' => 'greenpoint, nosotros, empresa, gestión de residuos',
+            'meta_descripcion' => 'Conoce GreenPoint: expertos en comunicaciones satelitales.',
+            'meta_keywords' => 'greenpoint, nosotros, satelital, comunicaciones',
             'estado' => true,
         ]);
 
@@ -214,9 +280,9 @@ class DemoContentSeeder extends Seeder
         }
 
         $barras = [
-            ['titulo' => 'Compromiso ambiental', 'porcentaje' => 95],
-            ['titulo' => 'Cobertura en el sureste', 'porcentaje' => 85],
-            ['titulo' => 'Satisfacción de clientes', 'porcentaje' => 90],
+            ['titulo' => 'Cobertura satelital', 'porcentaje' => 95],
+            ['titulo' => 'Experiencia en sector energético', 'porcentaje' => 90],
+            ['titulo' => 'Satisfacción de clientes', 'porcentaje' => 92],
         ];
 
         foreach ($barras as $index => $barra) {
@@ -244,9 +310,10 @@ class DemoContentSeeder extends Seeder
         ]);
 
         $eventos = [
-            ['anio' => 2010, 'titulo' => 'Fundación', 'descripcion' => 'Iniciamos operaciones en Tabasco.'],
-            ['anio' => 2015, 'titulo' => 'Expansión', 'descripcion' => 'Apertura de operaciones en Veracruz.'],
-            ['anio' => 2020, 'titulo' => 'Consolidación', 'descripcion' => 'Integración de nuevos servicios ambientales.'],
+            ['anio' => 2004, 'titulo' => 'Inicio de operaciones', 'descripcion' => 'GreenPoint inicia operaciones enfocadas en comunicaciones satelitales para el sureste de México.'],
+            ['anio' => 2010, 'titulo' => 'Expansión regional', 'descripcion' => 'Apertura de presencia operativa en Veracruz y Cd. del Carmen.'],
+            ['anio' => 2015, 'titulo' => 'Telepuerto iDirect', 'descripcion' => 'Consolidación del Telepuerto HUB Satelital iDirect interconectado con redes corporativas.'],
+            ['anio' => 2019, 'titulo' => 'Crecimiento continuo', 'descripcion' => 'Ampliación de soluciones de hardware satelital y redes WAN para el sector energético.'],
         ];
 
         foreach ($eventos as $index => $evento) {
@@ -281,21 +348,21 @@ class DemoContentSeeder extends Seeder
 
         $pagina = PaginaTecnologia::create([
             'titulo' => 'Tecnología',
-            'contenido' => 'En GreenPoint utilizamos tecnología de vanguardia para la gestión y trazabilidad de residuos.',
+            'contenido' => 'Contamos con el Telepuerto iDirect equipado con la mejor tecnología a nivel mundial para ofrecer comunicaciones robustas y confiables.',
             'imagen_destacada' => 'images/demo/tecnologia/destacada.jpg',
-            'meta_descripcion' => 'Tecnología y procesos utilizados por GreenPoint.',
-            'meta_keywords' => 'tecnologia, monitoreo, trazabilidad',
+            'meta_descripcion' => 'Tecnología e infraestructura satelital de GreenPoint.',
+            'meta_keywords' => 'tecnologia, idirect, satelital',
             'estado' => true,
         ]);
 
         $secciones = [
             [
-                'titulo' => 'Monitoreo en tiempo real',
-                'contenido' => 'Sistemas de monitoreo que permiten seguimiento en tiempo real de las operaciones.',
+                'titulo' => 'Telepuerto iDirect',
+                'contenido' => 'Infraestructura satelital de clase mundial para conexiones estables en tierra y costa afuera.',
             ],
             [
-                'titulo' => 'Optimización de rutas',
-                'contenido' => 'Herramientas de planificación para reducir tiempos y emisiones.',
+                'titulo' => 'Redes WAN',
+                'contenido' => 'Integración de hardware y redes WAN para operaciones críticas del sector energético.',
             ],
         ];
 
@@ -325,14 +392,16 @@ class DemoContentSeeder extends Seeder
         $seccionGeneral = PaginaAvisoSeccion::create([
             'pagina_aviso_id' => $pagina->id,
             'titulo' => 'Tratamiento de datos personales',
-            'contenido' => 'GreenPoint se compromete a proteger la información personal de sus clientes y usuarios.',
+            'contenido' => 'GREENPOINT S.A. de C.V., y/o sus empresas asociadas, afiliadas y subsidiarias (“GREENPOINT”), con domicilio en Francisco Sarabia #126, Col. Gil y Saenz, Municipio Centro, Villahermosa, Tabasco, México, es responsable de recabar sus datos personales y de su adecuado tratamiento conforme a la Ley aplicable.',
             'orden' => 1,
         ]);
 
         $listas = [
-            'Finalidades del tratamiento de datos.',
-            'Medios para ejercer los derechos ARCO.',
-            'Medidas de seguridad implementadas.',
+            'Autoridades Fiscales: para el cumplimiento de obligaciones fiscales.',
+            'Autoridades Gubernamentales, Administrativas y/o Judiciales: para procedimientos legales o auditorías.',
+            'Instituciones Bancarias: para cobros o pagos electrónicos aplicables.',
+            'Empleados, asesores, afiliadas y proveedores: para la prestación del servicio solicitado.',
+            'Terceros con relación comercial: para envío de publicidad autorizada.',
         ];
 
         foreach ($listas as $index => $texto) {
@@ -342,6 +411,12 @@ class DemoContentSeeder extends Seeder
                 'orden' => $index + 1,
             ]);
         }
+
+        PaginaAvisoSeccion::create([
+            'pagina_aviso_id' => $pagina->id,
+            'titulo' => 'Protección de Datos Personales',
+            'contenido' => 'En cumplimiento con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, GREENPOINT utiliza los datos para contacto, seguimiento de solicitudes, relación comercial y comunicaciones sobre servicios.',
+            'orden' => 2,
+        ]);
     }
 }
-

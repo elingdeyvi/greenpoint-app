@@ -10,6 +10,7 @@ Route::prefix('public')->group(function () {
     Route::get('/clientes', [PublicSiteController::class, 'clientesIndex']);
     Route::get('/galeria', [PublicSiteController::class, 'galeriaIndex']);
     Route::get('/contactos', [PublicSiteController::class, 'contactosIndex']);
+    Route::get('/redes-sociales', [PublicSiteController::class, 'redesSociales']);
     Route::get('/pagina-nosotros', [PublicSiteController::class, 'paginaNosotros']);
     Route::get('/pagina-historia', [PublicSiteController::class, 'paginaHistoria']);
     Route::get('/pagina-tecnologia', [PublicSiteController::class, 'paginaTecnologia']);

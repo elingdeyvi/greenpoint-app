@@ -1,4 +1,9 @@
+/**
+ * GreenPoint — Vue 3 + Inertia.js (Composition API) en todo el front.
+ * Admin (AdminLTE) y sitio público comparten el mismo runtime Vue 3.
+ */
 import '../css/app.css';
+import '../css/public.css';
 import './bootstrap';
 
 import 'bootstrap';
@@ -9,10 +14,10 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
-const appName = import.meta.env.VITE_APP_NAME || 'AdminLTE Vue';
+const appName = import.meta.env.VITE_APP_NAME || 'GreenPoint';
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
+    title: (title) => (title ? `${title} - ${appName}` : appName),
     resolve: (name) =>
         resolvePageComponent(
             `./Pages/${name}.vue`,
@@ -25,6 +30,6 @@ createInertiaApp({
             .mount(el);
     },
     progress: {
-        color: '#0d6efd',
+        color: '#f3663f',
     },
 });

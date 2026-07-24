@@ -23,7 +23,7 @@ const toggleSidebar = () => {
 };
 
 onMounted(() => {
-    document.body.classList.add('layout-fixed', 'sidebar-expand-lg', 'bg-body-tertiary');
+    document.body.className = 'layout-fixed sidebar-expand-lg bg-body-tertiary';
 });
 
 const isActive = (names) => {

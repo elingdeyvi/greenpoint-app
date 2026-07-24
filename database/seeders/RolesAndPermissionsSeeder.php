@@ -61,16 +61,23 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $admins = [
             [
-                'email' => 'admin@greenpoint.com',
+                'email' => 'admin@greenpoint.com.mx',
                 'name' => 'Administrador GreenPoint',
                 'password' => 'admin123456',
+                'role' => 'Administrador',
             ],
             [
-                'email' => 'admin@admin.com',
-                'name' => 'Administrador',
+                'email' => 'capturista@greenpoint.com.mx',
+                'name' => 'Capturista GreenPoint',
                 'password' => 'password',
+                'role' => 'Capturista',
             ],
         ];
+
+        // Elimina cuentas demo con dominio incorrecto / genérico.
+        User::query()
+            ->whereIn('email', ['admin@greenpoint.com', 'admin@admin.com'])
+            ->delete();
 
         foreach ($admins as $adminData) {
             $admin = User::query()->updateOrCreate(
@@ -83,9 +90,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 ]
             );
 
-            if (! $admin->hasRole($adminRole->name)) {
-                $admin->assignRole($adminRole);
-            }
+            $admin->syncRoles([$adminData['role']]);
         }
     }
 }

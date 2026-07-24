@@ -33,6 +33,8 @@ class ConfiguracionController extends Controller
             );
         }
 
+        app(\App\Services\PublicSiteService::class)->forgetCache();
+
         return redirect()
             ->back()
             ->with('success', 'Configuración actualizada correctamente.');

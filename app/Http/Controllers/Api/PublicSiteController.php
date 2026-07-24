@@ -3,57 +3,32 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Banner;
-use App\Models\Cliente;
-use App\Models\Contacto;
-use App\Models\FormularioContacto;
-use App\Models\Galeria;
-use App\Models\PaginaAviso;
-use App\Models\PaginaHistoria;
-use App\Models\PaginaNosotros;
-use App\Models\PaginaTecnologia;
 use App\Models\Servicio;
+use App\Services\PublicSiteService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class PublicSiteController extends Controller
 {
+    public function __construct(private readonly PublicSiteService $publicSiteService)
+    {
+    }
+
     public function home(): JsonResponse
     {
-        $banners = Cache::remember('public_banners', now()->addMinutes(10), function () {
-            return Banner::query()
-                ->where('activo', true)
-                ->orderBy('orden')
-                ->get();
-        });
-
-        $servicios = Cache::remember('public_servicios', now()->addMinutes(10), function () {
-            return Servicio::query()
-                ->where('activo', true)
-                ->orderBy('orden')
-                ->get();
-        });
-
-        return response()->json([
-            'banners' => $banners,
-            'servicios' => $servicios,
-        ], JsonResponse::HTTP_OK);
+        return response()->json($this->publicSiteService->home(), JsonResponse::HTTP_OK);
     }
 
     public function serviciosIndex(): JsonResponse
     {
-        $servicios = Servicio::query()
-            ->where('activo', true)
-            ->orderBy('orden')
-            ->get();
-
-        return response()->json($servicios, JsonResponse::HTTP_OK);
+        return response()->json($this->publicSiteService->servicios(), JsonResponse::HTTP_OK);
     }
 
     public function serviciosShow(Servicio $servicio): JsonResponse
     {
-        if (!$servicio->activo) {
+        $servicio = $this->publicSiteService->servicio($servicio);
+
+        if (!$servicio) {
             return response()->json(['message' => 'Not found'], JsonResponse::HTTP_NOT_FOUND);
         }
 
@@ -62,77 +37,42 @@ class PublicSiteController extends Controller
 
     public function clientesIndex(): JsonResponse
     {
-        $clientes = Cliente::query()
-            ->where('activo', true)
-            ->orderBy('orden')
-            ->get();
-
-        return response()->json($clientes, JsonResponse::HTTP_OK);
+        return response()->json($this->publicSiteService->clientes(), JsonResponse::HTTP_OK);
     }
 
     public function galeriaIndex(): JsonResponse
     {
-        $items = Galeria::query()
-            ->where('activo', true)
-            ->orderBy('orden')
-            ->get();
-
-        return response()->json($items, JsonResponse::HTTP_OK);
+        return response()->json($this->publicSiteService->galeria(), JsonResponse::HTTP_OK);
     }
 
     public function contactosIndex(): JsonResponse
     {
-        $contactos = Contacto::query()
-            ->orderBy('orden')
-            ->get();
+        return response()->json($this->publicSiteService->contactos(), JsonResponse::HTTP_OK);
+    }
 
-        return response()->json($contactos, JsonResponse::HTTP_OK);
+    public function redesSociales(): JsonResponse
+    {
+        return response()->json($this->publicSiteService->redesSociales(), JsonResponse::HTTP_OK);
     }
 
     public function paginaNosotros(): JsonResponse
     {
-        $pagina = PaginaNosotros::query()
-            ->with([
-                'imagenes' => fn ($q) => $q->orderBy('orden'),
-                'progreso' => fn ($q) => $q->orderBy('orden'),
-            ])
-            ->first();
-
-        return response()->json($pagina, JsonResponse::HTTP_OK);
+        return response()->json($this->publicSiteService->paginaNosotros(), JsonResponse::HTTP_OK);
     }
 
     public function paginaHistoria(): JsonResponse
     {
-        $pagina = PaginaHistoria::query()
-            ->with([
-                'eventos' => fn ($q) => $q->orderBy('orden'),
-                'imagenes' => fn ($q) => $q->orderBy('orden'),
-            ])
-            ->first();
-
-        return response()->json($pagina, JsonResponse::HTTP_OK);
+        return response()->json($this->publicSiteService->paginaHistoria(), JsonResponse::HTTP_OK);
     }
 
     public function paginaTecnologia(): JsonResponse
     {
-        $pagina = PaginaTecnologia::query()
-            ->with([
-                'secciones' => fn ($q) => $q->orderBy('orden'),
-            ])
-            ->first();
-
-        return response()->json($pagina, JsonResponse::HTTP_OK);
+        return response()->json($this->publicSiteService->paginaTecnologia(), JsonResponse::HTTP_OK);
     }
 
     public function paginaAviso(): JsonResponse
     {
-        $pagina = PaginaAviso::query()
-            ->with([
-                'secciones.listas' => fn ($q) => $q->orderBy('orden'),
-            ])
-            ->first();
-
-        return response()->json($pagina, JsonResponse::HTTP_OK);
+        return response()->json($this->publicSiteService->paginaAviso(), JsonResponse::HTTP_OK);
     }
 
     public function enviarFormularioContacto(Request $request): JsonResponse
@@ -144,7 +84,7 @@ class PublicSiteController extends Controller
             'mensaje' => ['required', 'string'],
         ]);
 
-        $formulario = FormularioContacto::create($validated + ['leido' => false]);
+        $formulario = $this->publicSiteService->enviarContacto($validated);
 
         return response()->json([
             'success' => true,
