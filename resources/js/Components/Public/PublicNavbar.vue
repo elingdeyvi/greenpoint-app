@@ -69,8 +69,9 @@ onUnmounted(() => {
                                         @click="closeMenus"
                                     >
                                         <img
+                                            id="logo"
                                             :src="logoSrc"
-                                            :alt="sitioNombre"
+                                            alt=""
                                             class="gp-brand-logo"
                                         />
                                     </Link>
@@ -107,9 +108,14 @@ onUnmounted(() => {
                                             class="nav-item dropdown has-sub"
                                             :class="{ active: openDropdown === 'nosotros' }"
                                         >
-                                            <button
-                                                type="button"
-                                                class="nav-link gp-nav-toggle btn btn-link"
+                                            <span
+                                                class="submenu-button"
+                                                aria-hidden="true"
+                                                @click.stop="toggleDropdown('nosotros')"
+                                            ></span>
+                                            <a
+                                                href="#"
+                                                class="nav-link gp-nav-toggle"
                                                 :class="{
                                                     active:
                                                         isActive('public.nosotros') ||
@@ -117,15 +123,10 @@ onUnmounted(() => {
                                                         isActive('public.aviso'),
                                                     show: openDropdown === 'nosotros',
                                                 }"
-                                                @click="toggleDropdown('nosotros')"
+                                                @click.prevent="toggleDropdown('nosotros')"
                                             >
                                                 Nosotros
-                                            </button>
-                                            <span
-                                                class="submenu-button d-lg-none"
-                                                aria-hidden="true"
-                                                @click.stop="toggleDropdown('nosotros')"
-                                            ></span>
+                                            </a>
                                             <ul
                                                 class="dropdown-menu"
                                                 :class="{ show: openDropdown === 'nosotros' }"
@@ -167,22 +168,22 @@ onUnmounted(() => {
                                             class="nav-item dropdown has-sub"
                                             :class="{ active: openDropdown === 'servicios' }"
                                         >
-                                            <button
-                                                type="button"
-                                                class="nav-link gp-nav-toggle btn btn-link"
+                                            <span
+                                                class="submenu-button"
+                                                aria-hidden="true"
+                                                @click.stop="toggleDropdown('servicios')"
+                                            ></span>
+                                            <a
+                                                href="#"
+                                                class="nav-link gp-nav-toggle"
                                                 :class="{
                                                     active: isActive('public.servicios'),
                                                     show: openDropdown === 'servicios',
                                                 }"
-                                                @click="toggleDropdown('servicios')"
+                                                @click.prevent="toggleDropdown('servicios')"
                                             >
                                                 Servicios
-                                            </button>
-                                            <span
-                                                class="submenu-button d-lg-none"
-                                                aria-hidden="true"
-                                                @click.stop="toggleDropdown('servicios')"
-                                            ></span>
+                                            </a>
                                             <ul
                                                 class="dropdown-menu"
                                                 :class="{ show: openDropdown === 'servicios' }"
@@ -245,22 +246,22 @@ onUnmounted(() => {
                                             class="nav-item dropdown has-sub"
                                             :class="{ active: openDropdown === 'contacto' }"
                                         >
-                                            <button
-                                                type="button"
-                                                class="nav-link gp-nav-toggle btn btn-link"
+                                            <span
+                                                class="submenu-button"
+                                                aria-hidden="true"
+                                                @click.stop="toggleDropdown('contacto')"
+                                            ></span>
+                                            <a
+                                                href="#"
+                                                class="nav-link gp-nav-toggle"
                                                 :class="{
                                                     active: isActive('public.contacto'),
                                                     show: openDropdown === 'contacto',
                                                 }"
-                                                @click="toggleDropdown('contacto')"
+                                                @click.prevent="toggleDropdown('contacto')"
                                             >
                                                 Contacto
-                                            </button>
-                                            <span
-                                                class="submenu-button d-lg-none"
-                                                aria-hidden="true"
-                                                @click.stop="toggleDropdown('contacto')"
-                                            ></span>
+                                            </a>
                                             <ul
                                                 class="dropdown-menu"
                                                 :class="{ show: openDropdown === 'contacto' }"

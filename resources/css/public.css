@@ -814,46 +814,24 @@ body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-header-
     body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.fixedHeader .navbar-default {
         min-height: 96px;
     }
-
-    /* Header fijo blanco (como producción) — solo desktop */
-    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-link,
-    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .gp-nav-toggle {
-        color: #282b2d !important;
-    }
-
-    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .gp-nav-toggle::after,
-    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .nav-link::after {
-        border-color: transparent #282b2d #282b2d transparent;
-    }
-
-    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-link:hover,
-    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-link.active,
-    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-link.show,
-    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .gp-nav-toggle:hover,
-    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .gp-nav-toggle.active,
-    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .gp-nav-toggle.show {
-        color: var(--gp-primary) !important;
-    }
-
-    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .gp-nav-toggle.active::after,
-    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .gp-nav-toggle.show::after {
-        border-color: transparent var(--gp-primary) var(--gp-primary) transparent;
-    }
 }
 
 body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-brand {
     display: inline-block;
-    padding: 0;
-    margin: 0;
+    /* prod nav-menu.css: sin reset de padding/margin — hereda Bootstrap (.3125rem) */
     transition: all 0.5s ease 0s;
 }
 
-body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .gp-brand-logo {
-    display: block;
+/* cgi-bin nav-menu.css: .navbar-brand img + default.css vertical-align:top */
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-brand img,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .gp-brand-logo,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 #logo {
     max-height: 43px;
     height: auto;
     width: auto;
-    transition: 0.5s;
+    max-width: 100%;
+    transition-duration: 0.5s;
+    vertical-align: top;
 }
 
 /* attr-nav como cgi-bin: ms-lg-auto empuja a la derecha */
@@ -917,51 +895,133 @@ body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-header 
     }
 }
 
+/* cgi-bin nav-menu.css: .navbar-nav > li > a — padding fijo, no variables Bootstrap */
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-nav > li > a.nav-link,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-nav > li > a.gp-nav-toggle,
 body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-link,
 body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .gp-nav-toggle {
+    --bs-nav-link-padding-y: 21px;
+    --bs-nav-link-padding-x: 0.5rem;
     color: #fff !important;
     font-size: 15px !important;
     font-weight: 700 !important;
     letter-spacing: 0.8px;
     text-transform: uppercase;
     padding: 21px 0.5rem !important;
-    line-height: 1.2;
+    /* prod: hereda line-height 1.7 del body (no 1.2) — alinea el chevron top:28px */
+    line-height: 1.7;
     text-decoration: none !important;
     border: 0;
     background: transparent;
     box-shadow: none;
     position: relative;
+    display: block;
     white-space: nowrap;
+}
+
+/*
+ * scrollHeader: misma especificidad que el blanco de arriba
+ * (.navbar-nav > li > a.nav-link), si no el #fff !important gana.
+ * Equivale a prod: .menu_area-light.scrollHeader .navbar-nav > li > a
+ */
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-nav > li > a.nav-link,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-nav > li > a.gp-nav-toggle,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-nav > li > a,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader.menu_area-light .navbar-nav > li > a {
+        color: #282b2d !important;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .gp-nav-toggle::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .nav-link::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-nav > li.has-sub > a::after {
+        border-color: transparent #282b2d #282b2d transparent;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-nav > li > a.nav-link:hover,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-nav > li > a.gp-nav-toggle:hover,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-nav > li > a.nav-link.active,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-nav > li > a.gp-nav-toggle.active,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-nav > li > a.nav-link.show,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-nav > li > a.gp-nav-toggle.show {
+        color: var(--gp-primary) !important;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .gp-nav-toggle.active::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .gp-nav-toggle.show::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-nav > li.has-sub > a.show::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-nav > li.has-sub > a.active::after {
+        border-color: transparent var(--gp-primary) var(--gp-primary) transparent;
+    }
 }
 
 body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item {
     margin-left: 10px;
+    list-style: none;
+}
+
+/* cgi-bin nav-menu.css: espacio del chevron en el <li> */
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-nav > .nav-item.has-sub {
+    padding-right: 13px;
 }
 
 body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .nav-link,
 body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle {
-    padding-right: 1.1rem !important;
-}
-
-/* Chevron tipo producción (rombo), no caret Bootstrap */
-body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle::after,
-body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .nav-link::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: 0;
-    margin-top: -3px;
-    width: 6px;
-    height: 6px;
-    border-style: solid;
-    border-width: 0 1px 1px 0;
-    border-color: transparent #fff #fff transparent;
-    transform: rotate(45deg);
-    display: block;
+    position: relative;
 }
 
 body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .dropdown-toggle::after {
     display: none !important;
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-nav > .nav-item {
+        float: left;
+    }
+
+    /* En desktop el chevron es ::after del link; submenu-button solo móvil */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .submenu-button {
+        display: none;
+    }
+
+    /* Base (nav-menu.css): rombo oscuro */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .nav-link::after {
+        content: '';
+        position: absolute;
+        top: 28px;
+        right: -8px;
+        width: 6px;
+        height: 6px;
+        border-style: solid;
+        border-width: 0 1px 1px 0;
+        border-color: transparent #282b2d #282b2d transparent;
+        transform: rotate(45deg);
+        display: block;
+        transition: border 0.3s ease 0s;
+    }
+
+    /* header-style1 / menu_area-light transparente: chevron blanco */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.fixedHeader .nav-item.has-sub > .gp-nav-toggle::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.fixedHeader .nav-item.has-sub > .nav-link::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.fixedHeader .nav-item.has-sub > .gp-nav-toggle:hover::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.fixedHeader .nav-item.has-sub > .nav-link:hover::after {
+        border-color: transparent #fff #fff transparent;
+    }
+
+    /* scrollHeader (fondo blanco): chevron oscuro otra vez */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .gp-nav-toggle::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .nav-link::after {
+        border-color: transparent #282b2d #282b2d transparent;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .gp-nav-toggle.active::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .gp-nav-toggle.show::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle.active::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle.show::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .nav-link.active::after {
+        border-color: transparent var(--gp-primary) var(--gp-primary) transparent;
+    }
 }
 
 body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-link:hover,
@@ -971,12 +1031,6 @@ body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .gp-nav-toggle:
 body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .gp-nav-toggle.active,
 body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .gp-nav-toggle.show {
     color: var(--gp-primary) !important;
-}
-
-body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle.active::after,
-body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle.show::after,
-body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .nav-link.active::after {
-    border-color: transparent var(--gp-primary) var(--gp-primary) transparent;
 }
 
 body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .dropdown-menu {
@@ -1028,7 +1082,6 @@ body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler
 
     body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-brand {
         margin-top: 6px;
-        padding: 0;
     }
 
     body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .attr-nav {
@@ -1153,6 +1206,10 @@ body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler
     }
 
     /* En móvil se ocultan chevrons; prod usa .submenu-button */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub {
+        padding-right: 0;
+    }
+
     body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle::after,
     body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .nav-link::after {
         display: none !important;
@@ -1165,7 +1222,7 @@ body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler
         top: 0 !important;
         display: block !important;
         height: 51px !important;
-        width: 51px !important;
+        width: 100% !important;
         cursor: pointer;
     }
 
@@ -1192,7 +1249,6 @@ body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler
     }
 
     body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub.active > .submenu-button::before,
-    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle.show ~ .submenu-button::before,
     body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub:has(> .gp-nav-toggle.show) > .submenu-button::before {
         display: none !important;
     }
@@ -1979,9 +2035,15 @@ body.gp-public .gp-public-wrapper .gp-hero-sm {
 
 /* ---------- Service overlap strip ---------- */
 
-/* cgi-bin/default.css: .pt-6 (Bootstrap no trae spacing 6) */
+/* cgi-bin/default.css: .pt-6 (sin !important para que .pt-lg-0 gane en ≥992px) */
 body.gp-public .gp-public-wrapper .pt-6 {
-    padding-top: 3.5rem !important;
+    padding-top: 3.5rem;
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper .pt-lg-0 {
+        padding-top: 0 !important;
+    }
 }
 
 /* cgi-bin/styles.css .service-style1 — sin overflow:hidden (recortaría
