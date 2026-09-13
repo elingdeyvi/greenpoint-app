@@ -83,6 +83,7 @@ class PublicSiteService
         return [
             'banners' => $banners,
             'servicios' => $servicios,
+            'galeria' => $this->galeria(),
             'nosotros' => $this->paginaNosotros(),
             'config' => $this->configuracion(),
         ];

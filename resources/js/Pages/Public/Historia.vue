@@ -7,7 +7,7 @@ import { usePublicImage } from '@/composables/usePublicImage';
 import { usePublicSite } from '@/composables/usePublicSite';
 
 const { resolveImage } = usePublicImage();
-const { telefonoPrincipal, emailPrincipal } = usePublicSite();
+const { telefonoPrincipal, emailPrincipal, direccionMatriz, redesSociales } = usePublicSite();
 
 const props = defineProps({
     pagina: {
@@ -17,91 +17,151 @@ const props = defineProps({
 });
 
 const eventos = computed(() => props.pagina?.eventos ?? []);
-const imagenes = computed(() => props.pagina?.imagenes ?? []);
-const heroBackground = computed(
-    () => resolveImage(imagenes.value[0]?.ruta_imagen) || '/images/demo/historia/historia1.jpg',
+const pageTitle = computed(() => props.pagina?.titulo || 'Historia');
+const infoImage = '/images/demo/historia/h1.jpg';
+const avatarImage = '/images/demo/historia/h2.jpg';
+const direccion = computed(
+    () => direccionMatriz.value || 'Tabasco, Cd. del Carmen, Veracruz',
 );
 </script>
 
 <template>
-    <Head :title="pagina?.titulo || 'Nuestra historia'" />
+    <Head :title="pageTitle" />
 
     <PublicLayout>
         <template v-if="pagina">
             <PageHero
-                :title="pagina.titulo || 'Historia'"
+                :title="pageTitle"
                 :breadcrumbs="[
                     { label: 'Inicio', href: route('public.home') },
                     { label: 'Nosotros' },
                     { label: 'Historia' },
                 ]"
-                :background="heroBackground"
+                background="/images/demo/page-title/con1.jpg"
             />
 
-            <section class="gp-section">
+            <section>
                 <div class="container">
-                    <div class="row g-5">
-                        <div class="col-lg-4">
-                            <aside class="service-details-sidebar">
-                                <div v-if="telefonoPrincipal || emailPrincipal" class="gp-widget">
-                                    <h4 class="h5 mb-3">Contacto</h4>
-                                    <div v-if="telefonoPrincipal" class="d-flex gap-3 mb-3">
-                                        <span class="contact-icon">
-                                            <i class="fa-solid fa-phone"></i>
-                                        </span>
-                                        <div>
-                                            <div class="fw-semibold">Teléfono</div>
-                                            <a :href="`tel:${telefonoPrincipal.replace(/[^\d+]/g, '')}`">
-                                                {{ telefonoPrincipal }}
-                                            </a>
+                    <div class="row">
+                        <!-- Sidebar — cgi-bin historia.html -->
+                        <div class="col-lg-4 order-2 order-lg-1">
+                            <div class="service-details-sidebar">
+                                <aside class="widget widget-address" v-reveal="{ delay: 100 }">
+                                    <h4 class="widget-title">
+                                        <span class="me-2 text-primary">|</span>Info de Contacto
+                                    </h4>
+                                    <div v-if="emailPrincipal" class="d-flex align-items-center mb-4">
+                                        <div class="flex-shrink-0">
+                                            <div class="contact-icon">
+                                                <i class="far fa-envelope"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h6 class="mb-0">Email</h6>
+                                            <p class="mb-0">{{ emailPrincipal }}</p>
                                         </div>
                                     </div>
-                                    <div v-if="emailPrincipal" class="d-flex gap-3">
-                                        <span class="contact-icon">
-                                            <i class="fa-solid fa-envelope"></i>
-                                        </span>
-                                        <div>
-                                            <div class="fw-semibold">Email</div>
-                                            <a :href="`mailto:${emailPrincipal}`">{{ emailPrincipal }}</a>
+                                    <div v-if="telefonoPrincipal" class="d-flex align-items-center mb-4">
+                                        <div class="flex-shrink-0">
+                                            <div class="contact-icon">
+                                                <i class="fas fa-mobile-alt"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h6 class="mb-0">Teléfono</h6>
+                                            <p class="mb-0">{{ telefonoPrincipal }}</p>
                                         </div>
                                     </div>
-                                </div>
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="flex-shrink-0">
+                                            <div class="contact-icon">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h6 class="mb-0">Dirección</h6>
+                                            <p class="mb-0">{{ direccion }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <div class="contact-icon">
+                                                <i class="far fa-clock"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h6 class="mb-0">Horarios</h6>
+                                            <p class="mb-0">Lun a Vie - 9:00am a 6:00pm</p>
+                                        </div>
+                                    </div>
+                                </aside>
 
-                                <div class="gp-widget gp-widget-cta">
-                                    <h4 class="h5 mb-3">¿Necesita asesoría?</h4>
-                                    <p class="mb-4 opacity9">
-                                        Contáctenos y conozca nuestras soluciones de comunicación satelital.
-                                    </p>
-                                    <Link :href="route('public.contacto')" class="butn secondary sm">
-                                        Contactar
-                                    </Link>
-                                </div>
-
-                                <div v-if="imagenes.length" class="row g-3">
-                                    <div v-for="imagen in imagenes" :key="imagen.id" class="col-6">
+                                <aside
+                                    class="bg-img cover-background border-radius-10 widget-info gp-overlay-dark-7"
+                                    v-reveal="{ delay: 200 }"
+                                    :style="{ backgroundImage: `url('${infoImage}')` }"
+                                >
+                                    <div class="position-relative z-index-9 text-center py-4 py-md-5">
                                         <img
-                                            :src="resolveImage(imagen.ruta_imagen)"
+                                            class="border-radius-50 mb-4"
+                                            :src="avatarImage"
                                             alt=""
-                                            class="img-fluid border-radius-10 w-100"
-                                            style="height: 120px; object-fit: cover;"
+                                            width="80"
+                                            height="80"
                                         />
+                                        <h5 class="text-white mb-3">Alguna duda?</h5>
+                                        <ul class="text-center list-unstyled mb-4">
+                                            <li v-if="telefonoPrincipal" class="text-white mb-2">
+                                                <i class="fa fa-phone-alt small text-white me-2"></i>
+                                                <a
+                                                    :href="`tel:${telefonoPrincipal.replace(/[^\d+]/g, '')}`"
+                                                    class="text-white"
+                                                >
+                                                    {{ telefonoPrincipal }}
+                                                </a>
+                                            </li>
+                                            <li v-if="emailPrincipal" class="text-white">
+                                                <i class="fa fa-envelope-open small text-white me-2"></i>
+                                                <a :href="`mailto:${emailPrincipal}`" class="text-white">
+                                                    {{ emailPrincipal }}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <ul v-if="redesSociales?.length" class="social-icons">
+                                            <li v-for="red in redesSociales" :key="red.id">
+                                                <a :href="red.url" target="_blank" rel="noopener noreferrer">
+                                                    <i :class="red.icono || 'fab fa-facebook-f'"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                </div>
-                            </aside>
+                                </aside>
+                            </div>
                         </div>
 
-                        <div class="col-lg-8">
-                            <ol v-if="eventos.length" class="gp-timeline">
-                                <li v-for="evento in eventos" :key="evento.id" class="gp-timeline-item">
-                                    <span class="gp-timeline-dot"></span>
-                                    <span class="gp-timeline-year">{{ evento.anio }}</span>
-                                    <h3 class="gp-timeline-title h4">{{ evento.titulo }}</h3>
-                                    <p class="gp-timeline-desc mb-0">{{ evento.descripcion }}</p>
-                                </li>
-                            </ol>
-                            <p v-else class="text-muted mb-0">
-                                Muy pronto compartiremos los hitos de nuestra historia.
-                            </p>
+                        <!-- Main — años en prosa como prod -->
+                        <div class="col-lg-8 order-1 order-lg-2 mb-2-6 mb-lg-0">
+                            <div class="ps-lg-1-6">
+                                <div class="row mb-2-2" v-reveal="{ delay: 100 }">
+                                    <div class="col-lg-12">
+                                        <h3 class="h4 mb-3">Historia Greenpoint</h3>
+                                        <p
+                                            v-if="eventos.length"
+                                            class="w-95 mb-2-2"
+                                            style="text-align: justify"
+                                        >
+                                            <template v-for="(evento, index) in eventos" :key="evento.id">
+                                                <strong>{{ evento.anio }}:</strong>
+                                                {{ evento.descripcion || evento.titulo }}
+                                                <br v-if="index < eventos.length - 1" />
+                                            </template>
+                                        </p>
+                                        <p v-else class="text-muted mb-0">
+                                            Muy pronto compartiremos los hitos de nuestra historia.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

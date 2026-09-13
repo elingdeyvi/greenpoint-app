@@ -12,7 +12,7 @@ defineProps({
 
 <template>
     <img
-        src="/images/greenpoint/logo.svg"
+        src="/images/greenpoint/logo.png"
         alt="GreenPoint"
         :height="height"
         class="gp-application-logo"

@@ -31,11 +31,9 @@ class ServicioController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(): RedirectResponse
     {
-        return Inertia::render('Admin/Servicios/Form', [
-            'servicio' => null,
-        ]);
+        return redirect()->route('admin.servicios.index');
     }
 
     public function store(StoreServicioRequest $request): RedirectResponse
@@ -53,11 +51,9 @@ class ServicioController extends Controller
             ->with('success', 'Servicio guardado correctamente.');
     }
 
-    public function edit(Servicio $servicio): Response
+    public function edit(Servicio $servicio): RedirectResponse
     {
-        return Inertia::render('Admin/Servicios/Form', [
-            'servicio' => $servicio,
-        ]);
+        return redirect()->route('admin.servicios.index');
     }
 
     public function update(UpdateServicioRequest $request, Servicio $servicio): RedirectResponse

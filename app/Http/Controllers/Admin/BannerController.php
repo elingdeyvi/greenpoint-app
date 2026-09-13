@@ -31,11 +31,9 @@ class BannerController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(): RedirectResponse
     {
-        return Inertia::render('Admin/Banners/Form', [
-            'banner' => null,
-        ]);
+        return redirect()->route('admin.banners.index');
     }
 
     public function store(StoreBannerRequest $request): RedirectResponse
@@ -53,11 +51,9 @@ class BannerController extends Controller
             ->with('success', 'Banner guardado correctamente.');
     }
 
-    public function edit(Banner $banner): Response
+    public function edit(Banner $banner): RedirectResponse
     {
-        return Inertia::render('Admin/Banners/Form', [
-            'banner' => $banner,
-        ]);
+        return redirect()->route('admin.banners.index');
     }
 
     public function update(UpdateBannerRequest $request, Banner $banner): RedirectResponse

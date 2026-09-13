@@ -1,9 +1,8 @@
 /**
- * GreenPoint — Vue 3 + Inertia.js (Composition API) en todo el front.
- * Admin (AdminLTE) y sitio público comparten el mismo runtime Vue 3.
+ * GreenPoint — entry admin / auth (AdminLTE + Bootstrap).
+ * El sitio público usa resources/js/public-app.js
  */
 import '../css/app.css';
-import '../css/public.css';
 import './bootstrap';
 
 import 'bootstrap';
@@ -30,6 +29,6 @@ createInertiaApp({
             .mount(el);
     },
     progress: {
-        color: '#f3663f',
+        color: '#198754',
     },
 });

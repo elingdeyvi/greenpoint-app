@@ -31,11 +31,9 @@ class GaleriaController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(): RedirectResponse
     {
-        return Inertia::render('Admin/Galeria/Form', [
-            'item' => null,
-        ]);
+        return redirect()->route('admin.galeria.index');
     }
 
     public function store(StoreGaleriaRequest $request): RedirectResponse
@@ -53,11 +51,9 @@ class GaleriaController extends Controller
             ->with('success', 'Imagen de galería guardada correctamente.');
     }
 
-    public function edit(Galeria $galeria): Response
+    public function edit(Galeria $galeria): RedirectResponse
     {
-        return Inertia::render('Admin/Galeria/Form', [
-            'item' => $galeria,
-        ]);
+        return redirect()->route('admin.galeria.index');
     }
 
     public function update(UpdateGaleriaRequest $request, Galeria $galeria): RedirectResponse

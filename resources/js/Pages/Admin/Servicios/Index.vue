@@ -1,7 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import AdminModal from '@/Components/Admin/AdminModal.vue';
+import ConfirmDeleteModal from '@/Components/Admin/ConfirmDeleteModal.vue';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps({
     servicios: {
@@ -11,6 +13,12 @@ const props = defineProps({
 });
 
 const search = ref('');
+const showFormModal = ref(false);
+const showDeleteModal = ref(false);
+const editing = ref(null);
+const deleting = ref(null);
+const previewUrl = ref(null);
+const deletingProcessing = ref(false);
 
 const rows = computed(() => {
     const source = Array.isArray(props.servicios) ? props.servicios : (props.servicios?.data ?? []);
@@ -27,10 +35,96 @@ const links = computed(() =>
     Array.isArray(props.servicios) ? [] : (props.servicios?.links ?? []),
 );
 
-const destroy = (id) => {
-    if (!confirm('¿Eliminar este servicio?')) return;
-    router.delete(route('admin.servicios.destroy', id));
+const isEdit = computed(() => !!editing.value?.id);
+
+const form = useForm({
+    nombre: '',
+    descripcion: '',
+    imagen: null,
+    orden: 0,
+    activo: true,
+});
+
+const resetForm = (record = null) => {
+    editing.value = record;
+    previewUrl.value = null;
+    form.clearErrors();
+    form.reset();
+    form.nombre = record?.nombre ?? '';
+    form.descripcion = record?.descripcion ?? '';
+    form.imagen = null;
+    form.orden = record?.orden ?? 0;
+    form.activo = record?.activo ?? true;
 };
+
+const openCreate = () => {
+    resetForm(null);
+    showFormModal.value = true;
+};
+
+const openEdit = (servicio) => {
+    resetForm(servicio);
+    showFormModal.value = true;
+};
+
+const closeFormModal = () => {
+    showFormModal.value = false;
+    resetForm(null);
+};
+
+const onFileChange = (e) => {
+    const file = e.target.files?.[0] ?? null;
+    form.imagen = file;
+    previewUrl.value = file ? URL.createObjectURL(file) : null;
+};
+
+const submit = () => {
+    const options = {
+        forceFormData: true,
+        preserveScroll: true,
+        onSuccess: () => closeFormModal(),
+        onFinish: () => form.transform((data) => data),
+    };
+
+    if (isEdit.value) {
+        form.transform((data) => ({
+            ...data,
+            activo: data.activo ? 1 : 0,
+            _method: 'put',
+        })).post(route('admin.servicios.update', editing.value.id), options);
+    } else {
+        form.transform((data) => ({
+            ...data,
+            activo: data.activo ? 1 : 0,
+        })).post(route('admin.servicios.store'), options);
+    }
+};
+
+const openDelete = (servicio) => {
+    deleting.value = servicio;
+    showDeleteModal.value = true;
+};
+
+const closeDeleteModal = () => {
+    showDeleteModal.value = false;
+    deleting.value = null;
+    deletingProcessing.value = false;
+};
+
+const confirmDelete = () => {
+    if (!deleting.value) return;
+    deletingProcessing.value = true;
+    router.delete(route('admin.servicios.destroy', deleting.value.id), {
+        preserveScroll: true,
+        onFinish: () => closeDeleteModal(),
+    });
+};
+
+watch(showFormModal, (open) => {
+    if (!open) {
+        form.clearErrors();
+    }
+});
 </script>
 
 <template>
@@ -56,9 +150,9 @@ const destroy = (id) => {
                         placeholder="Buscar..."
                         style="width: 200px"
                     />
-                    <Link :href="route('admin.servicios.create')" class="btn btn-sm btn-primary">
+                    <button type="button" class="btn btn-sm btn-primary" @click="openCreate">
                         <i class="fa-solid fa-plus me-1"></i> Nuevo
-                    </Link>
+                    </button>
                 </div>
             </div>
             <div class="card-body table-responsive p-0">
@@ -99,18 +193,19 @@ const destroy = (id) => {
                                 </span>
                             </td>
                             <td class="text-end table-actions">
-                                <Link
-                                    :href="route('admin.servicios.edit', servicio.id)"
+                                <button
+                                    type="button"
                                     class="btn btn-outline-primary btn-sm me-1"
                                     title="Editar"
+                                    @click="openEdit(servicio)"
                                 >
                                     <i class="fa-solid fa-pen"></i>
-                                </Link>
+                                </button>
                                 <button
                                     type="button"
                                     class="btn btn-outline-danger btn-sm"
                                     title="Eliminar"
-                                    @click="destroy(servicio.id)"
+                                    @click="openDelete(servicio)"
                                 >
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
@@ -144,5 +239,91 @@ const destroy = (id) => {
                 </ul>
             </div>
         </div>
+
+        <AdminModal
+            :show="showFormModal"
+            :title="isEdit ? 'Editar servicio' : 'Nuevo servicio'"
+            @close="closeFormModal"
+        >
+            <form id="servicio-form" @submit.prevent="submit">
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input
+                        v-model="form.nombre"
+                        type="text"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.nombre }"
+                        required
+                    />
+                    <div v-if="form.errors.nombre" class="invalid-feedback">{{ form.errors.nombre }}</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea
+                        v-model="form.descripcion"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.descripcion }"
+                        rows="4"
+                    />
+                    <div v-if="form.errors.descripcion" class="invalid-feedback">
+                        {{ form.errors.descripcion }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Imagen</label>
+                    <input
+                        type="file"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.imagen }"
+                        accept="image/*"
+                        @change="onFileChange"
+                    />
+                    <div v-if="form.errors.imagen" class="invalid-feedback">{{ form.errors.imagen }}</div>
+                    <div v-if="previewUrl || editing?.imagen" class="mt-2">
+                        <img
+                            :src="previewUrl || `/storage/${editing.imagen}`"
+                            alt="Vista previa"
+                            class="img-thumbnail"
+                            style="max-height: 140px"
+                        />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Orden</label>
+                    <input
+                        v-model.number="form.orden"
+                        type="number"
+                        min="0"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.orden }"
+                    />
+                    <div v-if="form.errors.orden" class="invalid-feedback">{{ form.errors.orden }}</div>
+                </div>
+                <div class="form-check">
+                    <input id="servicio-activo" v-model="form.activo" class="form-check-input" type="checkbox" />
+                    <label class="form-check-label" for="servicio-activo">Activo</label>
+                </div>
+            </form>
+            <template #footer>
+                <button type="button" class="btn btn-secondary" @click="closeFormModal">Cancelar</button>
+                <button
+                    type="submit"
+                    form="servicio-form"
+                    class="btn btn-primary"
+                    :disabled="form.processing"
+                >
+                    <span v-if="form.processing" class="spinner-border spinner-border-sm me-1" />
+                    Guardar
+                </button>
+            </template>
+        </AdminModal>
+
+        <ConfirmDeleteModal
+            :show="showDeleteModal"
+            :message="`¿Eliminar el servicio «${deleting?.nombre ?? ''}»?`"
+            :processing="deletingProcessing"
+            @close="closeDeleteModal"
+            @confirm="confirmDelete"
+        />
     </AuthenticatedLayout>
 </template>

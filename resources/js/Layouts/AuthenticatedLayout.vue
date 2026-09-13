@@ -97,8 +97,12 @@ const isActive = (names) => {
         <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
             <div class="sidebar-brand">
                 <Link :href="route('dashboard')" class="brand-link">
-                    <i class="fa-solid fa-leaf brand-image opacity-75 fs-4"></i>
-                    <span class="brand-text app-brand-text">GreenPoint</span>
+                    <img
+                        src="/images/greenpoint/logo-white.png"
+                        alt="GreenPoint"
+                        class="brand-image opacity-100"
+                        style="max-height: 34px; width: auto;"
+                    />
                 </Link>
             </div>
 
@@ -122,161 +126,263 @@ const isActive = (names) => {
                             </Link>
                         </li>
 
-                        <template v-if="can('catalogos.servicios') || can('catalogos.clientes') || can('catalogos.galeria') || can('catalogos.banners') || can('catalogos.contactos') || can('catalogos.redes_sociales')">
-                            <li class="nav-header">CATÁLOGOS</li>
-                            <li v-if="can('catalogos.servicios')" class="nav-item">
-                                <Link
-                                    :href="route('admin.servicios.index')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.servicios']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-recycle"></i>
-                                    <p>Servicios</p>
-                                </Link>
-                            </li>
-                            <li v-if="can('catalogos.clientes')" class="nav-item">
-                                <Link
-                                    :href="route('admin.clientes.index')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.clientes']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-building"></i>
-                                    <p>Clientes</p>
-                                </Link>
-                            </li>
-                            <li v-if="can('catalogos.galeria')" class="nav-item">
-                                <Link
-                                    :href="route('admin.galeria.index')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.galeria']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-images"></i>
-                                    <p>Galería</p>
-                                </Link>
-                            </li>
-                            <li v-if="can('catalogos.banners')" class="nav-item">
-                                <Link
-                                    :href="route('admin.banners.index')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.banners']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-panorama"></i>
-                                    <p>Banners</p>
-                                </Link>
-                            </li>
-                            <li v-if="can('catalogos.contactos')" class="nav-item">
-                                <Link
-                                    :href="route('admin.contactos.index')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.contactos']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-address-book"></i>
-                                    <p>Contactos</p>
-                                </Link>
-                            </li>
-                            <li v-if="can('catalogos.redes_sociales')" class="nav-item">
-                                <Link
-                                    :href="route('admin.redes-sociales.index')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.redes-sociales']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-share-nodes"></i>
-                                    <p>Redes sociales</p>
-                                </Link>
-                            </li>
-                        </template>
+                        <li
+                            v-if="can('catalogos.servicios') || can('catalogos.clientes') || can('catalogos.galeria') || can('catalogos.banners') || can('catalogos.contactos') || can('catalogos.redes_sociales')"
+                            class="nav-item"
+                            :class="{
+                                'menu-open': isActive([
+                                    'admin.servicios',
+                                    'admin.clientes',
+                                    'admin.galeria',
+                                    'admin.banners',
+                                    'admin.contactos',
+                                    'admin.redes-sociales',
+                                ]),
+                            }"
+                        >
+                            <a
+                                href="#"
+                                class="nav-link"
+                                :class="{
+                                    active: isActive([
+                                        'admin.servicios',
+                                        'admin.clientes',
+                                        'admin.galeria',
+                                        'admin.banners',
+                                        'admin.contactos',
+                                        'admin.redes-sociales',
+                                    ]),
+                                }"
+                            >
+                                <i class="nav-icon fa-solid fa-folder-open"></i>
+                                <p>
+                                    Catálogos
+                                    <i class="nav-arrow fa-solid fa-angle-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li v-if="can('catalogos.servicios')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.servicios.index')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.servicios']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-recycle"></i>
+                                        <p>Servicios</p>
+                                    </Link>
+                                </li>
+                                <li v-if="can('catalogos.clientes')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.clientes.index')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.clientes']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-building"></i>
+                                        <p>Clientes</p>
+                                    </Link>
+                                </li>
+                                <li v-if="can('catalogos.galeria')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.galeria.index')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.galeria']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-images"></i>
+                                        <p>Galería</p>
+                                    </Link>
+                                </li>
+                                <li v-if="can('catalogos.banners')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.banners.index')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.banners']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-panorama"></i>
+                                        <p>Banners</p>
+                                    </Link>
+                                </li>
+                                <li v-if="can('catalogos.contactos')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.contactos.index')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.contactos']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-address-book"></i>
+                                        <p>Contactos</p>
+                                    </Link>
+                                </li>
+                                <li v-if="can('catalogos.redes_sociales')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.redes-sociales.index')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.redes-sociales']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-share-nodes"></i>
+                                        <p>Redes sociales</p>
+                                    </Link>
+                                </li>
+                            </ul>
+                        </li>
 
-                        <template v-if="can('modulos.nosotros') || can('modulos.historia') || can('modulos.tecnologia') || can('modulos.aviso')">
-                            <li class="nav-header">PÁGINAS</li>
-                            <li v-if="can('modulos.nosotros')" class="nav-item">
-                                <Link
-                                    :href="route('admin.paginas.nosotros.edit')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.paginas.nosotros']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-users"></i>
-                                    <p>Nosotros</p>
-                                </Link>
-                            </li>
-                            <li v-if="can('modulos.historia')" class="nav-item">
-                                <Link
-                                    :href="route('admin.paginas.historia.edit')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.paginas.historia']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-clock-rotate-left"></i>
-                                    <p>Historia</p>
-                                </Link>
-                            </li>
-                            <li v-if="can('modulos.tecnologia')" class="nav-item">
-                                <Link
-                                    :href="route('admin.paginas.tecnologia.edit')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.paginas.tecnologia']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-microchip"></i>
-                                    <p>Tecnología</p>
-                                </Link>
-                            </li>
-                            <li v-if="can('modulos.aviso')" class="nav-item">
-                                <Link
-                                    :href="route('admin.paginas.aviso.edit')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.paginas.aviso']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-file-shield"></i>
-                                    <p>Aviso de privacidad</p>
-                                </Link>
-                            </li>
-                        </template>
+                        <li
+                            v-if="can('modulos.nosotros') || can('modulos.historia') || can('modulos.tecnologia') || can('modulos.aviso')"
+                            class="nav-item"
+                            :class="{
+                                'menu-open': isActive([
+                                    'admin.paginas',
+                                    'admin.paginas.nosotros',
+                                    'admin.paginas.historia',
+                                    'admin.paginas.tecnologia',
+                                    'admin.paginas.aviso',
+                                ]),
+                            }"
+                        >
+                            <Link
+                                :href="route('admin.paginas.index')"
+                                class="nav-link"
+                                :class="{
+                                    active: isActive([
+                                        'admin.paginas',
+                                        'admin.paginas.nosotros',
+                                        'admin.paginas.historia',
+                                        'admin.paginas.tecnologia',
+                                        'admin.paginas.aviso',
+                                    ]),
+                                }"
+                            >
+                                <i class="nav-icon fa-solid fa-file-lines"></i>
+                                <p>
+                                    Páginas
+                                    <i class="nav-arrow fa-solid fa-angle-right"></i>
+                                </p>
+                            </Link>
+                            <ul class="nav nav-treeview">
+                                <li v-if="can('modulos.nosotros')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.paginas.nosotros.edit')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.paginas.nosotros']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-users"></i>
+                                        <p>Nosotros</p>
+                                    </Link>
+                                </li>
+                                <li v-if="can('modulos.historia')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.paginas.historia.edit')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.paginas.historia']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-clock-rotate-left"></i>
+                                        <p>Historia</p>
+                                    </Link>
+                                </li>
+                                <li v-if="can('modulos.tecnologia')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.paginas.tecnologia.edit')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.paginas.tecnologia']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-microchip"></i>
+                                        <p>Tecnología</p>
+                                    </Link>
+                                </li>
+                                <li v-if="can('modulos.aviso')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.paginas.aviso.edit')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.paginas.aviso']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-file-shield"></i>
+                                        <p>Aviso de privacidad</p>
+                                    </Link>
+                                </li>
+                            </ul>
+                        </li>
 
-                        <template v-if="can('formularios_contacto.ver') || can('administracion.configuracion_critica')">
-                            <li class="nav-header">GESTIÓN</li>
-                            <li v-if="can('formularios_contacto.ver')" class="nav-item">
-                                <Link
-                                    :href="route('admin.formularios-contacto.index')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.formularios-contacto']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-envelope"></i>
-                                    <p>Mensajes</p>
-                                </Link>
-                            </li>
-                            <li v-if="can('administracion.configuracion_critica')" class="nav-item">
-                                <Link
-                                    :href="route('admin.configuracion.index')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.configuracion']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-sliders"></i>
-                                    <p>Configuración</p>
-                                </Link>
-                            </li>
-                        </template>
+                        <li
+                            v-if="can('formularios_contacto.ver') || can('administracion.configuracion_critica')"
+                            class="nav-item"
+                            :class="{
+                                'menu-open': isActive(['admin.formularios-contacto', 'admin.configuracion']),
+                            }"
+                        >
+                            <a
+                                href="#"
+                                class="nav-link"
+                                :class="{
+                                    active: isActive(['admin.formularios-contacto', 'admin.configuracion']),
+                                }"
+                            >
+                                <i class="nav-icon fa-solid fa-screwdriver-wrench"></i>
+                                <p>
+                                    Gestión
+                                    <i class="nav-arrow fa-solid fa-angle-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li v-if="can('formularios_contacto.ver')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.formularios-contacto.index')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.formularios-contacto']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-envelope"></i>
+                                        <p>Mensajes</p>
+                                    </Link>
+                                </li>
+                                <li v-if="can('administracion.configuracion_critica')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.configuracion.index')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.configuracion']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-sliders"></i>
+                                        <p>Configuración</p>
+                                    </Link>
+                                </li>
+                            </ul>
+                        </li>
 
-                        <template v-if="can('administracion.usuarios') || can('administracion.roles')">
-                            <li class="nav-header">ADMINISTRACIÓN</li>
-                            <li v-if="can('administracion.usuarios')" class="nav-item">
-                                <Link
-                                    :href="route('admin.users.index')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.users']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-user-gear"></i>
-                                    <p>Usuarios</p>
-                                </Link>
-                            </li>
-                            <li v-if="can('administracion.roles')" class="nav-item">
-                                <Link
-                                    :href="route('admin.roles.index')"
-                                    class="nav-link"
-                                    :class="{ active: isActive(['admin.roles']) }"
-                                >
-                                    <i class="nav-icon fa-solid fa-shield-halved"></i>
-                                    <p>Roles</p>
-                                </Link>
-                            </li>
-                        </template>
+                        <li
+                            v-if="can('administracion.usuarios') || can('administracion.roles')"
+                            class="nav-item"
+                            :class="{ 'menu-open': isActive(['admin.users', 'admin.roles']) }"
+                        >
+                            <a
+                                href="#"
+                                class="nav-link"
+                                :class="{ active: isActive(['admin.users', 'admin.roles']) }"
+                            >
+                                <i class="nav-icon fa-solid fa-user-shield"></i>
+                                <p>
+                                    Administración
+                                    <i class="nav-arrow fa-solid fa-angle-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li v-if="can('administracion.usuarios')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.users.index')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.users']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-user-gear"></i>
+                                        <p>Usuarios</p>
+                                    </Link>
+                                </li>
+                                <li v-if="can('administracion.roles')" class="nav-item">
+                                    <Link
+                                        :href="route('admin.roles.index')"
+                                        class="nav-link"
+                                        :class="{ active: isActive(['admin.roles']) }"
+                                    >
+                                        <i class="nav-icon fa-solid fa-shield-halved"></i>
+                                        <p>Roles</p>
+                                    </Link>
+                                </li>
+                            </ul>
+                        </li>
 
                         <li class="nav-header">CUENTA</li>
                         <li class="nav-item">

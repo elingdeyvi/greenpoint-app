@@ -20,6 +20,7 @@ class HomeController extends Controller
         return Inertia::render('Public/Home', [
             'banners' => $data['banners'],
             'servicios' => $data['servicios'],
+            'galeria' => $data['galeria'],
             'nosotros' => $data['nosotros'],
             'config' => $data['config'],
         ]);

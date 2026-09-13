@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import AdminModal from '@/Components/Admin/AdminModal.vue';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
     pagina: {
@@ -26,6 +27,10 @@ const form = useForm({
         })),
     })),
 });
+
+const closeEditor = () => {
+    router.visit(route('admin.paginas.index'));
+};
 
 const addSeccion = () => {
     form.secciones.push({
@@ -57,7 +62,10 @@ const submit = () => {
         ...data,
         estado: data.estado ? 1 : 0,
         _method: 'put',
-    })).post(route('admin.paginas.aviso.update'), { forceFormData: true });
+    })).post(route('admin.paginas.aviso.update'), {
+        forceFormData: true,
+        onSuccess: () => router.visit(route('admin.paginas.index')),
+    });
 };
 </script>
 
@@ -70,129 +78,150 @@ const submit = () => {
         </template>
         <template #breadcrumb>
             <li class="breadcrumb-item"><Link :href="route('dashboard')">Home</Link></li>
-            <li class="breadcrumb-item active">Aviso</li>
+            <li class="breadcrumb-item"><Link :href="route('admin.paginas.index')">Páginas</Link></li>
+            <li class="breadcrumb-item active">Editar</li>
         </template>
 
-        <form @submit.prevent="submit">
-            <div class="card card-primary mb-3">
-                <div class="card-header">
-                    <h3 class="card-title">Contenido principal</h3>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Título</label>
-                            <input v-model="form.titulo" type="text" class="form-control" required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Meta descripción</label>
-                            <input v-model="form.meta_descripcion" type="text" class="form-control" />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Meta keywords</label>
-                            <input v-model="form.meta_keywords" type="text" class="form-control" />
-                        </div>
-                        <div class="col-md-6 mb-3 d-flex align-items-end">
-                            <div class="form-check">
-                                <input
-                                    id="estado"
-                                    v-model="form.estado"
-                                    class="form-check-input"
-                                    type="checkbox"
-                                />
-                                <label class="form-check-label" for="estado">Página activa</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="card">
+            <div class="card-body text-muted">
+                Abriendo editor…
+                <Link :href="route('admin.paginas.index')" class="ms-2">Volver a páginas</Link>
             </div>
+        </div>
 
-            <div class="card mb-3">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title mb-0">Secciones</h3>
-                    <button type="button" class="btn btn-sm btn-outline-primary" @click="addSeccion">
-                        <i class="fa-solid fa-plus me-1"></i> Agregar sección
-                    </button>
-                </div>
-                <div class="card-body">
-                    <div
-                        v-for="(seccion, sIndex) in form.secciones"
-                        :key="seccion.id || `sec-${sIndex}`"
-                        class="border rounded p-3 mb-3"
-                    >
-                        <div class="row g-2 mb-2">
-                            <div class="col-md-5">
+        <AdminModal
+            :show="true"
+            title="Editar Aviso"
+            size="xl"
+            @close="closeEditor"
+        >
+            <form id="aviso-form" @submit.prevent="submit">
+                <div class="card card-primary mb-3">
+                    <div class="card-header">
+                        <h3 class="card-title">Contenido principal</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label">Título</label>
-                                <input v-model="seccion.titulo" type="text" class="form-control" required />
+                                <input v-model="form.titulo" type="text" class="form-control" required />
                             </div>
-                            <div class="col-md-2">
-                                <label class="form-label">Orden</label>
-                                <input v-model.number="seccion.orden" type="number" min="0" class="form-control" />
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Meta descripción</label>
+                                <input v-model="form.meta_descripcion" type="text" class="form-control" />
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Contenido</label>
-                                <textarea v-model="seccion.contenido" class="form-control" rows="2" />
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Meta keywords</label>
+                                <input v-model="form.meta_keywords" type="text" class="form-control" />
                             </div>
-                            <div class="col-md-1 d-flex align-items-end">
-                                <button
-                                    type="button"
-                                    class="btn btn-outline-danger btn-sm w-100"
-                                    @click="removeSeccion(sIndex)"
-                                >
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="ms-2 mt-2">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <strong class="small">Lista de puntos</strong>
-                                <button
-                                    type="button"
-                                    class="btn btn-sm btn-outline-secondary"
-                                    @click="addLista(sIndex)"
-                                >
-                                    + Punto
-                                </button>
-                            </div>
-                            <div
-                                v-for="(item, lIndex) in seccion.listas"
-                                :key="item.id || `li-${sIndex}-${lIndex}`"
-                                class="input-group input-group-sm mb-1"
-                            >
-                                <input
-                                    v-model="item.texto"
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="Texto del punto"
-                                />
-                                <input
-                                    v-model.number="item.orden"
-                                    type="number"
-                                    min="0"
-                                    class="form-control"
-                                    style="max-width: 80px"
-                                    title="Orden"
-                                />
-                                <button
-                                    type="button"
-                                    class="btn btn-outline-danger"
-                                    @click="removeLista(sIndex, lIndex)"
-                                >
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
+                            <div class="col-md-6 mb-3 d-flex align-items-end">
+                                <div class="form-check">
+                                    <input
+                                        id="estado"
+                                        v-model="form.estado"
+                                        class="form-check-input"
+                                        type="checkbox"
+                                    />
+                                    <label class="form-check-label" for="estado">Página activa</label>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <p v-if="!form.secciones.length" class="text-muted mb-0">Sin secciones</p>
                 </div>
-            </div>
 
-            <div class="mb-4">
-                <button type="submit" class="btn btn-primary" :disabled="form.processing">
-                    Guardar página
+                <div class="card mb-0">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title mb-0">Secciones</h3>
+                        <button type="button" class="btn btn-sm btn-outline-primary" @click="addSeccion">
+                            <i class="fa-solid fa-plus me-1"></i> Agregar sección
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div
+                            v-for="(seccion, sIndex) in form.secciones"
+                            :key="seccion.id || `sec-${sIndex}`"
+                            class="border rounded p-3 mb-3"
+                        >
+                            <div class="row g-2 mb-2">
+                                <div class="col-md-5">
+                                    <label class="form-label">Título</label>
+                                    <input v-model="seccion.titulo" type="text" class="form-control" required />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Orden</label>
+                                    <input v-model.number="seccion.orden" type="number" min="0" class="form-control" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Contenido</label>
+                                    <textarea v-model="seccion.contenido" class="form-control" rows="2" />
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-danger btn-sm w-100"
+                                        @click="removeSeccion(sIndex)"
+                                    >
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="ms-2 mt-2">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <strong class="small">Lista de puntos</strong>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        @click="addLista(sIndex)"
+                                    >
+                                        + Punto
+                                    </button>
+                                </div>
+                                <div
+                                    v-for="(item, lIndex) in seccion.listas"
+                                    :key="item.id || `li-${sIndex}-${lIndex}`"
+                                    class="input-group input-group-sm mb-1"
+                                >
+                                    <input
+                                        v-model="item.texto"
+                                        type="text"
+                                        class="form-control"
+                                        placeholder="Texto del punto"
+                                    />
+                                    <input
+                                        v-model.number="item.orden"
+                                        type="number"
+                                        min="0"
+                                        class="form-control"
+                                        style="max-width: 80px"
+                                        title="Orden"
+                                    />
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-danger"
+                                        @click="removeLista(sIndex, lIndex)"
+                                    >
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <p v-if="!form.secciones.length" class="text-muted mb-0">Sin secciones</p>
+                    </div>
+                </div>
+            </form>
+            <template #footer>
+                <button type="button" class="btn btn-secondary" @click="closeEditor">Cancelar</button>
+                <button
+                    type="submit"
+                    form="aviso-form"
+                    class="btn btn-primary"
+                    :disabled="form.processing"
+                >
+                    <span v-if="form.processing" class="spinner-border spinner-border-sm me-1" />
+                    Guardar
                 </button>
-            </div>
-        </form>
+            </template>
+        </AdminModal>
     </AuthenticatedLayout>
 </template>

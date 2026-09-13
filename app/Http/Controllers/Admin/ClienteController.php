@@ -31,11 +31,9 @@ class ClienteController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(): RedirectResponse
     {
-        return Inertia::render('Admin/Clientes/Form', [
-            'cliente' => null,
-        ]);
+        return redirect()->route('admin.clientes.index');
     }
 
     public function store(StoreClienteRequest $request): RedirectResponse
@@ -53,11 +51,9 @@ class ClienteController extends Controller
             ->with('success', 'Cliente guardado correctamente.');
     }
 
-    public function edit(Cliente $cliente): Response
+    public function edit(Cliente $cliente): RedirectResponse
     {
-        return Inertia::render('Admin/Clientes/Form', [
-            'cliente' => $cliente,
-        ]);
+        return redirect()->route('admin.clientes.index');
     }
 
     public function update(UpdateClienteRequest $request, Cliente $cliente): RedirectResponse

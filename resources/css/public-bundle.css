@@ -1,0 +1,7 @@
+/**
+ * Bundle CSS del sitio público (Bootstrap + FA + estilos GreenPoint).
+ * No incluye AdminLTE ni estilos de login/admin.
+ */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+@import './public.css';

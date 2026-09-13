@@ -1,7 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import AdminModal from '@/Components/Admin/AdminModal.vue';
+import ConfirmDeleteModal from '@/Components/Admin/ConfirmDeleteModal.vue';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps({
     contactos: {
@@ -11,6 +13,11 @@ const props = defineProps({
 });
 
 const search = ref('');
+const showFormModal = ref(false);
+const showDeleteModal = ref(false);
+const editing = ref(null);
+const deleting = ref(null);
+const deletingProcessing = ref(false);
 
 const rows = computed(() => {
     const source = Array.isArray(props.contactos)
@@ -30,10 +37,82 @@ const links = computed(() =>
     Array.isArray(props.contactos) ? [] : (props.contactos?.links ?? []),
 );
 
-const destroy = (id) => {
-    if (!confirm('¿Eliminar este contacto?')) return;
-    router.delete(route('admin.contactos.destroy', id));
+const isEdit = computed(() => !!editing.value?.id);
+
+const form = useForm({
+    ubicacion: '',
+    direccion: '',
+    telefono: '',
+    email: '',
+    mapa_url: '',
+    orden: 0,
+});
+
+const resetForm = (record = null) => {
+    editing.value = record;
+    form.clearErrors();
+    form.reset();
+    form.ubicacion = record?.ubicacion ?? '';
+    form.direccion = record?.direccion ?? '';
+    form.telefono = record?.telefono ?? '';
+    form.email = record?.email ?? '';
+    form.mapa_url = record?.mapa_url ?? '';
+    form.orden = record?.orden ?? 0;
 };
+
+const openCreate = () => {
+    resetForm(null);
+    showFormModal.value = true;
+};
+
+const openEdit = (contacto) => {
+    resetForm(contacto);
+    showFormModal.value = true;
+};
+
+const closeFormModal = () => {
+    showFormModal.value = false;
+    resetForm(null);
+};
+
+const submit = () => {
+    const options = {
+        preserveScroll: true,
+        onSuccess: () => closeFormModal(),
+    };
+
+    if (isEdit.value) {
+        form.put(route('admin.contactos.update', editing.value.id), options);
+    } else {
+        form.post(route('admin.contactos.store'), options);
+    }
+};
+
+const openDelete = (contacto) => {
+    deleting.value = contacto;
+    showDeleteModal.value = true;
+};
+
+const closeDeleteModal = () => {
+    showDeleteModal.value = false;
+    deleting.value = null;
+    deletingProcessing.value = false;
+};
+
+const confirmDelete = () => {
+    if (!deleting.value) return;
+    deletingProcessing.value = true;
+    router.delete(route('admin.contactos.destroy', deleting.value.id), {
+        preserveScroll: true,
+        onFinish: () => closeDeleteModal(),
+    });
+};
+
+watch(showFormModal, (open) => {
+    if (!open) {
+        form.clearErrors();
+    }
+});
 </script>
 
 <template>
@@ -59,9 +138,9 @@ const destroy = (id) => {
                         placeholder="Buscar..."
                         style="width: 200px"
                     />
-                    <Link :href="route('admin.contactos.create')" class="btn btn-sm btn-primary">
+                    <button type="button" class="btn btn-sm btn-primary" @click="openCreate">
                         <i class="fa-solid fa-plus me-1"></i> Nuevo
-                    </Link>
+                    </button>
                 </div>
             </div>
             <div class="card-body table-responsive p-0">
@@ -84,18 +163,19 @@ const destroy = (id) => {
                             <td>{{ contacto.email || '—' }}</td>
                             <td>{{ contacto.orden }}</td>
                             <td class="text-end table-actions">
-                                <Link
-                                    :href="route('admin.contactos.edit', contacto.id)"
+                                <button
+                                    type="button"
                                     class="btn btn-outline-primary btn-sm me-1"
                                     title="Editar"
+                                    @click="openEdit(contacto)"
                                 >
                                     <i class="fa-solid fa-pen"></i>
-                                </Link>
+                                </button>
                                 <button
                                     type="button"
                                     class="btn btn-outline-danger btn-sm"
                                     title="Eliminar"
-                                    @click="destroy(contacto.id)"
+                                    @click="openDelete(contacto)"
                                 >
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
@@ -129,5 +209,104 @@ const destroy = (id) => {
                 </ul>
             </div>
         </div>
+
+        <AdminModal
+            :show="showFormModal"
+            :title="isEdit ? 'Editar contacto' : 'Nuevo contacto'"
+            @close="closeFormModal"
+        >
+            <form id="contacto-form" @submit.prevent="submit">
+                <div class="mb-3">
+                    <label class="form-label">Ubicación</label>
+                    <input
+                        v-model="form.ubicacion"
+                        type="text"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.ubicacion }"
+                        required
+                    />
+                    <div v-if="form.errors.ubicacion" class="invalid-feedback">
+                        {{ form.errors.ubicacion }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Dirección</label>
+                    <textarea
+                        v-model="form.direccion"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.direccion }"
+                        rows="3"
+                    />
+                    <div v-if="form.errors.direccion" class="invalid-feedback">
+                        {{ form.errors.direccion }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Teléfono</label>
+                    <input
+                        v-model="form.telefono"
+                        type="text"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.telefono }"
+                    />
+                    <div v-if="form.errors.telefono" class="invalid-feedback">
+                        {{ form.errors.telefono }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input
+                        v-model="form.email"
+                        type="email"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.email }"
+                    />
+                    <div v-if="form.errors.email" class="invalid-feedback">{{ form.errors.email }}</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">URL del mapa</label>
+                    <input
+                        v-model="form.mapa_url"
+                        type="url"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.mapa_url }"
+                    />
+                    <div v-if="form.errors.mapa_url" class="invalid-feedback">
+                        {{ form.errors.mapa_url }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Orden</label>
+                    <input
+                        v-model.number="form.orden"
+                        type="number"
+                        min="0"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.orden }"
+                    />
+                    <div v-if="form.errors.orden" class="invalid-feedback">{{ form.errors.orden }}</div>
+                </div>
+            </form>
+            <template #footer>
+                <button type="button" class="btn btn-secondary" @click="closeFormModal">Cancelar</button>
+                <button
+                    type="submit"
+                    form="contacto-form"
+                    class="btn btn-primary"
+                    :disabled="form.processing"
+                >
+                    <span v-if="form.processing" class="spinner-border spinner-border-sm me-1" />
+                    Guardar
+                </button>
+            </template>
+        </AdminModal>
+
+        <ConfirmDeleteModal
+            :show="showDeleteModal"
+            :message="`¿Eliminar el contacto «${deleting?.ubicacion ?? ''}»?`"
+            :processing="deletingProcessing"
+            @close="closeDeleteModal"
+            @confirm="confirmDelete"
+        />
     </AuthenticatedLayout>
 </template>

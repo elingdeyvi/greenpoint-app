@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\PaginaAvisoController;
 use App\Http\Controllers\Admin\PaginaHistoriaController;
 use App\Http\Controllers\Admin\PaginaNosotrosController;
 use App\Http\Controllers\Admin\PaginaTecnologiaController;
+use App\Http\Controllers\Admin\PaginasController;
 use App\Http\Controllers\Admin\RedSocialController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\ServicioController as AdminServicioController;
@@ -98,6 +99,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::get('formularios-contacto/{formularioContacto}', [FormularioContactoController::class, 'show'])->name('formularios-contacto.show');
         Route::put('formularios-contacto/{formularioContacto}', [FormularioContactoController::class, 'update'])->name('formularios-contacto.update');
     });
+
+    Route::get('paginas', [PaginasController::class, 'index'])->name('paginas.index');
 
     Route::middleware('permission:modulos.nosotros')->group(function () {
         Route::get('paginas/nosotros', [PaginaNosotrosController::class, 'edit'])->name('paginas.nosotros.edit');

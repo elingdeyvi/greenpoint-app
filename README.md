@@ -45,8 +45,8 @@ Abre: http://127.0.0.1:8000
 
 | Email | Password | Rol |
 |-------|----------|-----|
-| `admin@greenpoint.com` | `admin123456` | Administrador |
-| `admin@admin.com` | `password` | Administrador |
+| `admin@greenpoint.com.mx` | `12345678` | Administrador |
+| `capturista@greenpoint.com.mx` | `12345678` | Capturista |
 
 ## Módulos admin (`/admin/*`)
 

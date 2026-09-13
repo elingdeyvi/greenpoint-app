@@ -10,6 +10,7 @@ export function usePublicSite() {
     const config = computed(() => page.props.publicSite?.config ?? {});
     const redesSociales = computed(() => page.props.publicSite?.redesSociales ?? []);
     const contactos = computed(() => page.props.publicSite?.contactos ?? []);
+    const navServicios = computed(() => page.props.publicSite?.navServicios ?? []);
 
     const getConfig = (clave, fallback = '') => {
         const value = config.value?.[clave];
@@ -34,6 +35,7 @@ export function usePublicSite() {
         config,
         redesSociales,
         contactos,
+        navServicios,
         getConfig,
         sitioNombre,
         empresaDescripcion,

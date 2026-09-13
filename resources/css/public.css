@@ -1,6 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;500;600;700;800;900&display=swap');
+/* GreenPoint public styles — scoped to body.gp-public / .gp-public-wrapper
+ * Bundle: public-bundle.css (sin AdminLTE / login) */
 
-/* GreenPoint public styles — scoped to body.gp-public / .gp-public-wrapper */
+html:has(body.gp-public) {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+}
 
 body.gp-public {
     --gp-primary: #f3663f;
@@ -16,7 +21,7 @@ body.gp-public {
     --gp-section-pad: 50px;
     --gp-section-pad-md: 90px;
 
-    background-color: #fff;
+    background-color: #fff !important;
     color: var(--gp-body);
     font-family: var(--gp-font);
     font-size: 16px;
@@ -24,12 +29,317 @@ body.gp-public {
     line-height: 1.7;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+    /* Aísla de utilidades admin si quedara algo cacheado */
+    --bs-body-font-family: var(--gp-font);
+    --bs-body-font-size: 16px;
+    --bs-body-color: var(--gp-body);
+    --bs-link-color: var(--gp-primary);
+    --bs-link-hover-color: var(--gp-secondary);
+    --bs-primary: #f3663f;
+    --bs-secondary: #24c373;
 }
 
+/* cgi-bin/default.css — body 15px en móvil */
+@media (max-width: 767px) {
+    body.gp-public {
+        font-size: 15px;
+        --bs-body-font-size: 15px;
+    }
+}
+
+body.gp-public .gp-public-wrapper .border-primary {
+    border-color: var(--gp-primary) !important;
+}
+
+/* Themify icons (ti-check en about, como prod) */
+@font-face {
+    font-family: 'themify';
+    src: url('/fonts/themify.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body.gp-public .gp-public-wrapper [class^='ti-'],
+body.gp-public .gp-public-wrapper [class*=' ti-'] {
+    font-family: 'themify' !important;
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body.gp-public .gp-public-wrapper .ti-check:before {
+    content: '\e64c';
+}
+
+body.gp-public .gp-public-wrapper .ti-user:before {
+    content: '\e602';
+}
+
+body.gp-public .gp-public-wrapper .ti-medall:before {
+    content: '\e623';
+}
+
+body.gp-public .gp-public-wrapper .ti-cloud-down:before {
+    content: '\e6b3';
+}
+
+body.gp-public .gp-public-wrapper .ti-calendar:before {
+    content: '\e6b6';
+}
+
+body.gp-public .gp-public-wrapper .ti-time:before {
+    content: '\e72b';
+}
+
+body.gp-public .gp-public-wrapper .about-style1 {
+    position: relative;
+    overflow: visible;
+    z-index: 1;
+}
+
+/*
+ * Video CTA (cgi-bin COUNTER / nos6.jpg)
+ * - Desktop (≥1200): padding 50px como `section` en prod; cover + zoom ligero
+ *   recorta las franjas verdes (~19px) del JPG.
+ * - ≤1199 / ≤991: hereda padding 90px / 70px de `section` (ahí sí se ve la franja).
+ */
+body.gp-public .gp-public-wrapper .gp-video-banner {
+    position: relative;
+    z-index: 2;
+    overflow: hidden !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-color: transparent;
+}
+
+@media screen and (min-width: 1200px) {
+    body.gp-public .gp-public-wrapper section.gp-video-banner {
+        padding: 50px 0 !important;
+        /* 19px/600 ≈ 3.2% por lado → ~7% de zoom oculta franjas en desktop */
+        background-size: 107% !important;
+        background-position: center center !important;
+    }
+}
+
+body.gp-public .gp-public-wrapper .gp-overlay-dark-4::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0.4;
+    z-index: 1;
+}
+
+body.gp-public .gp-public-wrapper .gp-overlay-dark-4 > .container {
+    position: relative;
+    z-index: 2;
+}
+
+body.gp-public .gp-public-wrapper .gp-video-banner h2 {
+    color: #fff !important;
+}
+
+body.gp-public .gp-public-wrapper .video_btn {
+    position: relative;
+    height: 80px;
+    width: 80px;
+    background: var(--gp-primary);
+    text-align: center;
+    display: inline-block;
+    line-height: 80px;
+    color: #fff !important;
+    border-radius: 50%;
+    transition-duration: 0s;
+}
+
+body.gp-public .gp-public-wrapper .video_btn:hover i,
+body.gp-public .gp-public-wrapper .video_btn:focus i {
+    color: var(--gp-secondary) !important;
+}
+
+body.gp-public .gp-public-wrapper .video_btn:after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 80px;
+    width: 80px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.3;
+    animation: pulse-border 1500ms ease-out infinite;
+}
+
+body.gp-public .gp-public-wrapper .video_btn:before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 95px;
+    width: 95px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.3;
+    animation: pulse-border 1500ms ease-out infinite;
+}
+
+@media screen and (max-width: 1199px) {
+    body.gp-public .gp-public-wrapper .video_btn {
+        height: 75px;
+        width: 75px;
+        line-height: 75px;
+    }
+
+    body.gp-public .gp-public-wrapper .video_btn:after {
+        height: 75px;
+        width: 75px;
+    }
+
+    body.gp-public .gp-public-wrapper .video_btn:before {
+        height: 90px;
+        width: 90px;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    body.gp-public .gp-public-wrapper .video_btn {
+        height: 70px;
+        width: 70px;
+        line-height: 70px;
+    }
+
+    body.gp-public .gp-public-wrapper .video_btn:after {
+        height: 70px;
+        width: 70px;
+    }
+
+    body.gp-public .gp-public-wrapper .video_btn:before {
+        height: 85px;
+        width: 85px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    body.gp-public .gp-public-wrapper .video_btn {
+        height: 60px;
+        width: 60px;
+        line-height: 60px;
+    }
+
+    body.gp-public .gp-public-wrapper .video_btn:after {
+        height: 60px;
+        width: 60px;
+    }
+
+    body.gp-public .gp-public-wrapper .video_btn:before {
+        height: 75px;
+        width: 75px;
+    }
+}
+
+body.gp-public.app-wrapper,
+body.gp-public.layout-fixed,
+body.gp-public.sidebar-expand-lg,
+body.gp-public.login-page,
+body.gp-public.register-page {
+    /* Evita clases de AdminLTE/login en páginas públicas */
+    display: block !important;
+    background: #fff !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+body.gp-public #app,
 body.gp-public .gp-public-wrapper,
 body.gp-public .public-layout {
     font-family: var(--gp-font);
     color: var(--gp-body);
+    background: #fff;
+    min-height: 100vh;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden;
+}
+
+body.gp-public .gp-public-wrapper > main {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Full-bleed solo en público (header NO aquí: maneja su propio position) */
+body.gp-public .gp-public-wrapper .gp-full-bleed,
+body.gp-public .gp-public-wrapper .gp-carousel,
+body.gp-public .gp-public-wrapper .full-screen,
+body.gp-public .gp-public-wrapper .gp-banner-section,
+body.gp-public .gp-public-wrapper .gp-video-cta,
+body.gp-public .gp-public-wrapper .gp-gallery-home,
+body.gp-public .gp-public-wrapper .gp-orange-bar,
+body.gp-public .gp-public-wrapper .gp-footer {
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+}
+
+/* Anchos de container como plantilla producción (Yodden) */
+@media (min-width: 1200px) {
+    body.gp-public .gp-public-wrapper .container,
+    body.gp-public .gp-public-wrapper .container-lg,
+    body.gp-public .gp-public-wrapper .container-md,
+    body.gp-public .gp-public-wrapper .container-sm,
+    body.gp-public .gp-public-wrapper .container-xl,
+    body.gp-public .gp-public-wrapper .container-xxl {
+        max-width: 1170px;
+    }
+}
+
+@media (min-width: 1400px) {
+    body.gp-public .gp-public-wrapper .container,
+    body.gp-public .gp-public-wrapper .container-lg,
+    body.gp-public .gp-public-wrapper .container-md,
+    body.gp-public .gp-public-wrapper .container-sm,
+    body.gp-public .gp-public-wrapper .container-xl,
+    body.gp-public .gp-public-wrapper .container-xxl {
+        max-width: 1320px;
+    }
+}
+
+/*
+ * Padding horizontal de containers = Bootstrap (mitad del gutter).
+ * Prod greenpoint.com.mx calcula ~12px (1.5rem * 0.5), no el gutter completo.
+ */
+body.gp-public .gp-public-wrapper .container,
+body.gp-public .gp-public-wrapper .container-fluid,
+body.gp-public .gp-public-wrapper .container-lg,
+body.gp-public .gp-public-wrapper .container-md,
+body.gp-public .gp-public-wrapper .container-sm,
+body.gp-public .gp-public-wrapper .container-xl,
+body.gp-public .gp-public-wrapper .container-xxl {
+    padding-left: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+    padding-right: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+}
+
+body.gp-public .gp-public-wrapper .row > * {
+    padding-right: calc(var(--bs-gutter-x) * 0.5);
+    padding-left: calc(var(--bs-gutter-x) * 0.5);
 }
 
 body.gp-public .gp-public-wrapper a {
@@ -51,7 +361,7 @@ body.gp-public .gp-public-wrapper h6 {
     font-family: var(--gp-font);
     font-weight: 600;
     color: var(--gp-heading);
-    letter-spacing: normal;
+    /* prod: headings heredan letter-spacing: 0.5px del body */
 }
 
 body.gp-public .gp-public-wrapper .text-primary,
@@ -91,8 +401,16 @@ body.gp-public .gp-public-wrapper .font-weight-400 {
     font-weight: 400 !important;
 }
 
+body.gp-public .gp-public-wrapper .font-weight-500 {
+    font-weight: 500 !important;
+}
+
 body.gp-public .gp-public-wrapper .font-weight-600 {
     font-weight: 600 !important;
+}
+
+body.gp-public .gp-public-wrapper .font-weight-700 {
+    font-weight: 700 !important;
 }
 
 body.gp-public .gp-public-wrapper .opacity8 {
@@ -220,6 +538,19 @@ body.gp-public .gp-public-wrapper .btn-outline-secondary:hover {
 
 /* ---------- Sections ---------- */
 
+/* cgi-bin default.css: padding base de <section> */
+body.gp-public .gp-public-wrapper section {
+    padding: 50px 0;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+}
+
+/* El banner de video no debe pintar fondo blanco detrás del cover */
+body.gp-public .gp-public-wrapper section.gp-video-banner {
+    background-color: transparent;
+}
+
 body.gp-public .gp-public-wrapper .gp-section,
 body.gp-public .gp-public-wrapper section.section {
     padding: var(--gp-section-pad) 0;
@@ -239,8 +570,23 @@ body.gp-public .gp-public-wrapper .gp-section-sm {
 }
 
 @media screen and (max-width: 1199px) {
+    body.gp-public .gp-public-wrapper section {
+        padding: 90px 0;
+    }
+
+    body.gp-public .gp-public-wrapper section.md,
     body.gp-public .gp-public-wrapper .gp-section {
         padding: 70px 0;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    body.gp-public .gp-public-wrapper section {
+        padding: 70px 0;
+    }
+
+    body.gp-public .gp-public-wrapper section.md {
+        padding: 50px 0;
     }
 }
 
@@ -261,7 +607,7 @@ body.gp-public .gp-public-wrapper .section-heading.text-start h2 {
 
 body.gp-public .gp-public-wrapper .section-heading h2 {
     position: relative;
-    line-height: 1.2;
+    line-height: 45px;
     font-size: 40px;
     width: 70%;
     font-weight: 700;
@@ -270,7 +616,18 @@ body.gp-public .gp-public-wrapper .section-heading h2 {
     color: var(--gp-heading);
 }
 
-body.gp-public .gp-public-wrapper .section-heading .subtitle,
+body.gp-public .gp-public-wrapper .section-heading .subtitle {
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block;
+    padding-left: 20px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #232323;
+    letter-spacing: 3px;
+    /* prod: sin font-size → hereda 16px del body */
+}
+
 body.gp-public .gp-public-wrapper .gp-eyebrow {
     margin-bottom: 20px;
     position: relative;
@@ -280,7 +637,6 @@ body.gp-public .gp-public-wrapper .gp-eyebrow {
     font-weight: 600;
     color: #232323;
     letter-spacing: 3px;
-    font-size: 0.9rem;
 }
 
 body.gp-public .gp-public-wrapper .section-heading .subtitle::before,
@@ -306,6 +662,10 @@ body.gp-public .gp-public-wrapper .gp-section-lead {
 }
 
 @media screen and (max-width: 1199px) {
+    body.gp-public .gp-public-wrapper .section-heading .subtitle {
+        margin-bottom: 25px;
+    }
+
     body.gp-public .gp-public-wrapper .section-heading h2 {
         font-size: 36px;
     }
@@ -316,9 +676,27 @@ body.gp-public .gp-public-wrapper .gp-section-lead {
         margin-bottom: 40px;
     }
 
+    body.gp-public .gp-public-wrapper .section-heading .subtitle {
+        margin-bottom: 20px;
+    }
+
     body.gp-public .gp-public-wrapper .section-heading h2 {
         font-size: 33px;
         width: 80%;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    body.gp-public .gp-public-wrapper .section-heading {
+        margin-bottom: 30px;
+    }
+
+    body.gp-public .gp-public-wrapper .section-heading .subtitle {
+        margin-bottom: 15px;
+    }
+
+    body.gp-public .gp-public-wrapper .section-heading h2 {
+        width: 100%;
     }
 }
 
@@ -331,107 +709,529 @@ body.gp-public .gp-public-wrapper .gp-section-lead {
 }
 
 /* ---------- Navbar ---------- */
-
-body.gp-public .gp-public-wrapper .gp-navbar {
+/*
+ * Header overlay transparente (antes de cambiar a relative).
+ * scrollHeader fija .navbar-default en blanco.
+ * .top-position1 { margin-top: -96px } solapa el banner bajo el header.
+ */
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1030;
-    background: transparent;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
+    z-index: 99999;
+    width: 100%;
+    background: transparent !important;
+    transition: all 0.5s ease 0s;
+    box-shadow: none;
 }
 
-body.gp-public .gp-public-wrapper .gp-navbar.is-scrolled {
-    position: fixed;
-    background: rgba(30, 32, 34, 0.96);
-    border-bottom-color: transparent;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.fixedHeader .navbar-default,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.fixedHeader .navbar,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.fixedHeader .container-fluid,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.fixedHeader .menu_area {
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
-body.gp-public .gp-public-wrapper .gp-navbar .navbar-brand {
-    font-weight: 700;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1.2rem;
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-default {
+    background: transparent !important;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    box-shadow: none !important;
+    transition: all 0.5s ease 0s;
 }
 
-body.gp-public .gp-public-wrapper .gp-navbar .navbar-brand:hover {
-    color: #fff;
+@media (max-width: 991.98px) {
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.fixedHeader .navbar-default {
+        border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+    }
 }
 
-body.gp-public .gp-public-wrapper .gp-navbar .gp-brand-logo {
-    height: 42px;
+/* Solo con scrollHeader en desktop (cgi-bin: reglas dentro de min-width 992px) */
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-default {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 99;
+        width: 100%;
+        background: #fff !important;
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+        border-bottom-color: transparent !important;
+        transition: all 0.2s ease 0s;
+    }
+}
+
+/* Utilidad del tema (cgi-bin/default.css) */
+body.gp-public .gp-public-wrapper .border-color-light-white {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper .px-lg-1-6 {
+        padding-left: 1.6rem !important;
+        padding-right: 1.6rem !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    body.gp-public .gp-public-wrapper .px-xl-2-5 {
+        padding-left: 2.5rem !important;
+        padding-right: 2.5rem !important;
+    }
+}
+
+@media (min-width: 1400px) {
+    body.gp-public .gp-public-wrapper .px-xxl-2-9 {
+        padding-left: 2.9rem !important;
+        padding-right: 2.9rem !important;
+    }
+}
+
+/* Container del nav */
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .container-fluid {
+    position: relative;
+}
+
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .menu_area {
+    position: relative;
+    z-index: 2;
+}
+
+/* Altura prod ≈96px (cgi-bin: padding 22+20 + logo 43) */
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-header-custom {
+    padding: 22px 0 20px;
+    transition: padding 0.5s ease;
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .navbar-header-custom {
+        padding: 10px 0;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.fixedHeader .navbar-default {
+        min-height: 96px;
+    }
+
+    /* Header fijo blanco (como producción) — solo desktop */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-link,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .gp-nav-toggle {
+        color: #282b2d !important;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .gp-nav-toggle::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .nav-link::after {
+        border-color: transparent #282b2d #282b2d transparent;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-link:hover,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-link.active,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-link.show,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .gp-nav-toggle:hover,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .gp-nav-toggle.active,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .gp-nav-toggle.show {
+        color: var(--gp-primary) !important;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .gp-nav-toggle.active::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1.scrollHeader .nav-item.has-sub > .gp-nav-toggle.show::after {
+        border-color: transparent var(--gp-primary) var(--gp-primary) transparent;
+    }
+}
+
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-brand {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    transition: all 0.5s ease 0s;
+}
+
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .gp-brand-logo {
+    display: block;
+    max-height: 43px;
+    height: auto;
     width: auto;
-    filter: brightness(0) invert(1);
+    transition: 0.5s;
 }
 
-body.gp-public .gp-public-wrapper .gp-navbar .nav-link {
-    color: rgba(255, 255, 255, 0.92) !important;
-    font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 0.5px;
+/* attr-nav como cgi-bin: ms-lg-auto empuja a la derecha */
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .attr-nav {
+    flex-shrink: 0;
+}
+
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .attr-nav > ul {
+    padding: 0;
+    margin: 0 0 -5px;
+    list-style: none;
+    display: inline-block;
+}
+
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .attr-nav > ul > li {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .attr-nav > ul > li > a.butn {
+    margin: 0;
+}
+
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    position: relative;
+}
+
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-header {
+    flex-shrink: 0;
+}
+
+/* Desktop: logo | menú | (ms-lg-auto) | WhatsApp — como prod */
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler {
+        display: none !important;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-nav {
+        display: flex !important;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        margin-left: auto;
+        margin-right: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-nav > .nav-item {
+        margin-left: 10px;
+        list-style: none;
+    }
+
+    /* prod: .attr-nav { float:right; margin-left:11px } + ms-lg-auto ≈ margen izq. grande */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .attr-nav.ms-lg-auto {
+        margin-left: auto !important;
+    }
+}
+
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-link,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .gp-nav-toggle {
+    color: #fff !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
-    padding: 0.65rem 0.85rem !important;
+    padding: 21px 0.5rem !important;
+    line-height: 1.2;
+    text-decoration: none !important;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    position: relative;
+    white-space: nowrap;
 }
 
-body.gp-public .gp-public-wrapper .gp-navbar .nav-link:hover,
-body.gp-public .gp-public-wrapper .gp-navbar .nav-link.active,
-body.gp-public .gp-public-wrapper .gp-navbar .nav-link.show {
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item {
+    margin-left: 10px;
+}
+
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .nav-link,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle {
+    padding-right: 1.1rem !important;
+}
+
+/* Chevron tipo producción (rombo), no caret Bootstrap */
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle::after,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .nav-link::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin-top: -3px;
+    width: 6px;
+    height: 6px;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    border-color: transparent #fff #fff transparent;
+    transform: rotate(45deg);
+    display: block;
+}
+
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .dropdown-toggle::after {
+    display: none !important;
+}
+
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-link:hover,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-link.active,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-link.show,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .gp-nav-toggle:hover,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .gp-nav-toggle.active,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .gp-nav-toggle.show {
     color: var(--gp-primary) !important;
 }
 
-body.gp-public .gp-public-wrapper .gp-navbar .dropdown-menu {
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle.active::after,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle.show::after,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .nav-link.active::after {
+    border-color: transparent var(--gp-primary) var(--gp-primary) transparent;
+}
+
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .dropdown-menu {
     border: 0;
-    border-radius: var(--gp-radius);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-    padding: 0.5rem 0;
-    margin-top: 0.35rem;
+    border-radius: 0;
+    background: #fff;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+    padding: 15px 0;
+    margin-top: 0;
+    min-width: 225px;
 }
 
-body.gp-public .gp-public-wrapper .gp-navbar .dropdown-item {
-    font-size: 14px;
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .dropdown-item {
+    font-size: 15px;
     font-weight: 500;
-    color: var(--gp-heading);
-    padding: 0.55rem 1.25rem;
+    color: #282b2d;
+    padding: 0.45rem 1.35rem;
+    text-transform: none;
+    letter-spacing: 0.3px;
 }
 
-body.gp-public .gp-public-wrapper .gp-navbar .dropdown-item:hover,
-body.gp-public .gp-public-wrapper .gp-navbar .dropdown-item.active {
-    background: rgba(243, 102, 63, 0.08);
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .dropdown-item:hover,
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .dropdown-item.active {
+    background: transparent;
     color: var(--gp-primary);
 }
 
-body.gp-public .gp-public-wrapper .gp-navbar .navbar-toggler {
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler {
     border: 0;
     background: var(--gp-primary);
     padding: 0.45rem 0.65rem;
     border-radius: 4px;
 }
 
-body.gp-public .gp-public-wrapper .gp-navbar .navbar-toggler-icon {
+body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler-icon {
     filter: brightness(0) invert(1);
 }
 
 @media (max-width: 991.98px) {
-    body.gp-public .gp-public-wrapper .gp-navbar .navbar-collapse {
-        background: #1e2022;
-        margin-top: 0.75rem;
-        border-radius: var(--gp-radius);
-        padding: 0.75rem;
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .container-fluid {
+        position: relative;
+        min-height: 70px;
     }
 
-    body.gp-public .gp-public-wrapper .gp-navbar .dropdown-menu {
-        background: transparent;
+    /* cgi-bin ≤991: padding 4px 0 8px */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-header-custom {
+        padding: 4px 0 8px;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-brand {
+        margin-top: 6px;
+        padding: 0;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .attr-nav {
+        /* cgi-bin ≤991: float left + espacio para toggler; WhatsApp oculto (d-xl) */
+        float: left;
+        margin-left: 0;
+        margin-right: 70px;
+    }
+
+    /* Toggler como producción: 50x45 naranja */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler {
+        width: 50px;
+        height: 45px;
+        padding: 0;
+        border-radius: 0;
+        border: none !important;
+        background: #f3663f !important;
+        position: absolute;
+        right: 15px;
+        top: 13px;
+        z-index: 20;
+        display: inline-block;
         box-shadow: none;
-        padding-left: 0.75rem;
     }
 
-    body.gp-public .gp-public-wrapper .gp-navbar .dropdown-item {
-        color: rgba(255, 255, 255, 0.85);
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler-icon {
+        display: none !important;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler::before {
+        content: '';
+        position: absolute;
+        top: 16px;
+        right: 15px;
+        display: block;
+        height: 2px;
+        width: 20px;
+        background: #fff !important;
+        transition: all 0.3s ease;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler::after {
+        content: '';
+        position: absolute;
+        top: 22px;
+        right: 15px;
+        display: block;
+        height: 8px;
+        width: 20px;
+        border-top: 2px solid #fff;
+        border-bottom: 2px solid #fff;
+        transition: all 0.3s ease;
+    }
+
+    /* X al minimizar: líneas blancas sobre naranja (styles.css) */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler.menu-opened {
+        background: #f3663f !important;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler.menu-opened::before {
+        top: 23px;
+        width: 19px;
+        background: #fff !important;
+        transform: rotate(-45deg);
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-toggler.menu-opened::after {
+        top: 23px;
+        height: 2px;
+        width: 19px;
+        border: 0;
+        background: #fff !important;
+        transform: rotate(45deg);
+    }
+
+    /* Menú móvil: panel absoluto como cgi-bin (#nav display none/block) */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-nav {
+        display: none;
+        background: #fff;
+        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+        position: absolute;
+        top: 71px;
+        left: 0;
+        width: 100%;
+        z-index: 30;
+        margin: 0;
+        padding: 0;
+        float: none;
+        list-style: none;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .navbar-nav.open {
+        display: block;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item {
+        margin-left: 0;
+        width: 100%;
+        border-top: 1px solid #e6e6e6;
+        float: none;
+        position: relative;
+        padding: 0;
+    }
+
+    /* cgi-bin nav-menu.css ≤991: .navbar-nav > li > a
+       Altura ≈ 53px: padding 14+14 + line-height body 1.7 (15×1.7≈25.5)
+       Local tenía line-height: 1.2 → ~46px */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-link,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .gp-nav-toggle {
+        color: #282b2d !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        padding: 14px 20px !important;
+        width: 100% !important;
+        text-align: left !important;
+        border-bottom: 0 !important;
+        display: block !important;
+        letter-spacing: 0.8px !important;
+        text-transform: uppercase !important;
+        line-height: 1.7 !important;
+        white-space: normal !important;
+    }
+
+    /* En móvil se ocultan chevrons; prod usa .submenu-button */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle::after,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .nav-link::after {
+        display: none !important;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .submenu-button {
+        position: absolute !important;
+        z-index: 99 !important;
+        right: 0 !important;
+        top: 0 !important;
+        display: block !important;
+        height: 51px !important;
+        width: 51px !important;
+        cursor: pointer;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .submenu-button::after {
+        content: '' !important;
+        position: absolute !important;
+        top: 24px !important;
+        right: 16px !important;
+        width: 10px !important;
+        height: 2px !important;
+        display: block !important;
+        background: #282b2d !important;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .submenu-button::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 20px !important;
+        right: 20px !important;
+        display: block !important;
+        width: 2px !important;
+        height: 10px !important;
+        background: #282b2d !important;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub.active > .submenu-button::before,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub > .gp-nav-toggle.show ~ .submenu-button::before,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .nav-item.has-sub:has(> .gp-nav-toggle.show) > .submenu-button::before {
+        display: none !important;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .dropdown-menu {
+        background: #f5f5f5 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        position: static !important;
+        float: none !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        display: none !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .dropdown-menu.show {
+        display: block !important;
+    }
+
+    /* cgi-bin: .navbar ul ul li a */
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .dropdown-item {
+        width: 100% !important;
+        border-bottom: 0 !important;
+        color: #575a7b !important;
+        background: none !important;
+        padding: 10px 30px !important;
+        font-weight: 500 !important;
+        font-size: 15px !important;
+        text-transform: none !important;
+        letter-spacing: 0.3px !important;
+    }
+
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .dropdown-item:hover,
+    body.gp-public .gp-public-wrapper header.gp-navbar.header-style1 .dropdown-item.active {
+        background: #f5f5f5 !important;
+        color: #000 !important;
     }
 }
 
@@ -504,12 +1304,67 @@ body.gp-public .gp-public-wrapper .gp-breadcrumb li:last-child span {
     color: var(--gp-primary);
 }
 
-body.gp-public .gp-public-wrapper .gp-breadcrumb li:not(:last-child)::after {
+body.gp-public .gp-public-wrapper .gp-breadcrumb li:not(:last-child)::after,
+body.gp-public .gp-public-wrapper .gp-page-breadcrumb ul li:not(:last-child)::after {
     content: '|';
     font-size: 18px;
     font-weight: 700;
     color: #ffffff;
     padding: 0 10px;
+}
+
+/* cgi-bin .breadcrumb (además de gp-breadcrumb legacy) */
+body.gp-public .gp-public-wrapper .gp-page-breadcrumb {
+    display: block;
+    position: relative;
+    margin: 0;
+    z-index: 1;
+}
+
+body.gp-public .gp-public-wrapper .gp-page-breadcrumb ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+body.gp-public .gp-public-wrapper .gp-page-breadcrumb ul li {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+body.gp-public .gp-public-wrapper .gp-page-breadcrumb ul li a {
+    font-size: 18px;
+    color: #ffffff;
+    vertical-align: middle;
+    font-weight: 600;
+}
+
+body.gp-public .gp-public-wrapper .gp-page-breadcrumb ul li:last-child a {
+    color: var(--gp-primary);
+}
+
+body.gp-public .gp-public-wrapper .gp-page-breadcrumb ul li:first-child a:hover {
+    color: var(--gp-secondary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+body.gp-public .gp-public-wrapper .right-40 {
+    right: 40%;
+    left: auto;
+}
+
+body.gp-public .gp-public-wrapper .top-25 {
+    top: 25%;
+}
+
+body.gp-public .gp-public-wrapper .bottom-10 {
+    bottom: 10%;
+}
+
+body.gp-public .gp-public-wrapper .z-index-1 {
+    z-index: 1;
 }
 
 body.gp-public .gp-public-wrapper .page-title-shape1 {
@@ -577,9 +1432,31 @@ body.gp-public .gp-public-wrapper .page-title-shape2 {
 
 /* ---------- Home banner carousel ---------- */
 
+body.gp-public .gp-public-wrapper .gp-banner-section {
+    position: relative;
+}
+
+/* Sin margen negativo: el header absolute + banner a 100vh no se desplaza.
+ * La franja blanca asoma con service-style1 { margin-top: -70px }. */
+body.gp-public .gp-public-wrapper .top-position1 {
+    margin-top: 0;
+}
+
+@media (max-width: 991.98px) {
+    body.gp-public .gp-public-wrapper .top-position1 {
+        margin-top: 0;
+    }
+}
+
+body.gp-public .gp-public-wrapper .full-screen {
+    /* Fallback; JS (cgi-bin fullScreenHeight) pone window.innerHeight */
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
 body.gp-public .gp-public-wrapper .gp-carousel {
     position: relative;
-    min-height: 100vh;
+    min-height: 100%;
     overflow: hidden;
     background: #111;
 }
@@ -600,48 +1477,193 @@ body.gp-public .gp-public-wrapper .gp-carousel-slide.is-active {
     position: relative;
     opacity: 1;
     visibility: visible;
+    min-height: 100%;
+}
+
+body.gp-public .gp-public-wrapper .gp-banner-row {
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
 body.gp-public .gp-public-wrapper .gp-carousel-slide::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(0, 0, 0, 0.7);
 }
 
 body.gp-public .gp-public-wrapper .gp-carousel-caption {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     width: 100%;
-    padding: 8rem 0 5rem;
+    padding-top: 0;
+    padding-bottom: 0;
     color: #fff;
     text-align: left;
+    letter-spacing: 0.5px;
 }
 
+body.gp-public .gp-public-wrapper .banner1 .gp-carousel-caption .title,
+body.gp-public .gp-public-wrapper .banner1 .gp-carousel-caption h1,
 body.gp-public .gp-public-wrapper .gp-carousel-caption .title,
-body.gp-public .gp-public-wrapper .gp-carousel-caption h1,
-body.gp-public .gp-public-wrapper .gp-carousel-caption h2 {
+body.gp-public .gp-public-wrapper .gp-carousel-caption h1 {
     color: #fff !important;
-    font-weight: 700;
-    font-size: clamp(2.1rem, 5vw, 4.5rem);
+    font-weight: 700 !important;
+    font-size: 72px !important;
     line-height: 1.15;
-    margin-bottom: 1.5rem;
-    max-width: 18ch;
+    margin-bottom: 2.2rem;
+    max-width: none;
+    letter-spacing: normal;
 }
 
-body.gp-public .gp-public-wrapper .gp-carousel-caption p {
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 1.15rem;
-    max-width: 36rem;
-    margin-bottom: 1.75rem;
+body.gp-public .gp-public-wrapper .gp-carousel-caption .title .font-weight-400,
+body.gp-public .gp-public-wrapper .gp-carousel-caption h1 .font-weight-400 {
+    font-weight: 400 !important;
+    display: inline;
+}
+
+/* Utilidades de posición deco banner (cgi-bin default.css) */
+body.gp-public .gp-public-wrapper .left {
+    left: 0;
+}
+
+body.gp-public .gp-public-wrapper .bottom-5 {
+    bottom: 5%;
+}
+
+body.gp-public .gp-public-wrapper .bottom-25 {
+    bottom: 25%;
+}
+
+body.gp-public .gp-public-wrapper .top-20 {
+    top: 20%;
+}
+
+body.gp-public .gp-public-wrapper .top-25 {
+    top: 25%;
+}
+
+body.gp-public .gp-public-wrapper .left-15 {
+    left: 15%;
+}
+
+body.gp-public .gp-public-wrapper .right-20 {
+    right: 20%;
+}
+
+body.gp-public .gp-public-wrapper .py-1-6 {
+    padding-top: 1.6rem !important;
+    padding-bottom: 1.6rem !important;
+}
+
+body.gp-public .gp-public-wrapper .border-radius-5 {
+    border-radius: 5px !important;
+}
+
+body.gp-public .gp-public-wrapper .mb-2-2 {
+    margin-bottom: 2.2rem !important;
+}
+
+body.gp-public .gp-public-wrapper .display-28 {
+    font-size: 1.1rem !important;
+}
+
+/* Anchos del <p> del banner como cgi-bin/default.css */
+@media (min-width: 576px) {
+    body.gp-public .gp-public-wrapper .w-sm-95 {
+        width: 95% !important;
+    }
+}
+
+@media (min-width: 768px) {
+    body.gp-public .gp-public-wrapper .w-md-90 {
+        width: 90% !important;
+    }
+}
+
+body.gp-public .gp-public-wrapper .gp-carousel-caption p,
+body.gp-public .gp-public-wrapper .gp-carousel-caption .display-28 {
+    color: #ffffff;
+    font-size: 1.1rem;
+    margin-bottom: 2.2rem;
+    letter-spacing: 0.5px;
+    line-height: 1.7;
+    max-width: none;
+}
+
+/* Original: d-none d-sm-block → oculto <576px, visible desde sm */
+@media (max-width: 575.98px) {
+    body.gp-public .gp-public-wrapper .gp-carousel-caption p.d-none {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    body.gp-public .gp-public-wrapper .banner1 .gp-carousel-caption .title,
+    body.gp-public .gp-public-wrapper .banner1 .gp-carousel-caption h1,
+    body.gp-public .gp-public-wrapper .gp-carousel-caption .title,
+    body.gp-public .gp-public-wrapper .gp-carousel-caption h1 {
+        font-size: 54px !important;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    body.gp-public .gp-public-wrapper .banner1 .gp-carousel-caption .title,
+    body.gp-public .gp-public-wrapper .banner1 .gp-carousel-caption h1,
+    body.gp-public .gp-public-wrapper .gp-carousel-caption .title,
+    body.gp-public .gp-public-wrapper .gp-carousel-caption h1 {
+        font-size: 46px !important;
+    }
+}
+
+/* Producción: 40px ≤767, 38px ≤575 */
+@media screen and (max-width: 767px) {
+    body.gp-public .gp-public-wrapper .banner1 .gp-carousel-caption .title,
+    body.gp-public .gp-public-wrapper .banner1 .gp-carousel-caption h1,
+    body.gp-public .gp-public-wrapper .gp-carousel-caption .title,
+    body.gp-public .gp-public-wrapper .gp-carousel-caption h1 {
+        font-size: 40px !important;
+        line-height: 1.25;
+        margin-bottom: 1.5rem;
+    }
+
+    body.gp-public .gp-public-wrapper .gp-carousel-caption .butn {
+        padding: 12px 26px !important;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+    }
+}
+
+@media screen and (max-width: 575px) {
+    body.gp-public .gp-public-wrapper .banner1 .gp-carousel-caption .title,
+    body.gp-public .gp-public-wrapper .banner1 .gp-carousel-caption h1,
+    body.gp-public .gp-public-wrapper .gp-carousel-caption .title,
+    body.gp-public .gp-public-wrapper .gp-carousel-caption h1 {
+        font-size: 38px !important;
+        line-height: 1.3;
+        margin-bottom: 1.25rem;
+    }
+
+    body.gp-public .gp-public-wrapper .gp-carousel-caption .display-28,
+    body.gp-public .gp-public-wrapper .gp-carousel-caption p {
+        font-size: 1rem !important;
+        max-width: 100%;
+        margin-bottom: 1.25rem;
+        line-height: 1.6;
+    }
+
+    body.gp-public .gp-public-wrapper .gp-carousel-caption .butn {
+        padding: 11px 22px !important;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+    }
 }
 
 body.gp-public .gp-public-wrapper .gp-carousel-dots {
     position: absolute;
-    z-index: 2;
+    z-index: 3;
     left: 50%;
-    bottom: 1.5rem;
+    bottom: 50px;
     transform: translateX(-50%);
     display: flex;
     gap: 0.5rem;
@@ -663,66 +1685,267 @@ body.gp-public .gp-public-wrapper .gp-carousel-dot.is-active {
 
 body.gp-public .gp-public-wrapper .gp-carousel-nav {
     position: absolute;
-    z-index: 2;
+    z-index: 3;
     top: 50%;
     transform: translateY(-50%);
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 70px;
+    height: 70px;
     border: 0;
     border-radius: 999px;
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(243, 102, 63, 0.2);
     color: #fff;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.1rem;
+    opacity: 0;
+    transition: background 0.3s ease, opacity 0.3s ease;
+}
+
+body.gp-public .gp-public-wrapper .gp-carousel:hover .gp-carousel-nav,
+body.gp-public .gp-public-wrapper .gp-banner-section:hover .gp-carousel-nav {
+    opacity: 1;
+}
+
+body.gp-public .gp-public-wrapper .gp-carousel-nav:hover {
+    background: #fff;
+    color: var(--gp-primary);
 }
 
 body.gp-public .gp-public-wrapper .gp-carousel-prev {
-    left: 1.25rem;
+    left: 15px;
 }
 
 body.gp-public .gp-public-wrapper .gp-carousel-next {
-    right: 1.25rem;
+    right: 15px;
 }
 
+@media (max-width: 991.98px) {
+    body.gp-public .gp-public-wrapper .gp-carousel-nav {
+        display: none !important;
+    }
+}
+
+/* Formas del banner — mismos valores que cgi-bin/styles.css
+ * Nota: .ani-top-bottom anima `transform: translate(...)` y en runtime
+ * pisa el rotate(70deg) de .banner-shape1 → el naranja se ve horizontal
+ * (comportamiento real de producción). */
 body.gp-public .gp-public-wrapper .banner-shape1 {
-    width: 190px;
-    height: 140px;
-    background: var(--gp-primary);
-    border-radius: var(--gp-radius);
+    height: 170px;
+    width: 320px;
+    background: #f3663f;
+    border-radius: 10px;
     position: absolute;
-    bottom: 8%;
-    right: 6%;
-    transform: rotate(53deg);
-    z-index: 2;
+    top: 11%;
+    right: -8%;
+    z-index: 1;
+    transform: rotate(70deg);
     pointer-events: none;
 }
 
 body.gp-public .gp-public-wrapper .banner-shape2 {
-    width: 180px;
-    height: 160px;
-    border: 2px solid rgba(255, 255, 255, 0.55);
-    border-radius: var(--gp-radius);
+    height: 360px;
+    width: 420px;
+    background: transparent;
+    border: 2px solid rgba(225, 225, 225, 0.4);
+    border-radius: 10px;
     position: absolute;
-    bottom: 12%;
-    right: 7%;
-    transform: rotate(53deg);
-    z-index: 2;
+    top: -3%;
+    right: -7%;
+    z-index: 1;
+    transform: rotate(70deg);
     pointer-events: none;
 }
 
-@keyframes gp-ani-move {
-    0%,
-    100% {
-        transform: translateY(0);
+body.gp-public .gp-public-wrapper .gp-banner-deco {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    border-radius: 5px;
+}
+
+/* cgi-bin: px-1-9 py-1-6 border | left bottom-5 */
+body.gp-public .gp-public-wrapper .gp-banner-deco-a {
+    left: 0;
+    bottom: 5%;
+    width: auto;
+    height: auto;
+    padding: 1.6rem 1.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    background: transparent;
+}
+
+/* cgi-bin: px-1-9 py-1-6 bg-secondary | left-5 bottom-10 */
+body.gp-public .gp-public-wrapper .gp-banner-deco-b {
+    left: 5%;
+    bottom: 10%;
+    width: auto;
+    height: auto;
+    padding: 1.6rem 1.9rem;
+    background: var(--gp-secondary);
+    border: 0;
+}
+
+body.gp-public .gp-public-wrapper .gp-banner-deco-c {
+    right: 20%;
+    bottom: 25%;
+    width: 14px;
+    height: 14px;
+    background: var(--gp-secondary);
+    border-radius: 50%;
+}
+
+body.gp-public .gp-public-wrapper .gp-banner-deco-d {
+    left: 15%;
+    top: 20%;
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border-radius: 50%;
+}
+
+@keyframes TopBottom {
+    0% {
+        transform: translate(0, 0);
     }
-    50% {
-        transform: translateY(-12px);
+    65% {
+        transform: translate(0, 30px);
+    }
+    100% {
+        transform: translate(0, 0);
     }
 }
 
+@keyframes ImageMove {
+    0% {
+        transform: translate(0, 0);
+    }
+    25% {
+        transform: translate(10px, 20px);
+    }
+    50% {
+        transform: translate(30px, 30px);
+    }
+    75% {
+        transform: translate(20px, 10px);
+    }
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes LeftRight {
+    0% {
+        transform: translate(0, 0);
+    }
+    65% {
+        transform: translate(30px, 0);
+    }
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes DecoFloat {
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(0, -14px);
+    }
+}
+
+body.gp-public .gp-public-wrapper .ani-top-bottom {
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+    animation-name: TopBottom;
+    animation-timing-function: ease-in-out;
+}
+
 body.gp-public .gp-public-wrapper .ani-move {
-    animation: gp-ani-move 3.5s ease-in-out infinite;
+    animation: ImageMove 5s infinite linear;
+}
+
+body.gp-public .gp-public-wrapper .ani-left-right {
+    animation: LeftRight 5s ease-in-out infinite;
+}
+
+body.gp-public .gp-public-wrapper .ani-float {
+    animation: DecoFloat 4s ease-in-out infinite;
+}
+
+/* Reveal on scroll (WOW.js equivalente) */
+body.gp-public .gp-public-wrapper .gp-reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+        opacity 0.7s ease,
+        transform 0.7s ease;
+    will-change: opacity, transform;
+}
+
+body.gp-public .gp-public-wrapper .gp-reveal-fade {
+    transform: none;
+}
+
+body.gp-public .gp-public-wrapper .gp-reveal-fade-left {
+    transform: translateX(-28px);
+}
+
+body.gp-public .gp-public-wrapper .gp-reveal-fade-right {
+    transform: translateX(28px);
+}
+
+body.gp-public .gp-public-wrapper .gp-reveal-fade-up,
+body.gp-public .gp-public-wrapper .gp-reveal-up {
+    transform: translateY(28px);
+}
+
+body.gp-public .gp-public-wrapper .gp-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Franja de servicios: sin z-index en el <section> (prod solo usa
+ * service-style1 { z-index: 3 }). Un z-index en el section crea un
+ * stacking context que tapa los cuadros del banner bajo la tarjeta. */
+body.gp-public .gp-public-wrapper section.p-0.overflow-visible {
+    background: transparent;
+    overflow: visible;
+}
+
+/* Figuras animadas (line-01, cuadrados) no deben recortarse */
+body.gp-public .gp-public-wrapper section.overflow-visible {
+    overflow: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.gp-public .gp-public-wrapper .ani-top-bottom,
+    body.gp-public .gp-public-wrapper .ani-move,
+    body.gp-public .gp-public-wrapper .ani-left-right,
+    body.gp-public .gp-public-wrapper .ani-float,
+    body.gp-public .gp-public-wrapper .gp-reveal {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    body.gp-public .gp-public-wrapper .gp-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    /* Mantener rotación estructural del cuadro (no es motion decorativo) */
+    body.gp-public .gp-public-wrapper .ani-move,
+    body.gp-public .gp-public-wrapper .ani-left-right,
+    body.gp-public .gp-public-wrapper .ani-float {
+        transform: none !important;
+    }
+
+    body.gp-public .gp-public-wrapper .banner-shape1,
+    body.gp-public .gp-public-wrapper .banner-shape2 {
+        transform: rotate(70deg) !important;
+    }
 }
 
 /* Fallback hero (sin banners) */
@@ -756,15 +1979,29 @@ body.gp-public .gp-public-wrapper .gp-hero-sm {
 
 /* ---------- Service overlap strip ---------- */
 
+/* cgi-bin/default.css: .pt-6 (Bootstrap no trae spacing 6) */
+body.gp-public .gp-public-wrapper .pt-6 {
+    padding-top: 3.5rem !important;
+}
+
+/* cgi-bin/styles.css .service-style1 — sin overflow:hidden (recortaría
+ * los cuadros del banner que asoman en la esquina de la tarjeta) */
 body.gp-public .gp-public-wrapper .service-style1 {
     position: relative;
     z-index: 3;
     margin-top: -70px;
-    margin-bottom: -40px;
+    margin-bottom: -70px;
     background: #fff;
     border-radius: 5px;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
+    box-shadow: 11px 10px 38px 0 rgba(0, 0, 0, 0.08);
+}
+
+/* Igual que prod: px-5 = 3rem lateral, 0 arriba/abajo (sin overrides mobile) */
+body.gp-public .gp-public-wrapper .service-style1 .px-5 {
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 body.gp-public .gp-public-wrapper .card-style1 {
@@ -772,29 +2009,51 @@ body.gp-public .gp-public-wrapper .card-style1 {
     border-radius: 0;
     background: #fff;
     height: 100%;
-    transition: background 0.3s ease;
+    transition: 0.4s;
 }
 
 body.gp-public .gp-public-wrapper .card-style1 .card-body {
-    padding: 50px 35px;
+    padding: 50px;
+}
+
+@media screen and (max-width: 992px) {
+    body.gp-public .gp-public-wrapper .card-style1 .card-body {
+        padding: 30px;
+    }
 }
 
 body.gp-public .gp-public-wrapper .card-style1.active,
 body.gp-public .gp-public-wrapper .card-style1:hover {
-    background: rgba(243, 102, 63, 0.06);
+    background: rgba(243, 102, 63, 0.05);
 }
 
 body.gp-public .gp-public-wrapper .card-style1 .card-icon {
-    width: 70px;
-    height: 70px;
+    position: relative;
+}
+
+body.gp-public .gp-public-wrapper .card-style1 .card-icon img {
+    position: relative;
+    z-index: 1;
+}
+
+body.gp-public .gp-public-wrapper .card-style1 .card-icon .round-shape {
+    height: 45px;
+    width: 45px;
     border-radius: 50%;
-    background: rgba(243, 102, 63, 0.1);
-    color: var(--gp-primary);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.75rem;
-    margin-bottom: 1.25rem;
+    background: rgba(243, 102, 63, 0.2);
+    position: absolute;
+    left: 30px;
+    top: 10px;
+    z-index: 0;
+}
+
+body.gp-public .gp-public-wrapper .card-style1 h3 a:hover,
+body.gp-public .gp-public-wrapper .card-style1 h4 a:hover {
+    color: var(--gp-primary) !important;
+}
+
+body.gp-public .gp-public-wrapper .card-style1 h4 {
+    font-weight: 600;
 }
 
 /* ---------- Cards generales ---------- */
@@ -859,13 +2118,18 @@ body.gp-public .gp-public-wrapper .card-style3 img {
 }
 
 body.gp-public .gp-public-wrapper .card-style5 {
-    border: 1px solid var(--gp-border);
-    border-radius: var(--gp-radius);
-    background: #fff;
+    border: none;
+    border-radius: 0;
+    background: transparent;
 }
 
 body.gp-public .gp-public-wrapper .card-style5 .card-body {
-    padding: 2rem;
+    position: relative;
+    background: #ffffff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    padding: 30px 25px;
+    z-index: 1;
 }
 
 /* ---------- Progress ---------- */
@@ -1153,6 +2417,268 @@ body.gp-public .gp-public-wrapper .gp-legal-box {
     }
 }
 
+/* ---------- Inner pages: Nosotros / Historia / Servicios detail ---------- */
+
+body.gp-public .gp-public-wrapper .about-line-shape {
+    height: 6px;
+    border-radius: 4px;
+}
+
+body.gp-public .gp-public-wrapper .title-style .title-shape {
+    width: 48px;
+    height: 48px;
+    vertical-align: middle;
+}
+
+body.gp-public .gp-public-wrapper .title-style .title-shape .shape1 {
+    width: 42px;
+    height: 42px;
+    top: 0;
+    left: 0;
+    border: 2px solid var(--gp-primary);
+    background: transparent !important;
+}
+
+body.gp-public .gp-public-wrapper .title-style .title-shape .shape2 {
+    width: 14px;
+    height: 14px;
+    top: -5px;
+    right: -5px;
+    left: auto;
+}
+
+body.gp-public .gp-public-wrapper .font-weight-600 {
+    font-weight: 600 !important;
+}
+
+body.gp-public .gp-public-wrapper .mt-n2-6 {
+    margin-top: -2.6rem !important;
+}
+
+body.gp-public .gp-public-wrapper .mt-2-6 {
+    margin-top: 2.6rem !important;
+}
+
+body.gp-public .gp-public-wrapper .mb-2-2 {
+    margin-bottom: 2.2rem !important;
+}
+
+body.gp-public .gp-public-wrapper .mb-2-5 {
+    margin-bottom: 2.5rem !important;
+}
+
+body.gp-public .gp-public-wrapper .mb-2-6 {
+    margin-bottom: 2.6rem !important;
+}
+
+body.gp-public .gp-public-wrapper .mb-2-9 {
+    margin-bottom: 2.9rem !important;
+}
+
+body.gp-public .gp-public-wrapper .w-95 {
+    width: 95%;
+    max-width: 100%;
+}
+
+body.gp-public .gp-public-wrapper .p-2-3 {
+    padding: 2.3rem !important;
+}
+
+body.gp-public .gp-public-wrapper .p-md-2-2 {
+    padding: 1.6rem !important;
+}
+
+@media (min-width: 768px) {
+    body.gp-public .gp-public-wrapper .p-md-2-2 {
+        padding: 2.2rem !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    body.gp-public .gp-public-wrapper .px-xl-10 {
+        padding-left: 5.5rem !important;
+        padding-right: 5.5rem !important;
+    }
+}
+
+body.gp-public .gp-public-wrapper .border-color-extra-light-gray {
+    border-color: #e5e5e5 !important;
+}
+
+body.gp-public .gp-public-wrapper .rounded-bottom-left-10px {
+    border-radius: 0 10px 10px 10px;
+}
+
+body.gp-public .gp-public-wrapper .rounded-top-right-10px {
+    border-top-right-radius: 10px;
+}
+
+body.gp-public .gp-public-wrapper .border-radius-50 {
+    border-radius: 50% !important;
+}
+
+body.gp-public .gp-public-wrapper .custom-progress {
+    background: #ececec;
+    overflow: hidden;
+}
+
+body.gp-public .gp-public-wrapper .custom-progress .custom-bar,
+body.gp-public .gp-public-wrapper .custom-progress .progress-bar {
+    background: var(--gp-primary);
+}
+
+body.gp-public .gp-public-wrapper section.md {
+    padding: 90px 0;
+}
+
+@media screen and (max-width: 1199px) {
+    body.gp-public .gp-public-wrapper section.md {
+        padding: 70px 0;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    body.gp-public .gp-public-wrapper section.md {
+        padding: 50px 0;
+    }
+}
+
+body.gp-public .gp-public-wrapper .gp-inner-video {
+    padding: 50px 0;
+}
+
+body.gp-public .gp-public-wrapper .gp-overlay-dark-7::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0.7;
+    z-index: 1;
+    border-radius: inherit;
+}
+
+body.gp-public .gp-public-wrapper .secondary-overlay {
+    position: relative;
+}
+
+body.gp-public .gp-public-wrapper .secondary-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gp-secondary);
+    opacity: 0.55;
+    border-radius: inherit;
+    z-index: 1;
+}
+
+body.gp-public .gp-public-wrapper .service-details-sidebar .widget {
+    margin-bottom: 30px;
+    padding: 30px 25px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+body.gp-public .gp-public-wrapper .service-details-sidebar .widget-title {
+    border-bottom: 1px solid #ededed;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+body.gp-public .gp-public-wrapper .service-details-sidebar .widget-address .contact-icon {
+    display: block;
+    color: #fff;
+    background: var(--gp-primary);
+    border-radius: 10px;
+    font-size: 20px;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+}
+
+body.gp-public .gp-public-wrapper .widget-info {
+    position: relative;
+    overflow: hidden;
+    background-size: cover !important;
+    background-position: center !important;
+    margin-bottom: 30px;
+}
+
+body.gp-public .gp-public-wrapper .widget-info .social-icons {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+body.gp-public .gp-public-wrapper .widget-info .social-icons li a {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--gp-secondary) !important;
+}
+
+body.gp-public .gp-public-wrapper .z-index-9 {
+    z-index: 9;
+}
+
+body.gp-public .gp-public-wrapper .z-index-3 {
+    z-index: 3;
+}
+
+body.gp-public .gp-public-wrapper .blog-sidebar .widget {
+    margin-bottom: 30px;
+    padding: 25px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body.gp-public .gp-public-wrapper .blog-sidebar .widget-title {
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+body.gp-public .gp-public-wrapper .blog-sidebar .blog-social-icon {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 0.5rem;
+}
+
+body.gp-public .gp-public-wrapper .blog-sidebar .blog-social-icon li a {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--gp-light);
+    color: var(--gp-heading) !important;
+}
+
+body.gp-public .gp-public-wrapper .blog-sidebar .blog-social-icon li a:hover {
+    background: var(--gp-primary);
+    color: #fff !important;
+}
+
+body.gp-public .gp-public-wrapper .list-style1 .bg-primary {
+    background-color: var(--gp-primary) !important;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
 /* ---------- CTA ---------- */
 
 body.gp-public .gp-public-wrapper .gp-cta {
@@ -1172,14 +2698,14 @@ body.gp-public .gp-public-wrapper .gp-video-cta {
     position: relative;
     background-size: cover;
     background-position: center;
-    padding: 6rem 0;
+    padding: 7rem 0;
 }
 
 body.gp-public .gp-public-wrapper .gp-video-cta::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.45);
 }
 
 body.gp-public .gp-public-wrapper .gp-video-cta .container {
@@ -1191,106 +2717,1054 @@ body.gp-public .gp-public-wrapper .gp-video-cta h2 {
     color: #fff !important;
 }
 
+body.gp-public .gp-public-wrapper .gp-video-btn {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--gp-primary);
+    color: #fff !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    transition: color 0.25s ease;
+}
+
+body.gp-public .gp-public-wrapper .gp-video-btn::before,
+body.gp-public .gp-public-wrapper .gp-video-btn::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    opacity: 0.3;
+    transform: translate(-50%, -50%);
+    animation: pulse-border 1500ms ease-out infinite;
+}
+
+body.gp-public .gp-public-wrapper .gp-video-btn::after {
+    width: 80px;
+    height: 80px;
+}
+
+body.gp-public .gp-public-wrapper .gp-video-btn::before {
+    width: 95px;
+    height: 95px;
+}
+
+body.gp-public .gp-public-wrapper .gp-video-btn:hover {
+    color: var(--gp-secondary) !important;
+}
+
+@keyframes pulse-border {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* ---------- Home about (cgi-bin about-style1) ---------- */
+
+/* Utilidades del tema usadas en about */
+body.gp-public .gp-public-wrapper .pt-16 {
+    padding-top: 8.5rem !important;
+}
+
+@media (min-width: 768px) {
+    body.gp-public .gp-public-wrapper .pt-md-18 {
+        padding-top: 9.5rem !important;
+    }
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper .pt-lg-22 {
+        padding-top: 11.5rem !important;
+    }
+}
+
+body.gp-public .gp-public-wrapper .mb-1-9 {
+    margin-bottom: 1.9rem !important;
+}
+
+body.gp-public .gp-public-wrapper .mb-1-6 {
+    margin-bottom: 1.6rem !important;
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper .ps-lg-1-6 {
+        padding-left: 1.6rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .pe-lg-1-6 {
+        padding-right: 1.6rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .mb-lg-0 {
+        margin-bottom: 0 !important;
+    }
+
+    body.gp-public .gp-public-wrapper .mb-lg-1-9 {
+        margin-bottom: 1.9rem !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    body.gp-public .gp-public-wrapper .mb-xl-2-5 {
+        margin-bottom: 2.5rem !important;
+    }
+}
+
+@media (min-width: 768px) {
+    body.gp-public .gp-public-wrapper .mb-md-0 {
+        margin-bottom: 0 !important;
+    }
+
+    body.gp-public .gp-public-wrapper .mb-md-3 {
+        margin-bottom: 1rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .mb-md-6 {
+        margin-bottom: 3.5rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .ms-md-1-9 {
+        margin-left: 1.9rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .my-md-5 {
+        margin-top: 3rem !important;
+        margin-bottom: 3rem !important;
+    }
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper .ms-lg-0 {
+        margin-left: 0 !important;
+    }
+
+    body.gp-public .gp-public-wrapper .ms-lg-6 {
+        margin-left: 3.5rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .me-lg-1-9 {
+        margin-right: 1.9rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .me-lg-6 {
+        margin-right: 3.5rem !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    body.gp-public .gp-public-wrapper .my-xl-0 {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+}
+
+body.gp-public .gp-public-wrapper .ms-1-6 {
+    margin-left: 1.6rem !important;
+}
+
+@media (min-width: 576px) {
+    body.gp-public .gp-public-wrapper .mb-sm-2-2 {
+        margin-bottom: 2.2rem !important;
+    }
+}
+
+body.gp-public .gp-public-wrapper .mt-1-9 {
+    margin-top: 1.9rem !important;
+}
+
+body.gp-public .gp-public-wrapper .p-1-9 {
+    padding: 1.9rem !important;
+}
+
+@media (min-width: 1200px) {
+    /* Después de .p-1-9: en xl el markup usa p-xl-5 (Bootstrap/tema = 3rem) */
+    body.gp-public .gp-public-wrapper .p-xl-5 {
+        padding: 3rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .ps-xl-6 {
+        padding-left: 3.5rem !important;
+    }
+}
+
+@media (min-width: 1400px) {
+    body.gp-public .gp-public-wrapper .pe-xxl-1-9 {
+        padding-right: 1.9rem !important;
+    }
+}
+
+body.gp-public .gp-public-wrapper .px-7 {
+    padding-left: 4rem !important;
+    padding-right: 4rem !important;
+}
+
+body.gp-public .gp-public-wrapper .top-15 {
+    top: 15%;
+}
+
+body.gp-public .gp-public-wrapper .bottom-10 {
+    bottom: 10%;
+}
+
+body.gp-public .gp-public-wrapper .left-10 {
+    left: 10%;
+}
+
+body.gp-public .gp-public-wrapper .left-5 {
+    left: 5%;
+}
+
+body.gp-public .gp-public-wrapper .top-n15 {
+    top: -15%;
+}
+
+body.gp-public .gp-public-wrapper .right-5 {
+    right: 5%;
+}
+
+body.gp-public .gp-public-wrapper .border-width-2 {
+    border-width: 2px !important;
+}
+
+body.gp-public .gp-public-wrapper .border-width-3 {
+    border-width: 3px !important;
+}
+
+body.gp-public .gp-public-wrapper .border-secondary {
+    border-color: var(--gp-secondary) !important;
+}
+
+body.gp-public .gp-public-wrapper .cover-background {
+    position: relative !important;
+    background-size: cover !important;
+    overflow: hidden !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+body.gp-public .gp-public-wrapper .display-20 {
+    font-size: 1.9rem;
+}
+
+body.gp-public .gp-public-wrapper .display-26 {
+    font-size: 1.3rem;
+}
+
+body.gp-public .gp-public-wrapper .z-index-1 {
+    z-index: 1;
+}
+
+body.gp-public .gp-public-wrapper .z-index-2 {
+    z-index: 2;
+}
+
+body.gp-public .gp-public-wrapper .z-index-3 {
+    z-index: 3;
+}
+
+body.gp-public .gp-public-wrapper .about-style1 .about-shape1 {
+    width: 190px;
+    height: 140px;
+    background: #24c373;
+    border-radius: 10px;
+    position: absolute;
+    bottom: -13%;
+    right: 50px;
+    transform: rotate(53deg);
+}
+
+body.gp-public .gp-public-wrapper .about-style1 .about-shape2 {
+    width: 180px;
+    height: 160px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    position: absolute;
+    bottom: -8%;
+    right: 55px;
+    transform: rotate(53deg);
+}
+
+body.gp-public .gp-public-wrapper .about-style1 .about-list {
+    display: inline-block;
+    padding: 15px;
+    border-radius: 5px;
+    transition: 0.4s;
+}
+
+body.gp-public .gp-public-wrapper .about-style1 .about-list.active,
+body.gp-public .gp-public-wrapper .about-style1 .about-list:hover {
+    box-shadow: 6px 5px 25px 0 rgba(0, 0, 0, 0.08);
+    background-color: #fff;
+}
+
+@media screen and (max-width: 575px) {
+    body.gp-public .gp-public-wrapper .about-style1 .about-shape1 {
+        right: 150px;
+    }
+
+    body.gp-public .gp-public-wrapper .about-style1 .about-shape2 {
+        right: 160px;
+    }
+}
+
+body.gp-public .gp-public-wrapper .gp-deco-line {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+body.gp-public .gp-public-wrapper .gp-deco-line-left {
+    left: 4%;
+    bottom: 8%;
+    width: 90px;
+}
+
+/* ---------- Why choose ---------- */
+/* Sin override de padding: hereda section 50px → 90px (≤1199) → 70px (≤991), igual que prod. */
+
+body.gp-public .gp-public-wrapper .gp-why-section {
+    position: relative;
+    overflow: hidden;
+}
+
+/* About: top lo marcan pt-16/18/22; el bottom en ≤991 debe seguir siendo 70px del section. */
+@media screen and (max-width: 991px) {
+    body.gp-public .gp-public-wrapper section.about-style1 {
+        padding-bottom: 70px;
+    }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+    body.gp-public .gp-public-wrapper section.about-style1 {
+        padding-bottom: 90px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    body.gp-public .gp-public-wrapper section.about-style1 {
+        padding-bottom: 50px;
+    }
+}
+
+/* Contenido siempre encima del shape decorativo */
+body.gp-public .gp-public-wrapper .gp-why-section > .container,
+body.gp-public .gp-public-wrapper .gp-why-section > .container-fluid {
+    position: relative;
+    z-index: 2;
+}
+
+body.gp-public .gp-public-wrapper .why-choose-shape1 {
+    height: 360px;
+    width: 400px;
+    background: #f8f9fa;
+    position: absolute;
+    bottom: 0;
+    z-index: 0;
+    border-radius: 10px;
+    transform: rotate(54deg);
+    right: -120px;
+    pointer-events: none;
+}
+
+body.gp-public .gp-public-wrapper .gp-why-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.1rem;
+}
+
+body.gp-public .gp-public-wrapper .gp-why-item-left {
+    margin-left: 0;
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper .gp-why-item-left:nth-child(odd) {
+        margin-left: 2rem;
+    }
+
+    body.gp-public .gp-public-wrapper .gp-why-item-left:nth-child(even) {
+        margin-right: 2rem;
+    }
+
+    body.gp-public .gp-public-wrapper .gp-why-item-right:nth-child(even) {
+        margin-left: 2rem;
+    }
+
+    body.gp-public .gp-public-wrapper .gp-why-item-right:nth-child(odd) {
+        margin-right: 2rem;
+    }
+}
+
+body.gp-public .gp-public-wrapper .gp-icon-box,
+body.gp-public .gp-public-wrapper .icon-box {
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+body.gp-public .gp-public-wrapper .gp-icon-box::before,
+body.gp-public .gp-public-wrapper .icon-box::before {
+    content: '';
+    position: absolute;
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    background: rgba(243, 102, 63, 0.2);
+    bottom: -10px;
+    right: -10px;
+}
+
+body.gp-public .gp-public-wrapper .gp-icon-box.right::before,
+body.gp-public .gp-public-wrapper .icon-box.right::before {
+    right: auto;
+    left: -10px;
+}
+
+body.gp-public .gp-public-wrapper .gp-icon-box img,
+body.gp-public .gp-public-wrapper .icon-box img {
+    width: auto;
+    height: auto;
+    max-width: 50px;
+    position: relative;
+    z-index: 1;
+    display: block;
+}
+
+@media screen and (max-width: 991px) {
+    body.gp-public .gp-public-wrapper .icon-box::before,
+    body.gp-public .gp-public-wrapper .gp-icon-box::before {
+        right: unset;
+        left: -10px;
+    }
+}
+
+body.gp-public .gp-public-wrapper .gp-why-center-img {
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+/* why-choose-shape1 definido arriba (detrás del contenido) */
+
+/* ---------- Offer (overlap + shapes como producción) ---------- */
+
+/* cgi-bin: section.py-0 + overlap-column; sin min-height en la foto */
+body.gp-public .gp-public-wrapper section.py-0:has(.overlap-column) {
+    margin: 0;
+    padding: 0 !important;
+    overflow: visible;
+    background: transparent;
+}
+
+body.gp-public .gp-public-wrapper .overlap-column {
+    margin-bottom: 3rem;
+    overflow: visible;
+}
+
+/* cgi-bin styles.css — overlap; SIN z-index (la foto va encima del bloque oscuro por orden DOM) */
+body.gp-public .gp-public-wrapper .overlap-column > [class*='col-']:first-child {
+    position: relative;
+    left: 2rem;
+}
+
+body.gp-public .gp-public-wrapper .overlap-column > [class*='col-']:last-child {
+    position: relative;
+    left: -2rem;
+    top: 3rem;
+}
+
+@media screen and (max-width: 991px) {
+    body.gp-public .gp-public-wrapper .overlap-column > [class*='col-']:first-child {
+        left: 0;
+    }
+}
+
+/* Padding lo dan las utilidades py-6 / px-1-9 del markup (como prod).
+ * Sin height:100% — en prod no está y con border-box comprime el padding interno. */
+body.gp-public .gp-public-wrapper .overlap-column .bg-dark {
+    border-radius: 10px;
+    position: relative;
+}
+
+body.gp-public .gp-public-wrapper .overlap-column .bg-img {
+    /* Sin min-height: la altura la da el stretch del row (= col de texto) */
+    min-height: 0;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    border-radius: 10px;
+    position: relative;
+    overflow: visible;
+}
+
+body.gp-public .gp-public-wrapper .offer-shape1 {
+    height: 310px;
+    width: 420px;
+    border: 1px solid #fff;
+    background: transparent;
+    position: absolute;
+    bottom: -120px;
+    right: 0;
+    z-index: 1;
+    border-radius: 10px;
+    transform: rotate(22deg);
+    pointer-events: none;
+}
+
+body.gp-public .gp-public-wrapper .offer-shape2 {
+    height: 100px;
+    width: 200px;
+    background: var(--gp-secondary);
+    position: absolute;
+    bottom: 14%;
+    right: 27%;
+    z-index: 0;
+    border-radius: 10px;
+    transform: rotate(-24deg);
+    pointer-events: none;
+}
+
+/* Features debajo del overlap: por encima de la foto desplazada.
+ * Markup prod: <section class="pb-0"> — padding-top del section (50/90/70), bottom 0. */
+body.gp-public .gp-public-wrapper section.py-0:has(.overlap-column) + section.pb-0 {
+    position: relative;
+    z-index: 2;
+    background: #fff;
+    overflow: visible;
+}
+
+body.gp-public .gp-public-wrapper .mt-n1-9 {
+    margin-top: -1.9rem !important;
+}
+
+body.gp-public .gp-public-wrapper .mt-1-9 {
+    margin-top: 1.9rem !important;
+}
+
+body.gp-public .gp-public-wrapper .py-6 {
+    padding-top: 3.5rem !important;
+    padding-bottom: 3.5rem !important;
+}
+
+body.gp-public .gp-public-wrapper .px-1-9 {
+    padding-left: 1.9rem !important;
+    padding-right: 1.9rem !important;
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper .py-lg-8 {
+        padding-top: 4.5rem !important;
+        padding-bottom: 4.5rem !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    body.gp-public .gp-public-wrapper .py-xl-10 {
+        padding-top: 5.5rem !important;
+        padding-bottom: 5.5rem !important;
+    }
+}
+
+@media (min-width: 1400px) {
+    body.gp-public .gp-public-wrapper .py-xxl-13 {
+        padding-top: 7rem !important;
+        padding-bottom: 7rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .px-xxl-9 {
+        padding-left: 5rem !important;
+        padding-right: 5rem !important;
+    }
+}
+
+body.gp-public .gp-public-wrapper .w-lg-80 {
+    width: 100%;
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper .w-lg-80 {
+        width: 80%;
+    }
+}
+
+body.gp-public .gp-public-wrapper .opacity8 {
+    opacity: 0.8;
+}
+
+body.gp-public .gp-public-wrapper .border-radius-10 {
+    border-radius: 10px !important;
+}
+
+body.gp-public .gp-public-wrapper .display-10 {
+    font-size: 2.9rem;
+}
+
+/* ---------- Feature cards (style7) — cgi-bin/styles.css tal cual ---------- */
+
+body.gp-public .gp-public-wrapper .card-style7 {
+    border-radius: 10px;
+    background: #f5f5f5;
+    transition: 0.5s;
+}
+
+body.gp-public .gp-public-wrapper .card-style7 .card-icon {
+    position: relative;
+}
+
+body.gp-public .gp-public-wrapper .card-style7 .card-icon i {
+    color: #f3663f;
+}
+
+body.gp-public .gp-public-wrapper .card-style7 .card-icon .round-shape {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    background: rgba(243, 102, 63, 0.2);
+    position: absolute;
+    left: 15px;
+    top: 10px;
+}
+
+body.gp-public .gp-public-wrapper .card-style7:hover {
+    background: #f3663f;
+}
+
+body.gp-public .gp-public-wrapper .card-style7:hover .card-icon i,
+body.gp-public .gp-public-wrapper .card-style7:hover h3 {
+    color: #fff;
+}
+
+body.gp-public .gp-public-wrapper .card-style7:hover .card-icon .round-shape {
+    background: rgba(225, 225, 225, 0.2);
+}
+
+/* ---------- Home gallery ---------- */
+
+body.gp-public .gp-public-wrapper .gp-gallery-home {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    padding: 5rem 0 4.5rem;
+    overflow: hidden;
+}
+
+body.gp-public .gp-public-wrapper .gp-gallery-home::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 22, 24, 0.78);
+}
+
+body.gp-public .gp-public-wrapper .gp-gallery-home > * {
+    position: relative;
+    z-index: 1;
+}
+
+body.gp-public .gp-public-wrapper .gp-gallery-home > .gp-gallery-shape {
+    position: absolute;
+    z-index: 1;
+}
+
+body.gp-public .gp-public-wrapper .section-heading.white .subtitle,
+body.gp-public .gp-public-wrapper .subtitle.white {
+    color: #fff !important;
+}
+
+/* prod: la barrita del subtitle white sigue en primary (naranja) */
+body.gp-public .gp-public-wrapper .section-heading.white .subtitle::before,
+body.gp-public .gp-public-wrapper .subtitle.white::before {
+    background: var(--gp-primary);
+}
+
+body.gp-public .gp-public-wrapper .gp-gallery-home-item {
+    display: block;
+    text-decoration: none;
+}
+
+body.gp-public .gp-public-wrapper .gp-gallery-home-img {
+    overflow: hidden;
+    /* prod: .rounded = 0.25rem (BS5.1), no radio grande custom */
+    border-radius: 0.25rem;
+}
+
+body.gp-public .gp-public-wrapper .gp-gallery-home-img img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    vertical-align: top;
+    transition: transform 0.5s ease;
+}
+
+body.gp-public .gp-public-wrapper .gp-gallery-home-item:hover .gp-gallery-home-img img {
+    transform: scale(1.1);
+}
+
+/* Stream carousel (galería home — equivalente owl stream-carousel02) */
+body.gp-public .gp-public-wrapper .gp-stream-carousel {
+    overflow: hidden;
+    width: 100%;
+}
+
+body.gp-public .gp-public-wrapper .gp-stream-track {
+    display: flex;
+    transition: transform 0.7s ease;
+    will-change: transform;
+}
+
+body.gp-public .gp-public-wrapper .gp-stream-slide {
+    flex: 0 0 var(--gp-slide-basis, 16.666%);
+    max-width: var(--gp-slide-basis, 16.666%);
+    padding: 0 12px;
+    box-sizing: border-box;
+}
+
+body.gp-public .gp-public-wrapper .gp-client-carousel {
+    overflow: hidden;
+    width: 100%;
+}
+
+body.gp-public .gp-public-wrapper .gp-client-carousel .social-icon-wrapper {
+    min-height: 120px;
+}
+
+/* Animación de caption al cambiar slide (fadeInUp de producción) */
+@keyframes gpFadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 28px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+body.gp-public .gp-public-wrapper .gp-anim-up {
+    opacity: 0;
+    animation: gpFadeInUp 0.85s ease forwards;
+}
+
+/* cgi-bin / prod .streaming-shape2 */
+body.gp-public .gp-public-wrapper .gp-gallery-shape {
+    position: absolute;
+    right: 1%;
+    top: -4%;
+    width: 150px;
+    height: 100px;
+    background: #24c373;
+    transform: rotate(22deg);
+    border-radius: 10px;
+    z-index: 1;
+}
+
+body.gp-public .gp-public-wrapper .gp-orange-bar {
+    /* legacy — preferir .counter-style1 */
+    background: var(--gp-primary);
+    min-height: 90px;
+}
+
+/* Franja naranja pre-footer (cgi-bin counter-style1) */
+body.gp-public .gp-public-wrapper .counter-style1 {
+    background: var(--gp-primary) !important;
+    overflow: hidden;
+    position: relative;
+}
+
+body.gp-public .gp-public-wrapper .counter-shape1 {
+    height: 380px;
+    width: 390px;
+    background: transparent;
+    border: 2px solid rgba(225, 225, 225, 0.3);
+    position: absolute;
+    transform: rotate(33deg);
+    border-radius: 10px;
+    left: 0;
+    bottom: -110px;
+    pointer-events: none;
+}
+
+body.gp-public .gp-public-wrapper .counter-shape2 {
+    height: 100px;
+    width: 130px;
+    background: rgba(225, 225, 225, 0.2);
+    position: absolute;
+    transform: rotate(50deg);
+    border-radius: 10px;
+    right: -60px;
+    bottom: 80px;
+    pointer-events: none;
+}
+
+body.gp-public .gp-public-wrapper .counter-shape3 {
+    height: 130px;
+    width: 160px;
+    background: transparent;
+    border: 1px solid #24c373;
+    position: absolute;
+    transform: rotate(50deg);
+    border-radius: 10px;
+    right: -60px;
+    bottom: 55px;
+    pointer-events: none;
+}
+
+body.gp-public .gp-public-wrapper .z-index-9 {
+    z-index: 9;
+}
+
 /* ---------- Footer ---------- */
 
-body.gp-public .gp-public-wrapper .gp-footer {
-    background: #1e2022;
+body.gp-public .gp-public-wrapper .gp-footer,
+body.gp-public .gp-public-wrapper footer.bg-dark {
+    background: #1e2022 !important;
     color: rgba(255, 255, 255, 0.85);
     padding: 0;
 }
 
-body.gp-public .gp-public-wrapper .gp-footer a {
+body.gp-public .gp-public-wrapper .gp-footer a,
+body.gp-public .gp-public-wrapper footer.bg-dark a {
     color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
 }
 
-body.gp-public .gp-public-wrapper .gp-footer a:hover {
+body.gp-public .gp-public-wrapper .gp-footer a:hover,
+body.gp-public .gp-public-wrapper footer.bg-dark a:hover {
     color: var(--gp-primary);
 }
 
-body.gp-public .gp-public-wrapper .gp-footer-top {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 2.5rem 0;
+body.gp-public .gp-public-wrapper .gp-footer-logo {
+    height: auto;
+    max-height: 48px;
+    width: auto;
 }
 
-body.gp-public .gp-public-wrapper .gp-footer-main {
-    padding: 3rem 0 2rem;
+body.gp-public .gp-public-wrapper .border-color-light-white {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.gp-public .gp-public-wrapper .borders-start {
+    border-left: 1px solid;
+}
+
+body.gp-public .gp-public-wrapper .opacity9 {
+    opacity: 0.9;
+}
+
+body.gp-public .gp-public-wrapper .display-30 {
+    font-size: 0.9rem;
+}
+
+body.gp-public .gp-public-wrapper .font-weight-500 {
+    font-weight: 500;
+}
+
+body.gp-public .gp-public-wrapper .font-weight-600 {
+    font-weight: 600;
+}
+
+body.gp-public .gp-public-wrapper .white-hover:hover {
+    color: #fff !important;
+}
+
+body.gp-public .gp-public-wrapper .py-2-5 {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+}
+
+body.gp-public .gp-public-wrapper .mb-6 {
+    margin-bottom: 3.5rem !important;
+}
+
+body.gp-public .gp-public-wrapper .mt-2-2 {
+    margin-top: 2.2rem !important;
+}
+
+body.gp-public .gp-public-wrapper .mt-2-6 {
+    margin-top: 2.6rem !important;
+}
+
+body.gp-public .gp-public-wrapper .mt-n1-9 {
+    margin-top: -1.9rem !important;
+}
+
+body.gp-public .gp-public-wrapper .mt-n2-6 {
+    margin-top: -2.6rem !important;
+}
+
+@media (min-width: 576px) {
+    body.gp-public .gp-public-wrapper .ps-sm-2-5 {
+        padding-left: 2.5rem !important;
+    }
+}
+
+@media (min-width: 768px) {
+    body.gp-public .gp-public-wrapper .py-md-6 {
+        padding-top: 3.5rem !important;
+        padding-bottom: 3.5rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .mb-md-8 {
+        margin-bottom: 4.5rem !important;
+    }
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper .mb-lg-10 {
+        margin-bottom: 5.5rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .ps-lg-2-5 {
+        padding-left: 2.5rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .display-lg-29 {
+        font-size: 1rem;
+    }
 }
 
 body.gp-public .gp-public-wrapper .gp-footer h4,
 body.gp-public .gp-public-wrapper .gp-footer h5,
-body.gp-public .gp-public-wrapper .gp-footer h6 {
+body.gp-public .gp-public-wrapper .gp-footer h6,
+body.gp-public .gp-public-wrapper footer.bg-dark h4,
+body.gp-public .gp-public-wrapper footer.bg-dark h5,
+body.gp-public .gp-public-wrapper footer.bg-dark h6 {
     color: #fff !important;
 }
 
-body.gp-public .gp-public-wrapper .gp-footer-title {
-    font-size: 1.15rem;
-    font-weight: 600;
-    margin-bottom: 1.25rem;
-    color: #fff !important;
-}
-
-body.gp-public .gp-public-wrapper .gp-footer-title span {
-    margin-right: 0.5rem;
-    color: var(--gp-primary);
-}
-
+/* footer-list-style — chevron + línea punteada (cgi-bin) */
 body.gp-public .gp-public-wrapper .footer-list-style {
-    list-style: none;
-    padding: 0;
     margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 body.gp-public .gp-public-wrapper .footer-list-style li {
-    margin-bottom: 0.65rem;
-}
-
-body.gp-public .gp-public-wrapper .footer-hour-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-body.gp-public .gp-public-wrapper .footer-hour-list li {
-    display: flex;
-    gap: 0.85rem;
-    margin-bottom: 1rem;
-}
-
-body.gp-public .gp-public-wrapper .footer-hour-list i {
+    position: relative;
+    list-style-type: none;
     color: #fff;
-    margin-top: 0.2rem;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 2px dotted rgba(102, 102, 102, 0.3);
 }
 
-body.gp-public .gp-public-wrapper .gp-footer-bar {
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    padding: 1.25rem 0;
+body.gp-public .gp-public-wrapper .footer-list-style li a {
+    color: #ffffff;
+    display: block;
+    padding-right: 1.25rem;
 }
 
-body.gp-public .gp-public-wrapper .footer-social-style {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: inline-flex;
-    gap: 0.5rem;
+body.gp-public .gp-public-wrapper .footer-list-style li a:after {
+    content: '\f105';
+    font-weight: 900;
+    font-family: 'Font Awesome 6 Free';
+    color: #ffffff;
+    position: absolute;
+    right: 0;
     vertical-align: middle;
 }
 
-body.gp-public .gp-public-wrapper .footer-social-style a {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background: #fff;
-    color: var(--gp-dark) !important;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.25s ease, color 0.25s ease;
+body.gp-public .gp-public-wrapper .footer-list-style li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
 }
 
-body.gp-public .gp-public-wrapper .footer-social-style a:hover {
-    background: var(--gp-primary);
-    color: #fff !important;
+body.gp-public .gp-public-wrapper .footer-list-style li a:hover {
+    color: #f3663f;
+}
+
+body.gp-public .gp-public-wrapper .footer-list-style li a:hover:after {
+    color: #f3663f;
+}
+
+body.gp-public .gp-public-wrapper .footer-hour-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+body.gp-public .gp-public-wrapper .footer-hour-list li {
+    padding-bottom: 15px;
+    display: flex;
+    margin-bottom: 15px;
+    border-bottom: 2px dotted rgba(102, 102, 102, 0.3);
+}
+
+body.gp-public .gp-public-wrapper .footer-hour-list li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+body.gp-public .gp-public-wrapper .footer-hour-list li i {
+    padding-right: 20px;
+    font-size: 20px;
+    margin-top: 4px;
+    color: #fff;
+}
+
+body.gp-public .gp-public-wrapper .footer-bar {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-top: 80px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+@media screen and (max-width: 767px) {
+    body.gp-public .gp-public-wrapper .footer-bar {
+        margin-top: 60px;
+    }
+}
+
+body.gp-public .gp-public-wrapper .footer-social-style {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    list-style: none;
+    vertical-align: middle;
+}
+
+body.gp-public .gp-public-wrapper .footer-social-style li {
+    text-align: center;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+body.gp-public .gp-public-wrapper .footer-social-style li:last-child {
+    margin-right: 0;
+}
+
+body.gp-public .gp-public-wrapper .footer-social-style li a {
+    color: #24c373 !important;
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    line-height: 35px;
+    display: inline-block;
+    font-size: 15px;
+    background: #ffffff;
+    text-align: center;
+}
+
+body.gp-public .gp-public-wrapper .footer-social-style li a:hover {
+    color: #ffffff !important;
+    background-color: #f3663f;
 }
 
 body.gp-public .gp-public-wrapper .gp-footer-contact-item {
@@ -1300,7 +3774,7 @@ body.gp-public .gp-public-wrapper .gp-footer-contact-item {
 }
 
 body.gp-public .gp-public-wrapper .gp-footer-contact-item .borders-start {
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
     padding-left: 1rem;
     margin-left: 0.25rem;
 }
@@ -1393,18 +3867,19 @@ body.gp-public .gp-public-wrapper .contact-icon {
     justify-content: center;
 }
 
-@media (max-width: 767.98px) {
-    body.gp-public .gp-public-wrapper .gp-carousel,
-    body.gp-public .gp-public-wrapper .gp-carousel-slide.is-active,
-    body.gp-public .gp-public-wrapper .gp-hero {
-        min-height: 70vh;
-    }
-
+@media (max-width: 575.98px) {
     body.gp-public .gp-public-wrapper .service-style1 {
-        margin-top: -30px;
+        margin-top: 0;
+        margin-bottom: 0;
     }
+}
 
+@media (max-width: 767.98px) {
     body.gp-public .gp-public-wrapper .gp-cta {
         padding: 2rem;
+    }
+
+    body.gp-public .gp-public-wrapper .gp-carousel-dots {
+        bottom: 28px;
     }
 }

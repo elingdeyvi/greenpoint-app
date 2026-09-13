@@ -26,11 +26,9 @@ class RedSocialController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(): RedirectResponse
     {
-        return Inertia::render('Admin/RedesSociales/Form', [
-            'redSocial' => null,
-        ]);
+        return redirect()->route('admin.redes-sociales.index');
     }
 
     public function store(StoreRedSocialRequest $request): RedirectResponse
@@ -42,11 +40,9 @@ class RedSocialController extends Controller
             ->with('success', 'Red social guardada correctamente.');
     }
 
-    public function edit(RedSocial $redSocial): Response
+    public function edit(RedSocial $redSocial): RedirectResponse
     {
-        return Inertia::render('Admin/RedesSociales/Form', [
-            'redSocial' => $redSocial,
-        ]);
+        return redirect()->route('admin.redes-sociales.index');
     }
 
     public function update(UpdateRedSocialRequest $request, RedSocial $redSocial): RedirectResponse

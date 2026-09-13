@@ -9,8 +9,8 @@ defineProps({
 });
 
 const form = useForm({
-    email: 'admin@greenpoint.com',
-    password: 'admin123456',
+    email: 'admin@greenpoint.com.mx',
+    password: '12345678',
     remember: true,
 });
 
@@ -92,7 +92,7 @@ const submit = () => {
 
         <hr />
         <p class="mb-0 text-muted small text-center">
-            Demo: <strong>admin@admin.com</strong> / <strong>password</strong>
+            Demo: <strong>admin@greenpoint.com.mx</strong> / <strong>12345678</strong>
         </p>
     </GuestLayout>
 </template>

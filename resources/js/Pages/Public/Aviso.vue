@@ -12,53 +12,64 @@ const props = defineProps({
 });
 
 const secciones = computed(() => props.pagina?.secciones ?? []);
+const pageTitle = computed(() => props.pagina?.titulo || 'Aviso de privacidad');
 </script>
 
 <template>
-    <Head :title="pagina?.titulo || 'Aviso de privacidad'" />
+    <Head :title="pageTitle" />
 
     <PublicLayout>
         <template v-if="pagina">
             <PageHero
-                :title="pagina.titulo || 'Aviso de privacidad'"
+                :title="pageTitle"
                 :breadcrumbs="[
                     { label: 'Inicio', href: route('public.home') },
                     { label: 'Nosotros' },
                     { label: 'Aviso de Privacidad' },
                 ]"
-                background="/images/demo/banners/banner1.jpg"
+                background="/images/demo/page-title/con1.jpg"
             />
 
-            <section class="gp-section">
+            <section>
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-lg-12">
-                            <div class="gp-legal-box">
-                                <div v-if="secciones.length" class="d-flex flex-column gap-4">
-                                    <article
-                                        v-for="seccion in secciones"
+                            <div
+                                class="p-1-6 p-md-2-2 border border-color-extra-light-gray border-radius-10 gp-legal-box"
+                            >
+                                <template v-if="secciones.length">
+                                    <div
+                                        v-for="(seccion, sIndex) in secciones"
                                         :key="seccion.id"
-                                        class="mb-1"
+                                        class="mb-1-6 mb-lg-1-9 mb-xl-2-5"
+                                        :class="{ 'mb-0': sIndex === secciones.length - 1 }"
                                     >
-                                        <h2 class="h4 mb-3">{{ seccion.titulo }}</h2>
+                                        <h3 v-if="seccion.titulo" class="mb-3 h5">
+                                            {{ seccion.titulo }}
+                                        </h3>
                                         <p
                                             v-if="seccion.contenido"
-                                            style="white-space: pre-line; text-align: justify;"
-                                            class="mb-3"
+                                            class="mb-0"
+                                            style="text-align: justify; white-space: pre-line"
                                         >
                                             {{ seccion.contenido }}
                                         </p>
-                                        <ul v-if="seccion.listas?.length" class="list-style1">
+                                        <ul
+                                            v-if="seccion.listas?.length"
+                                            class="list-style1 mb-0 mt-3"
+                                        >
                                             <li
                                                 v-for="(lista, index) in seccion.listas"
                                                 :key="lista.id ?? index"
                                             >
-                                                <i class="fa-solid fa-check text-gp-primary"></i>
+                                                <i
+                                                    class="ti-check text-primary me-3 font-weight-600"
+                                                ></i>
                                                 <span>{{ lista.texto }}</span>
                                             </li>
                                         </ul>
-                                    </article>
-                                </div>
+                                    </div>
+                                </template>
                                 <p v-else class="text-muted text-center py-4 mb-0">
                                     Aún no se ha publicado el contenido de este documento.
                                 </p>

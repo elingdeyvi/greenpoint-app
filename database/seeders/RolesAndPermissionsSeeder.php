@@ -63,13 +63,13 @@ class RolesAndPermissionsSeeder extends Seeder
             [
                 'email' => 'admin@greenpoint.com.mx',
                 'name' => 'Administrador GreenPoint',
-                'password' => 'admin123456',
+                'password' => '12345678',
                 'role' => 'Administrador',
             ],
             [
                 'email' => 'capturista@greenpoint.com.mx',
                 'name' => 'Capturista GreenPoint',
-                'password' => 'password',
+                'password' => '12345678',
                 'role' => 'Capturista',
             ],
         ];

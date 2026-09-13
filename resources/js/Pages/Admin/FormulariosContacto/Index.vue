@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import AdminModal from '@/Components/Admin/AdminModal.vue';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -11,6 +12,9 @@ const props = defineProps({
 });
 
 const search = ref('');
+const showDetailModal = ref(false);
+const selected = ref(null);
+const marking = ref(false);
 
 const rows = computed(() => {
     const source = Array.isArray(props.formularios)
@@ -33,6 +37,35 @@ const links = computed(() =>
 const formatDate = (value) => {
     if (!value) return '—';
     return new Date(value).toLocaleString('es-MX');
+};
+
+const openDetail = (row) => {
+    selected.value = { ...row };
+    showDetailModal.value = true;
+};
+
+const closeDetail = () => {
+    showDetailModal.value = false;
+    selected.value = null;
+    marking.value = false;
+};
+
+const markAsRead = () => {
+    if (!selected.value || selected.value.leido) return;
+    marking.value = true;
+    router.put(
+        route('admin.formularios-contacto.update', selected.value.id),
+        { leido: true },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                selected.value = { ...selected.value, leido: true };
+            },
+            onFinish: () => {
+                marking.value = false;
+            },
+        },
+    );
 };
 </script>
 
@@ -90,13 +123,14 @@ const formatDate = (value) => {
                             </td>
                             <td>{{ formatDate(row.created_at) }}</td>
                             <td class="text-end table-actions">
-                                <Link
-                                    :href="route('admin.formularios-contacto.show', row.id)"
+                                <button
+                                    type="button"
                                     class="btn btn-outline-primary btn-sm"
                                     title="Ver"
+                                    @click="openDetail(row)"
                                 >
                                     <i class="fa-solid fa-eye"></i>
-                                </Link>
+                                </button>
                             </td>
                         </tr>
                         <tr v-if="!rows.length">
@@ -127,5 +161,50 @@ const formatDate = (value) => {
                 </ul>
             </div>
         </div>
+
+        <AdminModal
+            :show="showDetailModal"
+            title="Detalle del mensaje"
+            size="lg"
+            @close="closeDetail"
+        >
+            <template v-if="selected">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="mb-0">{{ selected.nombre }}</h5>
+                    <span
+                        class="badge"
+                        :class="selected.leido ? 'text-bg-secondary' : 'text-bg-warning'"
+                    >
+                        {{ selected.leido ? 'Leído' : 'No leído' }}
+                    </span>
+                </div>
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Email</dt>
+                    <dd class="col-sm-9">{{ selected.email }}</dd>
+                    <dt class="col-sm-3">Teléfono</dt>
+                    <dd class="col-sm-9">{{ selected.telefono || '—' }}</dd>
+                    <dt class="col-sm-3">Fecha</dt>
+                    <dd class="col-sm-9">{{ formatDate(selected.created_at) }}</dd>
+                    <dt class="col-sm-3">Mensaje</dt>
+                    <dd class="col-sm-9">
+                        <p class="mb-0" style="white-space: pre-wrap">{{ selected.mensaje }}</p>
+                    </dd>
+                </dl>
+            </template>
+            <template #footer>
+                <button type="button" class="btn btn-secondary" @click="closeDetail">Cerrar</button>
+                <button
+                    v-if="selected && !selected.leido"
+                    type="button"
+                    class="btn btn-primary"
+                    :disabled="marking"
+                    @click="markAsRead"
+                >
+                    <span v-if="marking" class="spinner-border spinner-border-sm me-1" />
+                    <i v-else class="fa-solid fa-check me-1"></i>
+                    Marcar como leído
+                </button>
+            </template>
+        </AdminModal>
     </AuthenticatedLayout>
 </template>

@@ -52,6 +52,10 @@ class HandleInertiaRequests extends Middleware
                 'config' => fn () => $publicSiteService->configuracion(),
                 'redesSociales' => fn () => $publicSiteService->redesSociales(),
                 'contactos' => fn () => $publicSiteService->contactos(),
+                'navServicios' => fn () => $publicSiteService->servicios()->map(fn ($servicio) => [
+                    'id' => $servicio->id,
+                    'nombre' => $servicio->nombre,
+                ])->values()->all(),
             ],
         ];
     }

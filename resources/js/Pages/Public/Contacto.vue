@@ -57,6 +57,7 @@ const submit = () => {
                         <div v-if="contactos.length" class="d-flex flex-column gap-3">
                             <div
                                 v-for="contacto in contactos"
+                                :id="`oficina-${contacto.id}`"
                                 :key="contacto.id"
                                 class="gp-contact-card"
                             >

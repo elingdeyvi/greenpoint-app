@@ -29,12 +29,12 @@ const heroBackground = computed(
     <PublicLayout>
         <template v-if="pagina">
             <PageHero
-                :title="pagina.titulo || 'Tecnología'"
+                :title="pagina.titulo || 'Tecnologia'"
                 :breadcrumbs="[
                     { label: 'Inicio', href: route('public.home') },
-                    { label: 'Tecnología' },
+                    { label: 'Tecnologia' },
                 ]"
-                :background="heroBackground"
+                background="/images/demo/page-title/con3.jpg"
             />
 
             <section class="gp-section">

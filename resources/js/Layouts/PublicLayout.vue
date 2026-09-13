@@ -17,7 +17,14 @@ const scrollToTop = () => {
 };
 
 onMounted(() => {
-    document.body.className = 'gp-public';
+    document.body.classList.add('gp-public');
+    document.body.classList.remove(
+        'layout-fixed',
+        'sidebar-expand-lg',
+        'bg-body-tertiary',
+        'login-page',
+        'register-page',
+    );
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
 });
@@ -51,7 +58,7 @@ onUnmounted(() => {
             aria-label="Volver arriba"
             @click="scrollToTop"
         >
-            <i class="fa-solid fa-wifi fa-rotate-270"></i>
+            <i class="fa-solid fa-wifi" aria-hidden="true"></i>
         </button>
     </div>
 </template>

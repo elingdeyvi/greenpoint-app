@@ -1,7 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import AdminModal from '@/Components/Admin/AdminModal.vue';
+import ConfirmDeleteModal from '@/Components/Admin/ConfirmDeleteModal.vue';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps({
     redes: {
@@ -11,6 +13,11 @@ const props = defineProps({
 });
 
 const search = ref('');
+const showFormModal = ref(false);
+const showDeleteModal = ref(false);
+const editing = ref(null);
+const deleting = ref(null);
+const deletingProcessing = ref(false);
 
 const rows = computed(() => {
     const source = Array.isArray(props.redes) ? props.redes : (props.redes?.data ?? []);
@@ -27,10 +34,78 @@ const links = computed(() =>
     Array.isArray(props.redes) ? [] : (props.redes?.links ?? []),
 );
 
-const destroy = (id) => {
-    if (!confirm('¿Eliminar esta red social?')) return;
-    router.delete(route('admin.redes-sociales.destroy', id));
+const isEdit = computed(() => !!editing.value?.id);
+
+const form = useForm({
+    nombre: '',
+    url: '',
+    icono: '',
+    orden: 0,
+});
+
+const resetForm = (record = null) => {
+    editing.value = record;
+    form.clearErrors();
+    form.reset();
+    form.nombre = record?.nombre ?? '';
+    form.url = record?.url ?? '';
+    form.icono = record?.icono ?? '';
+    form.orden = record?.orden ?? 0;
 };
+
+const openCreate = () => {
+    resetForm(null);
+    showFormModal.value = true;
+};
+
+const openEdit = (red) => {
+    resetForm(red);
+    showFormModal.value = true;
+};
+
+const closeFormModal = () => {
+    showFormModal.value = false;
+    resetForm(null);
+};
+
+const submit = () => {
+    const options = {
+        preserveScroll: true,
+        onSuccess: () => closeFormModal(),
+    };
+
+    if (isEdit.value) {
+        form.put(route('admin.redes-sociales.update', editing.value.id), options);
+    } else {
+        form.post(route('admin.redes-sociales.store'), options);
+    }
+};
+
+const openDelete = (red) => {
+    deleting.value = red;
+    showDeleteModal.value = true;
+};
+
+const closeDeleteModal = () => {
+    showDeleteModal.value = false;
+    deleting.value = null;
+    deletingProcessing.value = false;
+};
+
+const confirmDelete = () => {
+    if (!deleting.value) return;
+    deletingProcessing.value = true;
+    router.delete(route('admin.redes-sociales.destroy', deleting.value.id), {
+        preserveScroll: true,
+        onFinish: () => closeDeleteModal(),
+    });
+};
+
+watch(showFormModal, (open) => {
+    if (!open) {
+        form.clearErrors();
+    }
+});
 </script>
 
 <template>
@@ -56,12 +131,9 @@ const destroy = (id) => {
                         placeholder="Buscar..."
                         style="width: 200px"
                     />
-                    <Link
-                        :href="route('admin.redes-sociales.create')"
-                        class="btn btn-sm btn-primary"
-                    >
+                    <button type="button" class="btn btn-sm btn-primary" @click="openCreate">
                         <i class="fa-solid fa-plus me-1"></i> Nuevo
-                    </Link>
+                    </button>
                 </div>
             </div>
             <div class="card-body table-responsive p-0">
@@ -89,18 +161,19 @@ const destroy = (id) => {
                             </td>
                             <td>{{ red.orden }}</td>
                             <td class="text-end table-actions">
-                                <Link
-                                    :href="route('admin.redes-sociales.edit', red.id)"
+                                <button
+                                    type="button"
                                     class="btn btn-outline-primary btn-sm me-1"
                                     title="Editar"
+                                    @click="openEdit(red)"
                                 >
                                     <i class="fa-solid fa-pen"></i>
-                                </Link>
+                                </button>
                                 <button
                                     type="button"
                                     class="btn btn-outline-danger btn-sm"
                                     title="Eliminar"
-                                    @click="destroy(red.id)"
+                                    @click="openDelete(red)"
                                 >
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
@@ -134,5 +207,78 @@ const destroy = (id) => {
                 </ul>
             </div>
         </div>
+
+        <AdminModal
+            :show="showFormModal"
+            :title="isEdit ? 'Editar red social' : 'Nueva red social'"
+            @close="closeFormModal"
+        >
+            <form id="red-social-form" @submit.prevent="submit">
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input
+                        v-model="form.nombre"
+                        type="text"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.nombre }"
+                        required
+                    />
+                    <div v-if="form.errors.nombre" class="invalid-feedback">{{ form.errors.nombre }}</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">URL</label>
+                    <input
+                        v-model="form.url"
+                        type="url"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.url }"
+                        required
+                    />
+                    <div v-if="form.errors.url" class="invalid-feedback">{{ form.errors.url }}</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Icono (clase CSS)</label>
+                    <input
+                        v-model="form.icono"
+                        type="text"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.icono }"
+                        placeholder="ej. fa-brands fa-facebook"
+                    />
+                    <div v-if="form.errors.icono" class="invalid-feedback">{{ form.errors.icono }}</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Orden</label>
+                    <input
+                        v-model.number="form.orden"
+                        type="number"
+                        min="0"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.orden }"
+                    />
+                    <div v-if="form.errors.orden" class="invalid-feedback">{{ form.errors.orden }}</div>
+                </div>
+            </form>
+            <template #footer>
+                <button type="button" class="btn btn-secondary" @click="closeFormModal">Cancelar</button>
+                <button
+                    type="submit"
+                    form="red-social-form"
+                    class="btn btn-primary"
+                    :disabled="form.processing"
+                >
+                    <span v-if="form.processing" class="spinner-border spinner-border-sm me-1" />
+                    Guardar
+                </button>
+            </template>
+        </AdminModal>
+
+        <ConfirmDeleteModal
+            :show="showDeleteModal"
+            :message="`¿Eliminar la red social «${deleting?.nombre ?? ''}»?`"
+            :processing="deletingProcessing"
+            @close="closeDeleteModal"
+            @confirm="confirmDelete"
+        />
     </AuthenticatedLayout>
 </template>

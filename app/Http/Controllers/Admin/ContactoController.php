@@ -26,11 +26,9 @@ class ContactoController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(): RedirectResponse
     {
-        return Inertia::render('Admin/Contactos/Form', [
-            'contacto' => null,
-        ]);
+        return redirect()->route('admin.contactos.index');
     }
 
     public function store(StoreContactoRequest $request): RedirectResponse
@@ -42,11 +40,9 @@ class ContactoController extends Controller
             ->with('success', 'Contacto guardado correctamente.');
     }
 
-    public function edit(Contacto $contacto): Response
+    public function edit(Contacto $contacto): RedirectResponse
     {
-        return Inertia::render('Admin/Contactos/Form', [
-            'contacto' => $contacto,
-        ]);
+        return redirect()->route('admin.contactos.index');
     }
 
     public function update(UpdateContactoRequest $request, Contacto $contacto): RedirectResponse

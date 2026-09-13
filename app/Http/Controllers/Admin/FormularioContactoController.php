@@ -24,11 +24,9 @@ class FormularioContactoController extends Controller
         ]);
     }
 
-    public function show(FormularioContacto $formularioContacto): Response
+    public function show(FormularioContacto $formularioContacto): RedirectResponse
     {
-        return Inertia::render('Admin/FormulariosContacto/Show', [
-            'formulario' => $formularioContacto,
-        ]);
+        return redirect()->route('admin.formularios-contacto.index');
     }
 
     public function update(Request $request, FormularioContacto $formularioContacto): RedirectResponse

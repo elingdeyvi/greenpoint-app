@@ -25,15 +25,13 @@ class UserController extends Controller
 
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
+            'roles' => Role::query()->orderBy('name')->get(['id', 'name']),
         ]);
     }
 
-    public function create(): Response
+    public function create(): RedirectResponse
     {
-        return Inertia::render('Admin/Users/Form', [
-            'user' => null,
-            'roles' => Role::query()->orderBy('name')->get(['id', 'name']),
-        ]);
+        return redirect()->route('admin.users.index');
     }
 
     public function store(Request $request): RedirectResponse
@@ -48,13 +46,14 @@ class UserController extends Controller
             ],
             'password' => ['required', 'confirmed', Password::defaults()],
             'role' => ['required', Rule::exists('roles', 'name')],
+            'estatus' => ['nullable', Rule::in(['activo', 'inactivo', 'suspendido'])],
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => $validated['password'],
-            'estatus' => 'activo',
+            'estatus' => $validated['estatus'] ?? 'activo',
         ]);
 
         $user->assignRole($validated['role']);
@@ -64,14 +63,9 @@ class UserController extends Controller
             ->with('success', 'Usuario guardado correctamente.');
     }
 
-    public function edit(User $user): Response
+    public function edit(User $user): RedirectResponse
     {
-        $user->load('roles');
-
-        return Inertia::render('Admin/Users/Form', [
-            'user' => $user,
-            'roles' => Role::query()->orderBy('name')->get(['id', 'name']),
-        ]);
+        return redirect()->route('admin.users.index');
     }
 
     public function update(Request $request, User $user): RedirectResponse
@@ -88,6 +82,7 @@ class UserController extends Controller
             ],
             'password' => ['nullable', 'confirmed', Password::defaults()],
             'role' => ['required', Rule::exists('roles', 'name')],
+            'estatus' => ['nullable', Rule::in(['activo', 'inactivo', 'suspendido'])],
         ]);
 
         $data = [
@@ -95,8 +90,12 @@ class UserController extends Controller
             'email' => $validated['email'],
         ];
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $data['password'] = $validated['password'];
+        }
+
+        if (array_key_exists('estatus', $validated) && $validated['estatus'] !== null) {
+            $data['estatus'] = $validated['estatus'];
         }
 
         $user->update($data);
