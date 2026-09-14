@@ -143,7 +143,7 @@ const pageTitle = computed(() => props.pagina?.titulo || 'Quienes Somos');
                                 Greenpoint: Servicios Satelitales
                             </h2>
                             <a
-                                class="video_btn border-radius-5"
+                                class="popup-social-video video_btn border-radius-5"
                                 :href="videoUrl"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -197,7 +197,7 @@ const pageTitle = computed(() => props.pagina?.titulo || 'Quienes Somos');
                             <div class="vw-lg-50 position-relative">
                                 <img
                                     :src="fortalezasImage"
-                                    class="rounded-bottom-left-10px w-100"
+                                    class="rounded-bottom-left-10px"
                                     alt=""
                                 />
                                 <div
