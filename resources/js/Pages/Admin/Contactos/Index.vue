@@ -41,6 +41,7 @@ const isEdit = computed(() => !!editing.value?.id);
 
 const form = useForm({
     ubicacion: '',
+    subtitulo: '',
     direccion: '',
     telefono: '',
     email: '',
@@ -53,6 +54,7 @@ const resetForm = (record = null) => {
     form.clearErrors();
     form.reset();
     form.ubicacion = record?.ubicacion ?? '';
+    form.subtitulo = record?.subtitulo ?? '';
     form.direccion = record?.direccion ?? '';
     form.telefono = record?.telefono ?? '';
     form.email = record?.email ?? '';
@@ -230,6 +232,19 @@ watch(showFormModal, (open) => {
                     </div>
                 </div>
                 <div class="mb-3">
+                    <label class="form-label">Subtítulo</label>
+                    <input
+                        v-model="form.subtitulo"
+                        type="text"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.subtitulo }"
+                        placeholder="Ej. Villahermosa"
+                    />
+                    <div v-if="form.errors.subtitulo" class="invalid-feedback">
+                        {{ form.errors.subtitulo }}
+                    </div>
+                </div>
+                <div class="mb-3">
                     <label class="form-label">Dirección</label>
                     <textarea
                         v-model="form.direccion"
@@ -264,12 +279,13 @@ watch(showFormModal, (open) => {
                     <div v-if="form.errors.email" class="invalid-feedback">{{ form.errors.email }}</div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">URL del mapa</label>
-                    <input
+                    <label class="form-label">URL embed del mapa (iframe Google Maps)</label>
+                    <textarea
                         v-model="form.mapa_url"
-                        type="url"
                         class="form-control"
                         :class="{ 'is-invalid': form.errors.mapa_url }"
+                        rows="3"
+                        placeholder="https://www.google.com/maps/embed?pb=..."
                     />
                     <div v-if="form.errors.mapa_url" class="invalid-feedback">
                         {{ form.errors.mapa_url }}

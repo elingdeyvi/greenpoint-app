@@ -43,10 +43,12 @@ Route::name('public.')->group(function () {
     Route::get('/galeria', [PublicGaleriaController::class, 'index'])->name('galeria');
     Route::get('/tecnologia', [PaginaController::class, 'tecnologia'])->name('tecnologia');
     Route::get('/contacto', [PublicContactoController::class, 'index'])->name('contacto');
+    Route::get('/contacto/{contacto}', [PublicContactoController::class, 'show'])->name('contacto.show');
     Route::post('/contacto', [PublicContactoController::class, 'store'])
         ->middleware('throttle:10,1')
         ->name('contacto.store');
     Route::get('/aviso-de-privacidad', [PaginaController::class, 'aviso'])->name('aviso');
+    Route::get('/cv.pdf', [PaginaController::class, 'cv'])->name('cv');
 });
 
 Route::get('/dashboard', function () {

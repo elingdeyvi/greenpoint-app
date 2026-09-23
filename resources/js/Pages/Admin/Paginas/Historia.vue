@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AdminModal from '@/Components/Admin/AdminModal.vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     pagina: {
@@ -15,6 +16,9 @@ const form = useForm({
     meta_descripcion: props.pagina.meta_descripcion ?? '',
     meta_keywords: props.pagina.meta_keywords ?? '',
     estado: props.pagina.estado ?? true,
+    cv_etiqueta: props.pagina.cv_etiqueta ?? 'Servicios Greenpoint',
+    cv_pdf: null,
+    eliminar_cv_pdf: false,
     eventos: (props.pagina.eventos ?? []).map((e, index) => ({
         id: e.id ?? null,
         anio: e.anio ?? new Date().getFullYear(),
@@ -29,6 +33,9 @@ const form = useForm({
         archivo: null,
     })),
 });
+
+const cvFileName = ref('');
+const hasStoredCv = computed(() => !!props.pagina.cv_pdf && !form.eliminar_cv_pdf);
 
 const closeEditor = () => {
     router.visit(route('admin.paginas.index'));
@@ -61,10 +68,24 @@ const onImagenFile = (index, e) => {
     form.imagenes[index].archivo = e.target.files?.[0] ?? null;
 };
 
+const onCvFile = (e) => {
+    const file = e.target.files?.[0] ?? null;
+    form.cv_pdf = file;
+    form.eliminar_cv_pdf = false;
+    cvFileName.value = file?.name ?? '';
+};
+
+const markRemoveCv = () => {
+    form.cv_pdf = null;
+    form.eliminar_cv_pdf = true;
+    cvFileName.value = '';
+};
+
 const submit = () => {
     form.transform((data) => ({
         ...data,
         estado: data.estado ? 1 : 0,
+        eliminar_cv_pdf: data.eliminar_cv_pdf ? 1 : 0,
         _method: 'put',
     })).post(route('admin.paginas.historia.update'), {
         forceFormData: true,
@@ -127,6 +148,66 @@ const submit = () => {
                                         type="checkbox"
                                     />
                                     <label class="form-check-label" for="estado">Página activa</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">Curriculum (PDF)</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            Archivo del widget “Curriculum” en /historia. Se publica en
+                            <code>/cv.pdf</code> (igual que en producción).
+                        </p>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Etiqueta del enlace</label>
+                                <input
+                                    v-model="form.cv_etiqueta"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Servicios Greenpoint"
+                                />
+                                <div v-if="form.errors.cv_etiqueta" class="text-danger small mt-1">
+                                    {{ form.errors.cv_etiqueta }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Archivo PDF</label>
+                                <input
+                                    type="file"
+                                    class="form-control"
+                                    accept="application/pdf,.pdf"
+                                    @change="onCvFile"
+                                />
+                                <div v-if="form.errors.cv_pdf" class="text-danger small mt-1">
+                                    {{ form.errors.cv_pdf }}
+                                </div>
+                                <div v-if="cvFileName" class="form-text">Nuevo archivo: {{ cvFileName }}</div>
+                                <div
+                                    v-else-if="hasStoredCv"
+                                    class="form-text d-flex flex-wrap gap-2 align-items-center"
+                                >
+                                    <span>
+                                        Actual:
+                                        <a :href="route('public.cv')" target="_blank" rel="noopener noreferrer">
+                                            Ver /cv.pdf
+                                        </a>
+                                    </span>
+                                    <button
+                                        type="button"
+                                        class="btn btn-link btn-sm text-danger p-0"
+                                        @click="markRemoveCv"
+                                    >
+                                        Quitar PDF
+                                    </button>
+                                </div>
+                                <div v-else-if="form.eliminar_cv_pdf" class="form-text text-warning">
+                                    El PDF se eliminará al guardar.
                                 </div>
                             </div>
                         </div>

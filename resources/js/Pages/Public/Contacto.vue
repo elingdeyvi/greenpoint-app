@@ -1,10 +1,11 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import PublicLayout from '@/Layouts/PublicLayout.vue';
 import PageHero from '@/Components/Public/PageHero.vue';
 import { usePublicSite } from '@/composables/usePublicSite';
 
-defineProps({
+const props = defineProps({
     contactos: {
         type: Array,
         default: () => [],
@@ -30,6 +31,19 @@ const submit = () => {
         onSuccess: () => form.reset(),
     });
 };
+
+/** Compatibilidad con enlaces antiguos /contacto#oficina-{id} */
+onMounted(() => {
+    const hash = window.location.hash || '';
+    const match = hash.match(/^#oficina-(\d+)$/);
+    if (!match) {
+        return;
+    }
+    const id = Number(match[1]);
+    if (props.contactos.some((c) => c.id === id)) {
+        router.visit(route('public.contacto.show', id), { replace: true });
+    }
+});
 </script>
 
 <template>
@@ -55,11 +69,12 @@ const submit = () => {
                         </div>
 
                         <div v-if="contactos.length" class="d-flex flex-column gap-3">
-                            <div
+                            <a
                                 v-for="contacto in contactos"
                                 :id="`oficina-${contacto.id}`"
                                 :key="contacto.id"
-                                class="gp-contact-card"
+                                :href="route('public.contacto.show', contacto.id)"
+                                class="gp-contact-card text-decoration-none text-reset"
                             >
                                 <span class="contact-icon-box">
                                     <i class="fa-solid fa-location-dot"></i>
@@ -70,23 +85,13 @@ const submit = () => {
                                         {{ contacto.direccion }}
                                     </p>
                                     <p v-if="contacto.telefono" class="mb-1">
-                                        <a :href="`tel:${contacto.telefono}`">{{ contacto.telefono }}</a>
+                                        {{ contacto.telefono }}
                                     </p>
                                     <p v-if="contacto.email" class="mb-0">
-                                        <a :href="`mailto:${contacto.email}`">{{ contacto.email }}</a>
+                                        {{ contacto.email }}
                                     </p>
-                                    <a
-                                        v-if="contacto.mapa_url"
-                                        :href="contacto.mapa_url"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="d-inline-flex align-items-center gap-1 fw-semibold mt-2"
-                                    >
-                                        Ver en el mapa
-                                        <i class="fa-solid fa-arrow-up-right-from-square small"></i>
-                                    </a>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                         <p v-else class="text-muted">
                             Muy pronto publicaremos nuestros datos de contacto.

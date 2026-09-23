@@ -1,25 +1,18 @@
 <script setup>
-import { computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import PublicLayout from '@/Layouts/PublicLayout.vue';
 import PageHero from '@/Components/Public/PageHero.vue';
 import ClientLogoGrid from '@/Components/Public/ClientLogoGrid.vue';
-import { usePublicImage } from '@/composables/usePublicImage';
 import { usePublicSite } from '@/composables/usePublicSite';
 
-const props = defineProps({
+defineProps({
     clientes: {
         type: Array,
         default: () => [],
     },
 });
 
-const { resolveImage } = usePublicImage();
 const { sitioNombre } = usePublicSite();
-
-const heroBackground = computed(
-    () => resolveImage(props.clientes[0]?.logo) || '/images/demo/banners/banner3.jpg',
-);
 </script>
 
 <template>
@@ -33,16 +26,17 @@ const heroBackground = computed(
                 { label: 'Nosotros' },
                 { label: 'Clientes' },
             ]"
-            :background="heroBackground"
+            background="/images/demo/page-title/con3.jpg"
         />
 
-        <section class="gp-section">
+        <!-- cgi-bin clientes.html — OUR TEAM / logos grid -->
+        <section>
             <div class="container">
-                <div class="section-heading">
-                    <span class="subtitle">{{ sitioNombre }}</span>
+                <div class="section-heading" v-reveal="{ delay: 100 }">
+                    <span class="subtitle">{{ sitioNombre || 'Greenpoint' }}</span>
                     <h2>Algunos <span class="font-weight-400">Clientes</span></h2>
                 </div>
-                <ClientLogoGrid :clientes="clientes" />
+                <ClientLogoGrid :clientes="clientes" :carousel="false" />
             </div>
         </section>
     </PublicLayout>

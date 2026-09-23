@@ -19,6 +19,10 @@ class UpdatePaginaHistoriaRequest extends FormRequest
             'meta_keywords' => ['nullable', 'string', 'max:255'],
             'estado' => ['required', 'boolean'],
 
+            'cv_pdf' => ['nullable', 'file', 'mimes:pdf', 'max:12288'],
+            'cv_etiqueta' => ['nullable', 'string', 'max:255'],
+            'eliminar_cv_pdf' => ['nullable', 'boolean'],
+
             'eventos' => ['nullable', 'array'],
             'eventos.*.id' => ['nullable', 'integer', 'exists:pagina_historia_eventos,id'],
             'eventos.*.anio' => ['required', 'integer', 'min:1900', 'max:2100'],

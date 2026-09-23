@@ -16,10 +16,11 @@ class UpdateContactoRequest extends FormRequest
     {
         return [
             'ubicacion' => ['sometimes', 'required', 'string', 'max:255'],
+            'subtitulo' => ['nullable', 'string', 'max:255'],
             'direccion' => ['nullable', 'string'],
             'telefono' => ['sometimes', 'required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
-            'mapa_url' => ['nullable', 'url', 'max:255'],
+            'mapa_url' => ['nullable', 'string', 'max:2048'],
             'orden' => ['nullable', 'integer', 'min:0'],
         ];
     }

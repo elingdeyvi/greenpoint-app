@@ -39,20 +39,31 @@ const isEdit = computed(() => !!editing.value?.id);
 
 const form = useForm({
     nombre: '',
+    subtitulo: '',
+    titulo_seccion: '',
     descripcion: '',
     imagen: null,
+    imagen_secundaria: null,
+    plantilla: 'detalle',
     orden: 0,
     activo: true,
 });
 
+const previewSecondaryUrl = ref(null);
+
 const resetForm = (record = null) => {
     editing.value = record;
     previewUrl.value = null;
+    previewSecondaryUrl.value = null;
     form.clearErrors();
     form.reset();
     form.nombre = record?.nombre ?? '';
+    form.subtitulo = record?.subtitulo ?? '';
+    form.titulo_seccion = record?.titulo_seccion ?? '';
     form.descripcion = record?.descripcion ?? '';
     form.imagen = null;
+    form.imagen_secundaria = null;
+    form.plantilla = record?.plantilla ?? 'detalle';
     form.orden = record?.orden ?? 0;
     form.activo = record?.activo ?? true;
 };
@@ -76,6 +87,19 @@ const onFileChange = (e) => {
     const file = e.target.files?.[0] ?? null;
     form.imagen = file;
     previewUrl.value = file ? URL.createObjectURL(file) : null;
+};
+
+const onSecondaryFileChange = (e) => {
+    const file = e.target.files?.[0] ?? null;
+    form.imagen_secundaria = file;
+    previewSecondaryUrl.value = file ? URL.createObjectURL(file) : null;
+};
+
+const imageSrc = (path) => {
+    if (!path) return '';
+    if (path.startsWith('http') || path.startsWith('/')) return path;
+    if (path.startsWith('images/')) return `/${path}`;
+    return `/storage/${path}`;
 };
 
 const submit = () => {
@@ -258,19 +282,61 @@ watch(showFormModal, (open) => {
                     <div v-if="form.errors.nombre" class="invalid-feedback">{{ form.errors.nombre }}</div>
                 </div>
                 <div class="mb-3">
+                    <label class="form-label">Plantilla</label>
+                    <select
+                        v-model="form.plantilla"
+                        class="form-select"
+                        :class="{ 'is-invalid': form.errors.plantilla }"
+                    >
+                        <option value="detalle">Detalle (Conexión satelital)</option>
+                        <option value="about">About (Soluciones)</option>
+                        <option value="split">Split (Hardware)</option>
+                    </select>
+                    <div v-if="form.errors.plantilla" class="invalid-feedback">
+                        {{ form.errors.plantilla }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Título de sección</label>
+                    <input
+                        v-model="form.titulo_seccion"
+                        type="text"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.titulo_seccion }"
+                        placeholder="Ej. Soluciones a medida"
+                    />
+                    <div v-if="form.errors.titulo_seccion" class="invalid-feedback">
+                        {{ form.errors.titulo_seccion }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Subtítulo</label>
+                    <input
+                        v-model="form.subtitulo"
+                        type="text"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.subtitulo }"
+                        placeholder="Texto naranja bajo el título"
+                    />
+                    <div v-if="form.errors.subtitulo" class="invalid-feedback">
+                        {{ form.errors.subtitulo }}
+                    </div>
+                </div>
+                <div class="mb-3">
                     <label class="form-label">Descripción</label>
                     <textarea
                         v-model="form.descripcion"
                         class="form-control"
                         :class="{ 'is-invalid': form.errors.descripcion }"
-                        rows="4"
+                        rows="6"
+                        placeholder="Texto y bloques [features]...[/features] / [badges]...[/badges]"
                     />
                     <div v-if="form.errors.descripcion" class="invalid-feedback">
                         {{ form.errors.descripcion }}
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Imagen</label>
+                    <label class="form-label">Imagen principal</label>
                     <input
                         type="file"
                         class="form-control"
@@ -281,8 +347,29 @@ watch(showFormModal, (open) => {
                     <div v-if="form.errors.imagen" class="invalid-feedback">{{ form.errors.imagen }}</div>
                     <div v-if="previewUrl || editing?.imagen" class="mt-2">
                         <img
-                            :src="previewUrl || `/storage/${editing.imagen}`"
+                            :src="previewUrl || imageSrc(editing.imagen)"
                             alt="Vista previa"
+                            class="img-thumbnail"
+                            style="max-height: 140px"
+                        />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Imagen secundaria (Soluciones)</label>
+                    <input
+                        type="file"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.imagen_secundaria }"
+                        accept="image/*"
+                        @change="onSecondaryFileChange"
+                    />
+                    <div v-if="form.errors.imagen_secundaria" class="invalid-feedback">
+                        {{ form.errors.imagen_secundaria }}
+                    </div>
+                    <div v-if="previewSecondaryUrl || editing?.imagen_secundaria" class="mt-2">
+                        <img
+                            :src="previewSecondaryUrl || imageSrc(editing.imagen_secundaria)"
+                            alt="Vista previa secundaria"
                             class="img-thumbnail"
                             style="max-height: 140px"
                         />

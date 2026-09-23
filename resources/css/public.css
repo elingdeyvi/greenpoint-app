@@ -102,11 +102,13 @@ body.gp-public .gp-public-wrapper .ti-time:before {
     content: '\e72b';
 }
 
-body.gp-public .gp-public-wrapper .about-style1 {
+/* cgi-bin soluciones.html — about-style1: overflow visible para overlap + decó */
+body.gp-public .gp-public-wrapper section.about-style1 {
     position: relative;
     overflow: visible;
     z-index: 1;
 }
+
 
 /*
  * Video CTA (cgi-bin COUNTER / nos6.jpg)
@@ -370,6 +372,13 @@ body.gp-public .gp-public-wrapper .text-gp-primary {
     color: var(--gp-primary) !important;
 }
 
+/* cgi-bin — subtítulo lead en soluciones.html */
+body.gp-public .gp-public-wrapper .lead {
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
 body.gp-public .gp-public-wrapper .text-secondary,
 body.gp-public .gp-public-wrapper .text-gp-secondary {
     color: var(--gp-secondary) !important;
@@ -558,6 +567,11 @@ body.gp-public .gp-public-wrapper section {
     overflow: hidden;
     background: #fff;
     position: relative;
+}
+
+/* cgi-bin soluciones.html — overlap de s2 + line-02 fuera del box; no recortar */
+body.gp-public .gp-public-wrapper section.about-style1 {
+    overflow: visible !important;
 }
 
 /* El banner de video no debe pintar fondo blanco detrás del cover */
@@ -2212,29 +2226,38 @@ body.gp-public .gp-public-wrapper .card-style3 {
     border: 0;
     background: transparent;
     box-shadow: none;
+    border-radius: 10px;
+    text-align: center;
+    transition: box-shadow 0.3s ease;
 }
 
 body.gp-public .gp-public-wrapper .card-style3 .social-icon-wrapper {
-    background: #fff;
-    border: 1px solid var(--gp-border);
-    border-radius: var(--gp-radius);
-    padding: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 140px;
-    transition: box-shadow 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
+    padding: 0;
+    display: block;
+    min-height: 0;
+}
+
+body.gp-public .gp-public-wrapper .card-style3:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
 }
 
 body.gp-public .gp-public-wrapper .card-style3:hover .social-icon-wrapper {
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    box-shadow: none;
 }
 
 body.gp-public .gp-public-wrapper .card-style3 img {
-    max-height: 80px;
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: none;
     max-width: 100%;
-    object-fit: contain;
-    border-radius: var(--gp-radius);
+    object-fit: cover;
+    border-radius: 10px;
 }
 
 body.gp-public .gp-public-wrapper .card-style5 {
@@ -2356,9 +2379,6 @@ body.gp-public .gp-public-wrapper .list-style1 li {
     position: relative;
     padding-left: 0;
     margin-bottom: 0.85rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
 }
 
 body.gp-public .gp-public-wrapper .list-style1 li i {
@@ -2367,8 +2387,60 @@ body.gp-public .gp-public-wrapper .list-style1 li i {
     flex-shrink: 0;
 }
 
-/* ---------- Gallery ---------- */
+/* ---------- Gallery (cgi-bin portfolio 4 columns) ---------- */
 
+body.gp-public .gp-public-wrapper .portfolio-image {
+    position: relative;
+    display: block;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+body.gp-public .gp-public-wrapper .portfolio-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 1.5s ease;
+}
+
+body.gp-public .gp-public-wrapper .portfolio-image:hover img {
+    transform: scale(1.1);
+    transition: transform 2s ease;
+}
+
+body.gp-public .gp-public-wrapper .portfolio-image .portfolio-icon {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    display: inline-block;
+    background: #fff;
+    transform: translateX(-50%);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--gp-primary);
+    height: 45px;
+    width: 45px;
+    line-height: 42px;
+    text-align: center;
+    border-radius: 50%;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 2;
+    transition: all 1s cubic-bezier(0.37, 0.31, 0.2, 0.85);
+}
+
+body.gp-public .gp-public-wrapper .portfolio-image:hover .portfolio-icon {
+    opacity: 1;
+    visibility: visible;
+    bottom: 40%;
+}
+
+body.gp-public .gp-public-wrapper .portfolio-image .portfolio-icon:hover {
+    background: var(--gp-primary);
+    color: #fff;
+}
+
+/* legacy grid (por si se reutiliza) */
 body.gp-public .gp-public-wrapper .gp-gallery-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -2502,6 +2574,11 @@ body.gp-public .gp-public-wrapper .contact-icon-box {
     flex-shrink: 0;
 }
 
+/* cgi-bin tabasco/veracruz/carmen — tel/email en color body, no primary */
+body.gp-public .gp-public-wrapper .gp-contact-plain {
+    color: var(--gp-body);
+}
+
 body.gp-public .gp-public-wrapper .gp-contact-card {
     background: #fff;
     border: 1px solid var(--gp-border);
@@ -2583,6 +2660,32 @@ body.gp-public .gp-public-wrapper .w-95 {
 
 body.gp-public .gp-public-wrapper .p-2-3 {
     padding: 2.3rem !important;
+}
+
+body.gp-public .gp-public-wrapper .p-1-6 {
+    padding: 1.6rem !important;
+}
+
+@media (min-width: 576px) {
+    body.gp-public .gp-public-wrapper .p-sm-6 {
+        padding: 3.5rem !important;
+    }
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper .p-lg-8 {
+        padding: 4.5rem !important;
+    }
+}
+
+body.gp-public .gp-public-wrapper .display-md-28 {
+    font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+    body.gp-public .gp-public-wrapper .display-md-28 {
+        font-size: 1.05rem;
+    }
 }
 
 body.gp-public .gp-public-wrapper .p-md-2-2 {
@@ -2675,7 +2778,9 @@ body.gp-public .gp-public-wrapper .secondary-overlay {
     position: relative;
 }
 
-body.gp-public .gp-public-wrapper .secondary-overlay::before {
+/* cgi-bin: el overlay verde solo aplica con data-overlay-dark;
+   sin ese attr las imágenes del sidebar se ven sin tinte. */
+body.gp-public .gp-public-wrapper .secondary-overlay[data-overlay-dark]::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -2711,6 +2816,44 @@ body.gp-public .gp-public-wrapper .service-details-sidebar .widget-address .cont
     height: 50px;
     text-align: center;
     line-height: 50px;
+}
+
+/* cgi-bin widget brochure (Curriculum PDF) */
+body.gp-public .gp-public-wrapper .service-details-sidebar .widget-brochure li a {
+    position: relative;
+    display: block;
+    padding: 15px 20px;
+    color: #232323;
+    background: #e9ecef;
+    font-weight: 500;
+    border-radius: 10px;
+}
+
+body.gp-public .gp-public-wrapper .service-details-sidebar .widget-brochure li a span {
+    position: absolute;
+    top: 0;
+    right: 20px;
+    display: inline-block;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 7px;
+    border-radius: 0 0 10px 10px;
+    background-color: #f3663f;
+}
+
+body.gp-public .gp-public-wrapper .service-details-sidebar .widget-brochure li:hover a span {
+    background: #24c373;
+}
+
+body.gp-public .gp-public-wrapper .service-details-sidebar .widget-brochure li a:hover {
+    background: #f3663f;
+    transition: all 0.4s ease 0s;
+    color: #fff;
+}
+
+body.gp-public .gp-public-wrapper .service-details-sidebar .widget-brochure li:last-child {
+    margin-bottom: 0;
 }
 
 body.gp-public .gp-public-wrapper .widget-info {
@@ -2777,12 +2920,12 @@ body.gp-public .gp-public-wrapper .blog-sidebar .blog-social-icon li a {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: var(--gp-light);
-    color: var(--gp-heading) !important;
+    background: var(--gp-primary);
+    color: #fff !important;
 }
 
 body.gp-public .gp-public-wrapper .blog-sidebar .blog-social-icon li a:hover {
-    background: var(--gp-primary);
+    background: var(--gp-heading);
     color: #fff !important;
 }
 
@@ -3133,6 +3276,82 @@ body.gp-public .gp-public-wrapper .about-style1 .about-list.active,
 body.gp-public .gp-public-wrapper .about-style1 .about-list:hover {
     box-shadow: 6px 5px 25px 0 rgba(0, 0, 0, 0.08);
     background-color: #fff;
+}
+
+/*
+ * cgi-bin soluciones.html — s2 sin width forzado (tamaño intrínseco 320px).
+ * El reset global `img { max-width:100% }` la encogía al % del contenedor h-100
+ * (columna), no al de s1; por eso se veía más chica y mal alineada.
+ */
+body.gp-public .gp-public-wrapper .about-style1 .position-absolute.bottom-0.end-0 {
+    width: auto;
+    max-width: none;
+    height: auto;
+}
+
+body.gp-public .gp-public-wrapper .right-25 {
+    right: 25% !important;
+}
+
+body.gp-public .gp-public-wrapper .top-10 {
+    top: 10% !important;
+}
+
+@media (min-width: 576px) {
+    body.gp-public .gp-public-wrapper .mb-sm-10 {
+        margin-bottom: 6rem !important;
+    }
+}
+
+/* cgi-bin hardware.html — cover a ancho de columna; altura ≈ cuadrado como prod */
+body.gp-public .gp-public-wrapper .gp-servicio-split-media {
+    width: 100%;
+    min-height: 480px;
+    aspect-ratio: 1 / 1;
+    background-position: center center;
+    background-size: cover;
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper .gp-servicio-split-media {
+        min-height: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    body.gp-public .gp-public-wrapper .py-md-8 {
+        padding-top: 4.5rem !important;
+        padding-bottom: 4.5rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .px-md-6 {
+        padding-left: 3.5rem !important;
+        padding-right: 3.5rem !important;
+    }
+}
+
+@media (min-width: 576px) {
+    body.gp-public .gp-public-wrapper .py-sm-2-9 {
+        padding-top: 2.9rem !important;
+        padding-bottom: 2.9rem !important;
+    }
+
+    body.gp-public .gp-public-wrapper .px-sm-2-5 {
+        padding-left: 2.5rem !important;
+        padding-right: 2.5rem !important;
+    }
+}
+
+@media (min-width: 992px) {
+    body.gp-public .gp-public-wrapper .ps-lg-2-5 {
+        padding-left: 2.5rem !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    body.gp-public .gp-public-wrapper .ps-xl-7 {
+        padding-left: 4rem !important;
+    }
 }
 
 @media screen and (max-width: 575px) {

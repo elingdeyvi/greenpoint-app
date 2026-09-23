@@ -14,22 +14,21 @@ const props = defineProps({
     },
 });
 
-const featuredImage = computed(() =>
-    props.pagina?.imagen_destacada ? resolveImage(props.pagina.imagen_destacada) : null,
-);
-const secciones = computed(() => props.pagina?.secciones ?? []);
-const heroBackground = computed(
-    () => featuredImage.value || '/images/demo/tecnologia/destacada.jpg',
+const pageTitle = computed(() => props.pagina?.titulo || 'Tecnologia');
+const featuredImage = computed(
+    () =>
+        resolveImage(props.pagina?.imagen_destacada) ||
+        '/images/demo/tecnologia/tec1.jpg',
 );
 </script>
 
 <template>
-    <Head :title="pagina?.titulo || 'Tecnología'" />
+    <Head :title="pageTitle" />
 
     <PublicLayout>
         <template v-if="pagina">
             <PageHero
-                :title="pagina.titulo || 'Tecnologia'"
+                :title="pageTitle"
                 :breadcrumbs="[
                     { label: 'Inicio', href: route('public.home') },
                     { label: 'Tecnologia' },
@@ -37,39 +36,16 @@ const heroBackground = computed(
                 background="/images/demo/page-title/con3.jpg"
             />
 
-            <section class="gp-section">
+            <!-- cgi-bin tecnologia.html — solo imagen destacada (tec1) -->
+            <section>
                 <div class="container">
-                    <div v-if="featuredImage" class="mb-4 mb-lg-5">
-                        <img
-                            :src="featuredImage"
-                            :alt="pagina.titulo"
-                            class="img-fluid border-radius-10 w-100"
-                            style="max-height: 520px; object-fit: cover;"
-                        />
-                    </div>
-
-                    <p
-                        v-if="pagina.contenido"
-                        class="fs-5 mb-5"
-                        style="white-space: pre-line; text-align: justify;"
-                    >
-                        {{ pagina.contenido }}
-                    </p>
-
-                    <div v-if="secciones.length" class="row g-4">
-                        <div
-                            v-for="seccion in secciones"
-                            :key="seccion.id"
-                            class="col-md-6"
-                        >
-                            <div class="gp-card h-100">
-                                <div class="gp-card-body">
-                                    <h3 class="gp-card-title h5 mb-2">{{ seccion.titulo }}</h3>
-                                    <p class="mb-0" style="white-space: pre-line;">
-                                        {{ seccion.contenido }}
-                                    </p>
-                                </div>
-                            </div>
+                    <div class="row mb-2-5">
+                        <div class="col-lg-12" v-reveal="{ delay: 100 }">
+                            <img
+                                :src="featuredImage"
+                                class="border-radius-10 w-100"
+                                :alt="pageTitle"
+                            />
                         </div>
                     </div>
                 </div>

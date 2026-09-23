@@ -130,11 +130,12 @@ onUnmounted(() => {
         </div>
     </div>
 
-    <div v-else-if="clientes.length" class="row g-4">
+    <div v-else-if="clientes.length" class="row mt-n1-9">
         <div
-            v-for="cliente in clientes"
+            v-for="(cliente, i) in clientes"
             :key="cliente.id"
-            class="col-sm-6 col-lg-3"
+            class="col-sm-6 col-lg-3 mt-1-9"
+            v-reveal="{ delay: 100 + (i % 4) * 100 }"
         >
             <component
                 :is="cliente.enlace ? 'a' : 'div'"

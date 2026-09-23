@@ -24,7 +24,19 @@ class PaginaHistoriaService
             'meta_descripcion',
             'meta_keywords',
             'estado',
+            'cv_etiqueta',
         ]);
+
+        if ($request->boolean('eliminar_cv_pdf') && ! $request->hasFile('cv_pdf')) {
+            $this->imageService->deleteImage($pagina->cv_pdf);
+            $data['cv_pdf'] = null;
+        }
+
+        if ($request->hasFile('cv_pdf')) {
+            $this->imageService->deleteImage($pagina->cv_pdf);
+            $data['cv_pdf'] = $this->imageService
+                ->storeImage($request->file('cv_pdf'), 'historia/cv');
+        }
 
         $pagina->update($data);
 

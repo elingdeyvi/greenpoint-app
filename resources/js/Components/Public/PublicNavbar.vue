@@ -15,7 +15,11 @@ const logoSrc = computed(() =>
         : '/images/greenpoint/logo-inner.png',
 );
 
-const isActive = (name) => route().current(name) || route().current(`${name}.*`);
+const isActive = (name) =>
+    route().current(name) ||
+    route().current(`${name}.*`) ||
+    route().current(`${name}.show`) ||
+    route().current(`${name}.index`);
 
 const toggle = () => {
     collapsed.value = !collapsed.value;
@@ -268,7 +272,7 @@ onUnmounted(() => {
                                             >
                                                 <li v-for="contacto in contactos" :key="contacto.id">
                                                     <Link
-                                                        :href="`${route('public.contacto')}#oficina-${contacto.id}`"
+                                                        :href="route('public.contacto.show', contacto.id)"
                                                         class="dropdown-item"
                                                         @click="closeMenus"
                                                     >

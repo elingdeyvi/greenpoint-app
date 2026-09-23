@@ -16,6 +16,8 @@ class PaginaHistoria extends Model
         'meta_descripcion',
         'meta_keywords',
         'estado',
+        'cv_pdf',
+        'cv_etiqueta',
     ];
 
     protected $casts = [

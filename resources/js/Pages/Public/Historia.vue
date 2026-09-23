@@ -18,6 +18,8 @@ const props = defineProps({
 
 const eventos = computed(() => props.pagina?.eventos ?? []);
 const pageTitle = computed(() => props.pagina?.titulo || 'Historia');
+const cvUrl = computed(() => (props.pagina?.cv_pdf ? route('public.cv') : null));
+const cvLabel = computed(() => props.pagina?.cv_etiqueta || 'Servicios Greenpoint');
 const infoImage = '/images/demo/historia/h1.jpg';
 const avatarImage = '/images/demo/historia/h2.jpg';
 const direccion = computed(
@@ -94,6 +96,25 @@ const direccion = computed(
                                             <p class="mb-0">Lun a Vie - 9:00am a 6:00pm</p>
                                         </div>
                                     </div>
+                                </aside>
+
+                                <aside
+                                    v-if="cvUrl"
+                                    class="widget widget-brochure"
+                                    v-reveal="{ delay: 150 }"
+                                >
+                                    <h4 class="widget-title">
+                                        <span class="me-2 text-primary">|</span>Curriculum
+                                    </h4>
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-3">
+                                            <a :href="cvUrl" target="_blank" rel="noopener noreferrer">
+                                                <i class="far fa-file-pdf display-26 me-3"></i>
+                                                {{ cvLabel }}
+                                                <span>PDF</span>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </aside>
 
                                 <aside

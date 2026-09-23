@@ -13,8 +13,12 @@ class Servicio extends Model
     // Campos asignables en masa (snake_case en BD)
     protected $fillable = [
         'nombre',
+        'subtitulo',
+        'titulo_seccion',
         'descripcion',
         'imagen',
+        'imagen_secundaria',
+        'plantilla',
         'orden',
         'activo',
     ];

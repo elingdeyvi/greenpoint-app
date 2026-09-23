@@ -44,6 +44,13 @@ class ServicioController extends Controller
             $data['imagen'] = $this->imageService->storeImage($request->file('imagen'), 'servicios');
         }
 
+        if ($request->hasFile('imagen_secundaria')) {
+            $data['imagen_secundaria'] = $this->imageService->storeImage(
+                $request->file('imagen_secundaria'),
+                'servicios',
+            );
+        }
+
         Servicio::create($data);
 
         return redirect()
@@ -65,6 +72,14 @@ class ServicioController extends Controller
             $data['imagen'] = $this->imageService->storeImage($request->file('imagen'), 'servicios');
         }
 
+        if ($request->hasFile('imagen_secundaria')) {
+            $this->imageService->deleteImage($servicio->imagen_secundaria);
+            $data['imagen_secundaria'] = $this->imageService->storeImage(
+                $request->file('imagen_secundaria'),
+                'servicios',
+            );
+        }
+
         $servicio->update($data);
 
         return redirect()
@@ -75,6 +90,7 @@ class ServicioController extends Controller
     public function destroy(Servicio $servicio): RedirectResponse
     {
         $this->imageService->deleteImage($servicio->imagen);
+        $this->imageService->deleteImage($servicio->imagen_secundaria);
         $servicio->delete();
 
         return redirect()

@@ -75,22 +75,34 @@ class DemoContentSeeder extends Seeder
         $servicios = [
             [
                 'nombre' => 'Conexion Satelital',
+                'subtitulo' => null,
+                'titulo_seccion' => 'Greenpoint cuenta con el telepuerto iDirect',
                 'descripcion' => "Equipado con la mejor tecnología a nivel mundial. Permite entregar a sus clientes una conexión robusta, compartida o servicios dedicados con administración del QoS, para asignar prioridades a las aplicaciones críticas como son voz, video o información en tiempo real.\n\n[features]\nAnchos de banda desde 64 Kbps hasta 100 Mbps\nServicio dedicado o en tasa compartida\nCIR (committed information rate)\nIP Públicas Homologadas\nConexión al backbone de internet o WAN empresarial\nQoS ajustable a las necesidades de cada cliente\n[/features]\n\n[badges]\nVSAT FIJA MANUAL\nVSAT SEMI-FIJA AUTOMATICA\nVSAT AUTOESTABILIZADA\nVSAT BAJO PERFIL EN MOVIMIENTO\nSERVICIOS SATELITALES IP\nSERVICIOS DE ACCESO A INTERNET\nRED PRIVADA SATELITAL\nTRANSPORTE DE VOZ, DATOS Y VIDEO\nCELLULAR BACKHAUL\nDISTRIBUCION DE CONTENIDO\n[/badges]",
                 'imagen' => 'images/demo/servicios/tec2.jpg',
+                'imagen_secundaria' => 'images/demo/servicios/tec3.jpg',
+                'plantilla' => 'detalle',
                 'orden' => 1,
                 'activo' => true,
             ],
             [
                 'nombre' => 'Soluciones',
-                'descripcion' => "Soluciones a medida para el sector petrolero, marítimo y energético. Conectividad satelital e inalámbrica diseñada para operaciones críticas en tierra y costa afuera.\n\n[features]\nEnlaces satelitales dedicados\nComunicaciones marítimas\nRedes privadas IP\nSoporte 24/7 en campo\n[/features]",
-                'imagen' => 'images/demo/servicios/internet-satelital.jpg',
+                'subtitulo' => 'Soluciones para el sector petrolero y maritimo.',
+                'titulo_seccion' => 'Soluciones a medida',
+                'descripcion' => "[features]\nInstalación en pozos y plataformas\nServicios satelitales dedicados\nBackhaul para redes de hardware\nSCPC Punto a Punto Satelital\nEnlaces microondas PtP, PtM y Mesh\nRenta y Venta de equipos de hadware\nConsultoría y Asesoria en networking\nProyectos garantizados con llave en mano\nServicios de Telefonía IP, IP-PBX\nIntegración de redes locales\nSoluciones de Videoconferencias IP\n[/features]",
+                'imagen' => 'images/demo/servicios/s1.jpg',
+                'imagen_secundaria' => 'images/demo/servicios/s2.jpg',
+                'plantilla' => 'about',
                 'orden' => 2,
                 'activo' => true,
             ],
             [
                 'nombre' => 'Hardware Satelital y Redes Wan',
-                'descripcion' => "Hardware satelital y redes WAN para mantener su operación conectada con la mejor tecnología disponible.\n\n[features]\nAntenas VSAT fijas y móviles\nEquipos iDirect\nEnlaces microondas\nIntegración WAN empresarial\n[/features]",
-                'imagen' => 'images/demo/servicios/red-privada-ip.jpg',
+                'subtitulo' => null,
+                'titulo_seccion' => 'Hardware y Equipos',
+                'descripcion' => "Greenpoint brinda el asesoramiento, suministro, instalaciones, mantenimiento, garantías y todo lo relacionado al hardware utilizado en los servicios que se prestan, por lo que nuestros clientes no tienen que dedicar tiempo para estos asuntos.\n\n[kit]: : : : Kit satelital: Modem, buc, Inb, canister y base : : : :[/kit]\n\n[features]\nEquipamiento para redes alámbricas e inalámbricas\nMantenimiento de equipos satelitales\nSuministro de refacciones y herramientas especiales\nTelepuerto iDirect para redes empresariales\nDiseño y arquitectura de redes satelitales tipo malla y/o estrella\n[/features]",
+                'imagen' => 'images/demo/servicios/s3.jpg',
+                'imagen_secundaria' => null,
+                'plantilla' => 'split',
                 'orden' => 3,
                 'activo' => true,
             ],
@@ -109,117 +121,33 @@ class DemoContentSeeder extends Seeder
 
     protected function seedClientes(): void
     {
-        if (Cliente::query()->exists()) {
-            return;
+        for ($i = 1; $i <= 16; $i++) {
+            Cliente::query()->updateOrCreate(
+                ['orden' => $i],
+                [
+                    'nombre' => "Cliente {$i}",
+                    'logo' => "images/demo/clientes/c{$i}.jpg",
+                    'enlace' => null,
+                    'activo' => true,
+                ],
+            );
         }
 
-        for ($i = 1; $i <= 16; $i++) {
-            Cliente::create([
-                'nombre' => "Cliente {$i}",
-                'logo' => "images/demo/clientes/cliente{$i}.png",
-                'enlace' => null,
-                'orden' => $i,
-                'activo' => true,
-            ]);
-        }
+        Cliente::query()->where('orden', '>', 16)->update(['activo' => false]);
     }
 
     protected function seedGaleria(): void
     {
-        // Fotos de antenas de producción:
-        // - img/proyectos/01-07.jpg → home carousel
-        // - galeria/g1-g8.jpg → página Galería
+        // cgi-bin galeria.html — galeria/g1.jpg … g8.jpg
         $items = [
-            [
-                'titulo' => 'Antena VSAT — instalación en campo',
-                'descripcion' => 'Proyecto de enlace satelital en operación.',
-                'imagen' => 'images/demo/proyectos/01.jpg',
-                'orden' => 1,
-            ],
-            [
-                'titulo' => 'Telepuerto GreenPoint',
-                'descripcion' => 'Antenas de comunicación satelital.',
-                'imagen' => 'images/demo/proyectos/02.jpg',
-                'orden' => 2,
-            ],
-            [
-                'titulo' => 'Enlace satelital dedicado',
-                'descripcion' => 'Infraestructura para sector energético.',
-                'imagen' => 'images/demo/proyectos/03.jpg',
-                'orden' => 3,
-            ],
-            [
-                'titulo' => 'Antena nocturna — telepuerto',
-                'descripcion' => 'Operación continua 24/7.',
-                'imagen' => 'images/demo/proyectos/04.jpg',
-                'orden' => 4,
-            ],
-            [
-                'titulo' => 'Instalación offshore',
-                'descripcion' => 'Comunicaciones marítimas y plataformas.',
-                'imagen' => 'images/demo/proyectos/05.jpg',
-                'orden' => 5,
-            ],
-            [
-                'titulo' => 'Proyecto satelital al atardecer',
-                'descripcion' => 'Despliegue en sitio remoto.',
-                'imagen' => 'images/demo/proyectos/06.jpg',
-                'orden' => 6,
-            ],
-            [
-                'titulo' => 'Array de antenas GreenPoint',
-                'descripcion' => 'Capacidad multi-enlace.',
-                'imagen' => 'images/demo/proyectos/07.jpg',
-                'orden' => 7,
-            ],
-            [
-                'titulo' => 'Galería — antena 01',
-                'descripcion' => 'Registro fotográfico de proyectos realizados.',
-                'imagen' => 'images/demo/galeria/galeria1.jpg',
-                'orden' => 8,
-            ],
-            [
-                'titulo' => 'Galería — antena 02',
-                'descripcion' => 'Registro fotográfico de proyectos realizados.',
-                'imagen' => 'images/demo/galeria/galeria2.jpg',
-                'orden' => 9,
-            ],
-            [
-                'titulo' => 'Galería — antena 03',
-                'descripcion' => 'Registro fotográfico de proyectos realizados.',
-                'imagen' => 'images/demo/galeria/galeria3.jpg',
-                'orden' => 10,
-            ],
-            [
-                'titulo' => 'Galería — antena 04',
-                'descripcion' => 'Registro fotográfico de proyectos realizados.',
-                'imagen' => 'images/demo/galeria/galeria4.jpg',
-                'orden' => 11,
-            ],
-            [
-                'titulo' => 'Galería — antena 05',
-                'descripcion' => 'Registro fotográfico de proyectos realizados.',
-                'imagen' => 'images/demo/galeria/galeria5.jpg',
-                'orden' => 12,
-            ],
-            [
-                'titulo' => 'Galería — antena 06',
-                'descripcion' => 'Registro fotográfico de proyectos realizados.',
-                'imagen' => 'images/demo/galeria/galeria6.jpg',
-                'orden' => 13,
-            ],
-            [
-                'titulo' => 'Galería — antena 07',
-                'descripcion' => 'Registro fotográfico de proyectos realizados.',
-                'imagen' => 'images/demo/galeria/galeria7.jpg',
-                'orden' => 14,
-            ],
-            [
-                'titulo' => 'Galería — antena 08',
-                'descripcion' => 'Registro fotográfico de proyectos realizados.',
-                'imagen' => 'images/demo/galeria/galeria8.jpg',
-                'orden' => 15,
-            ],
+            ['titulo' => 'Fast Internet #01', 'descripcion' => 'Streaming', 'imagen' => 'images/demo/galeria/g1.jpg', 'orden' => 1],
+            ['titulo' => 'Internet Speed #02', 'descripcion' => 'Online TV', 'imagen' => 'images/demo/galeria/g2.jpg', 'orden' => 2],
+            ['titulo' => 'Best TV Programs #03', 'descripcion' => 'Broadband', 'imagen' => 'images/demo/galeria/g3.jpg', 'orden' => 3],
+            ['titulo' => 'Movies to Watch #04', 'descripcion' => 'Streaming', 'imagen' => 'images/demo/galeria/g4.jpg', 'orden' => 4],
+            ['titulo' => 'Fast Internet #05', 'descripcion' => 'Online Gaming', 'imagen' => 'images/demo/galeria/g5.jpg', 'orden' => 5],
+            ['titulo' => 'Provide Wi-Fi #06', 'descripcion' => 'Broadband', 'imagen' => 'images/demo/galeria/g6.jpg', 'orden' => 6],
+            ['titulo' => 'Mobile Internet #07', 'descripcion' => 'Streaming', 'imagen' => 'images/demo/galeria/g7.jpg', 'orden' => 7],
+            ['titulo' => 'Provide Wi-Fi #08', 'descripcion' => 'Online Gaming', 'imagen' => 'images/demo/galeria/g8.jpg', 'orden' => 8],
         ];
 
         foreach ($items as $item) {
@@ -233,6 +161,8 @@ class DemoContentSeeder extends Seeder
                 ],
             );
         }
+
+        Galeria::query()->where('orden', '>', 8)->update(['activo' => false]);
     }
 
     protected function seedBanners(): void
@@ -277,26 +207,29 @@ class DemoContentSeeder extends Seeder
         $contactos = [
             [
                 'ubicacion' => 'Tabasco',
-                'direccion' => 'Francisco Sarabia #126, Col. Gil y Saenz, CP 86080, Villahermosa, Tabasco.',
-                'telefono' => '(993) 161 6064',
-                'email' => 'villahermosa@greenpoint.com.mx',
-                'mapa_url' => null,
+                'subtitulo' => 'Villahermosa',
+                'direccion' => 'Francisco Sarabia # 126, Col. Gil y Saenz, Tabasco. CP. 86080',
+                'telefono' => '(+52) (993) 161 6064',
+                'email' => 'villahermosa@greenpoint.mx',
+                'mapa_url' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3794.853128487109!2d-92.93587504926919!3d17.985568889949867!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85edd8294181d1c7%3A0x2dcc0df6165753a1!2sFrancisco%20Sarabia%20126%2C%20Gil%20y%20Saenz%2C%2086080%20Villahermosa%2C%20Tab.!5e0!3m2!1ses-419!2smx!4v1657138972272!5m2!1ses-419!2smx',
                 'orden' => 1,
             ],
             [
                 'ubicacion' => 'Veracruz',
-                'direccion' => 'Sandoval #174, Fracc. Reforma, CP 91919, Veracruz.',
-                'telefono' => '(229) 000 0000',
-                'email' => 'veracruz@greenpoint.com.mx',
-                'mapa_url' => null,
+                'subtitulo' => 'Veracruz',
+                'direccion' => 'Sandoval # 174, Fracc. Reforma, Veracruz. CP. 91919',
+                'telefono' => '(+52) (229) 932 6060',
+                'email' => 'veracruz@greenpoint.mx',
+                'mapa_url' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3768.5267450228316!2d-96.13034614925766!3d19.172182353859956!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85c34136fd546f85%3A0xe7e6d38ced7b4b25!2sGonzalo%20de%20Sandoval%20174%2C%20poligono%201%2C%20Reforma%2C%2091919%20Veracruz%2C%20Ver.!5e0!3m2!1ses-419!2smx!4v1657140738812!5m2!1ses-419!2smx',
                 'orden' => 2,
             ],
             [
                 'ubicacion' => 'Cd. del Carmen',
-                'direccion' => 'Calle 53 #74, Col. Morelos, Ciudad del Carmen, Campeche.',
-                'telefono' => '(938) 160 4654',
-                'email' => 'cdcarmen@greenpoint.com.mx',
-                'mapa_url' => null,
+                'subtitulo' => 'Ciudad del Carmen',
+                'direccion' => 'Calle 53 # 74, Col. Morelos, Cd. del Carmen, Campeche.',
+                'telefono' => "(+52) (999) 122 3651\n(+52) (938) 160 4654",
+                'email' => 'cdcarmen@greenpoint.mx',
+                'mapa_url' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3780.1763891315436!2d-91.82917044926279!3d18.656079069822226!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85f10781ff8261c3%3A0xb7d4145b2b9aec07!2sC.%2053%2074%2C%20Morelos%2C%2024115%20Cd%20del%20Carmen%2C%20Camp.!5e0!3m2!1ses-419!2smx!4v1657141404646!5m2!1ses-419!2smx',
                 'orden' => 3,
             ],
         ];
@@ -409,7 +342,29 @@ class DemoContentSeeder extends Seeder
             'meta_descripcion' => 'Línea de tiempo de la evolución de GreenPoint.',
             'meta_keywords' => 'historia, greenpoint, trayectoria',
             'estado' => true,
+            'cv_etiqueta' => 'Servicios Greenpoint',
         ]);
+
+        // Curriculum PDF (cgi-bin: cv.pdf)
+        if (! $pagina->cv_pdf || ! \Illuminate\Support\Facades\Storage::disk('public')->exists($pagina->cv_pdf)) {
+            $cvPath = 'historia/cv/servicios-greenpoint.pdf';
+            \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('historia/cv');
+
+            if (! \Illuminate\Support\Facades\Storage::disk('public')->exists($cvPath)) {
+                $demoCv = public_path('images/demo/cv/servicios-greenpoint.pdf');
+                if (is_file($demoCv)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->put($cvPath, file_get_contents($demoCv));
+                } else {
+                    // Placeholder mínimo; reemplazable desde Admin → Páginas → Historia
+                    \Illuminate\Support\Facades\Storage::disk('public')->put($cvPath, "%PDF-1.4\n1 0 obj<< /Type /Catalog /Pages 2 0 R >>endobj\n2 0 obj<< /Type /Pages /Kids [3 0 R] /Count 1 >>endobj\n3 0 obj<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources<< /Font<< /F1 5 0 R >> >> >>endobj\n4 0 obj<< /Length 80 >>stream\nBT /F1 18 Tf 72 720 Td (Servicios Greenpoint) Tj ET\nendstream\nendobj\n5 0 obj<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>endobj\nxref\n0 6\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n0000000274 00000 n \n0000000404 00000 n \ntrailer<< /Size 6 /Root 1 0 R >>\nstartxref\n481\n%%EOF\n");
+                }
+            }
+
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($cvPath)) {
+                $pagina->cv_pdf = $cvPath;
+            }
+        }
+
         $pagina->save();
 
         $eventos = [
@@ -462,38 +417,21 @@ class DemoContentSeeder extends Seeder
 
     protected function seedPaginaTecnologia(): void
     {
-        if (PaginaTecnologia::query()->exists()) {
-            return;
-        }
-
-        $pagina = PaginaTecnologia::create([
-            'titulo' => 'Tecnología',
-            'contenido' => 'Contamos con el Telepuerto iDirect equipado con la mejor tecnología a nivel mundial para ofrecer comunicaciones robustas y confiables.',
-            'imagen_destacada' => 'images/demo/tecnologia/destacada.jpg',
+        $pagina = PaginaTecnologia::query()->firstOrNew([]);
+        $pagina->fill([
+            'titulo' => 'Tecnologia',
+            'contenido' => null,
+            'imagen_destacada' => 'images/demo/tecnologia/tec1.jpg',
             'meta_descripcion' => 'Tecnología e infraestructura satelital de GreenPoint.',
             'meta_keywords' => 'tecnologia, idirect, satelital',
             'estado' => true,
         ]);
+        $pagina->save();
 
-        $secciones = [
-            [
-                'titulo' => 'Telepuerto iDirect',
-                'contenido' => 'Infraestructura satelital de clase mundial para conexiones estables en tierra y costa afuera.',
-            ],
-            [
-                'titulo' => 'Redes WAN',
-                'contenido' => 'Integración de hardware y redes WAN para operaciones críticas del sector energético.',
-            ],
-        ];
-
-        foreach ($secciones as $index => $seccion) {
-            PaginaTecnologiaSeccion::create([
-                'pagina_tecnologia_id' => $pagina->id,
-                'titulo' => $seccion['titulo'],
-                'contenido' => $seccion['contenido'],
-                'orden' => $index + 1,
-            ]);
-        }
+        // cgi-bin: no hay secciones de texto; todo viene en tec1.jpg
+        PaginaTecnologiaSeccion::query()
+            ->where('pagina_tecnologia_id', $pagina->id)
+            ->delete();
     }
 
     protected function seedPaginaAviso(): void
@@ -518,14 +456,17 @@ class DemoContentSeeder extends Seeder
         $secciones = [
             [
                 'titulo' => '',
-                'contenido' => 'GREENPOINT S.A. de C.V., y/o sus empresas asociadas, afiliadas y subsidiarias (“GREENPOINT”), con domicilio en Francisco Sarabia # 126, Col. Gil y Saenz, Municipio Centro, Villahermosa, Tabasco, México, es responsable de recabar sus datos personales, incluyendo: datos personales de identificación: (i) nombre completo; (ii) domicilio; (iii) teléfono; (iv) correo electrónico; y/o (v) datos financieros, ya sea en las páginas web de GREENPOINT o a través de cualquier otro medio autorizado por GREENPOINT, le comunicamos por este medio, que GREENPOINT es el único responsable del tratamiento, uso, almacenamiento y/o divulgación, tratamiento y adecuada protección de sus datos personales conforme a lo establecido en la Ley de la materia y el presente Aviso de Privacidad.
-
-Los sitios, programas y/o servicios que ofrezca GREENPOINT tienen la finalidad de garantizar, recopilar, mantener y proteger la privacidad de la información personal sobre los suscriptores, visitantes, clientes, proveedores, usuarios y cualquier otra persona interesada en los servicios de GREENPOINT (los “Usuarios”), de conformidad con este Aviso de Privacidad, así como con las leyes, reglamentos y demás normatividad aplicable.',
+                'contenido' => "GREENPOINT S.A. de C.V., y/o sus empresas asociadas, afiliadas y subsidiarias (“GREENPOINT”), con domicilio en Francisco Sarabia # 126, Col. Gil y Saenz, Municipio Centro, Villahermosa, Tabasco, México, es responsable de recabar sus datos personales, incluyendo: datos personales de identificación: (i) nombre completo; (ii) domicilio; (iii) teléfono; (iv) correo electrónico; y/o (v) datos financieros, ya sea en las páginas web de GREENPOINT o a través de cualquier otro medio autorizado por GREENPOINT, le comunicamos por este medio, que GREENPOINT es el único responsable del tratamiento, uso, almacenamiento y/o divulgación, tratamiento y adecuada protección de sus datos personales conforme a lo establecido en la Ley de la materia y el presente Aviso de Privacidad.\nLos sitios, programas y/o servicios que ofrezca GREENPOINT tienen la finalidad de garantizar, recopilar, mantener y proteger la privacidad de la información personal sobre los suscriptores, visitantes, clientes, proveedores, usuarios y cualquier otra persona interesada en los servicios de GREENPOINT (los “Usuarios”), de conformidad con este Aviso de Privacidad, así como con las leyes, reglamentos y demás normatividad aplicable. Este Aviso de Privacidad aplica a información personal recopilada a través de los recursos y comunicaciones de GREENPOINT en línea o en forma impresa como contratos, formatos, circulares, avisos, incluyendo el Sitio, correo electrónico y otras herramientas en línea. Este Aviso de Privacidad no aplica a información personal recopilada por los recursos de terceros en línea con los cuales pueden tener un vínculo los sitios de Internet de GREENPOINT, en lo que este último no controle el contenido o las prácticas de privacidad de dichos recursos. GREENPOINT sólo recopila información personalmente, identificable sobre los visitantes del Sitio, programas y/o servicios otorgados por GREENPOINT, si los visitantes así lo eligen.",
                 'listas' => [],
             ],
             [
                 'titulo' => '',
                 'contenido' => 'Protección de Datos Personales.- En cumplimiento con lo establecido en la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, publicada en el Diario Oficial de la Federación el 5 de Julio de 2010, su Reglamento y/o Lineamientos aplicables (en lo sucesivo la “Ley”), y con la finalidad de garantizar la privacidad de nuestros Usuarios en compartir sus datos personales, le informamos lo siguiente: Los datos personales de nuestros Usuarios, serán utilizados para los siguientes fines: Para ser contactado vía correo electrónico, por escrito, por teléfono, por mensaje de texto o cualquier otro medio, ya sea físico o electrónico del que se disponga y enviar información a fin de dar seguimiento a sus peticiones, sugerencias, reclamaciones y/o cualquier otra solicitud o para realizar acciones de actualizaciones técnicas de los productos o servicios que hubiese adquirido, para crear una relación comercial, dar seguimiento y mantener comunicación en general.',
+                'listas' => [],
+            ],
+            [
+                'titulo' => '',
+                'contenido' => "Para identificar, ubicar, comunicar, contactar, enviar información y/o mercancía a los Usuarios.- De igual forma, la información proporcionada por los Usuarios podrá ser también utilizada para diferentes fines de Recursos Humanos (manejo de desempeño, decisiones de sucesión o acciones de desarrollo, entre otras), Mercadotécnicos, Publicitarios o de Prospección Comercial, los cuales servirán para entender mejor sus necesidades y la manera en que podemos mejorar nuestros servicios, así como para personalizar ciertas comunicaciones con los Usuarios sobre servicios y promociones que los mismos pueden encontrar interesantes.\n\nEn caso de que los datos personales del Usuario no hayan sido obtenidos de manera directa por el titular de dichos datos, este último tendrá un plazo máximo de 5 (cinco) días hábiles para que pueda manifestar su negativa para el tratamiento de sus datos personales con respecto al párrafo anterior, teniendo a salvo los medios para ejercer sus derechos ARCO, los cuales se mencionan en el presente Aviso.",
                 'listas' => [],
             ],
             [
@@ -540,21 +481,29 @@ Los sitios, programas y/o servicios que ofrezca GREENPOINT tienen la finalidad d
                 ],
             ],
             [
+                'titulo' => '',
+                'contenido' => 'En caso de que el Usuario no acepte que sus datos personales sean transmitan a un Tercero, deberá enviar un correo electrónico indicando que se opone a dicha transferencia tal y como se detalla en el siguiente punto.',
+                'listas' => [],
+            ],
+            [
                 'titulo' => 'Medios para ejercer los derechos ARCO.',
-                'contenido' => 'El Usuario, en relación con sus datos personales, podrá ejercer sus derechos de accesar a sus datos personales que GREENPOINT posee, rectificar sus datos personales cuando sean inexactos o incompletos, cancelar sus datos personales cuando considere que son excesivos o innecesarios para las finalidades del tratamiento o haya finalizado la relación contractual o de servicio u oponerse a proporcionar sus datos personales para los fines aquí mencionados, así como revocar su consentimiento para el tratamiento de sus datos personales, a fin de que GREENPOINT deje de hacer uso de los mismos. Lo anterior lo podrá realizar el Usuario a través de una solicitud por escrito dirigida a GREENPOINT, la cual podrá presentarse mediante correo electrónico: contacto@greenpoint.mx, o directamente en el domicilio de GREENPOINT.
-
-De igual forma, GREENPOINT podrá negar el acceso, rectificación, cancelación u oposición a los datos personales del Usuario, cuando:',
+                'contenido' => "El Usuario, en relación con sus datos personales, podrá ejercer sus derechos de accesar a sus datos personales que GREENPOINT posee, rectificar sus datos personales cuando sean inexactos o incompletos, cancelar sus datos personales cuando considere que son excesivos o innecesarios para las finalidades del tratamiento o haya finalizado la relación contractual o de servicio u oponerse a proporcionar sus datos personales para los fines aquí mencionados, así como revocar su consentimiento para el tratamiento de sus datos personales, a fin de que GREENPOINT deje de hacer uso de los mismos. Lo anterior lo podrá realizar el Usuario a través de una solicitud por escrito dirigida a GREENPOINT, la cual podrá presentarse a través de las siguientes opciones: a) Mediante correo electrónico: contacto@greenpoint.mx, en la cual el Usuario tendrá que acreditar su identidad mediante el envío de: a.1) Fotocopia de cualquier identificación oficial (credencial de elector, pasaporte, cartilla militar o cédula profesional); o En caso de actuar en representación de un tercero, deberá presentar copia de la escritura pública del poder o carta poder simple otorgada al representante legal del Usuario, según corresponda, así como su identificación correspondiente; b) Sea(n) entregado(s) directamente en el domicilio de GREENPOINT, Francisco Sarabia # 126, Col. Gil y Saenz, Municipio Centro, Villahermosa, Tabasco, México, de Lunes a Viernes de 9:00 a 18:00 horas, con la acreditación correspondiente mencionada en el inciso a) anterior.\n\nAsimismo, GREENPOINT tiene un plazo máximo de 20 (veinte) días naturales, contados a partir de la fecha en que recibió la solicitud de acceso, rectificación, cancelación u oposición, para comunicarle al Usuario a través del mismo medio en que recibió la solicitud, si se acepta o no la misma, y en caso de que así sea, GREENPOINT tiene un plazo de 15 (quince) días naturales siguientes a la fecha en que se comunicó la respuesta al Usuario, para realizar las modificaciones correspondientes o entregar copia simple de la información solicitada. Los plazos antes mencionados podrán ser ampliados una sola vez por un periodo igual, siempre y cuando así GREENPOINT lo justifique y conforme a lo establecido en el artículo 32 de la Ley.",
+                'listas' => [],
+            ],
+            [
+                'titulo' => 'De igual forma, GREENPOINT podrá negar el acceso, rectificación, cancelación u oposición a los datos personales del Usuario, cuando:',
+                'contenido' => '',
                 'listas' => [
                     '1) El Usuario no sea el titular de los datos personales, o el representante legal no esté debidamente acreditado para ello;',
                     '2) Cuando en su base de datos, no se encuentren los datos personales del solicitante;',
                     '3) Cuando se lesionen los derechos de un tercero;',
                     '4) Cuando exista un impedimento legal, o la resolución de una autoridad competente, que restrinja el acceso a los datos personales del Usuario, o no permita la rectificación, cancelación u oposición de los mismos,',
-                    '5) Cuando la rectificación, cancelación u oposición haya sido previamente realizada.',
+                    '5) Cuando la rectificación, cancelación u oposición haya sido previamente realizada. En todos los casos anteriores, GREENPOINT informará al Usuario o al representante legal, según sea el caso, el motivo de su decisión por el mismo medio por el que se llevó a cabo la solicitud, acompañando, en su caso, las pruebas que resulten pertinentes.',
                 ],
             ],
             [
                 'titulo' => '',
-                'contenido' => 'Modificaciones al Aviso de Privacidad.- GREENPOINT se reserva el derecho de efectuar en cualquier momento modificaciones o actualizaciones al presente Aviso de Privacidad. Si usted tiene cualquier duda acerca de nuestras prácticas de privacidad y protección de datos personales le sugerimos nos contacte a través de: contacto@greenpoint.mx',
+                'contenido' => "Mecanismos y Procedimientos para la Revocación del Consentimiento.- Para el caso de que el Usuario quisiera revocar su consentimiento para el tratamiento de sus datos personales, deberá seguir los pasos establecidos anteriormente, referentes a los medios para ejercer sus derechos ARCO y el tiempo de respuesta por parte de GREENPOINT, será conforme a lo establecido en el párrafo anterior.\n\nMedidas de seguridad.- GREENPOINT garantiza en este acto que los datos personales del Usuario se almacenarán en las bases de datos de GREENPOINT, las cuales permanecerán durante el periodo necesario para cumplir con la finalidad específica para los cuales fueron recabados y de acuerdo a lo establecido en la Ley, siento el Usuario el único responsable de la veracidad de los datos que proporciona. GREENPOINT utiliza precauciones de tecnología, reglas y otros procedimientos de seguridad para proteger sus datos personales contra accesos no autorizados, mal uso, divulgación, pérdida o destrucción. Para asegurar la confidencialidad de sus datos, GREENPOINT también utiliza la protección estándar de la industria con firewalls y contraseñas. Sin embargo, es responsabilidad del Usuario asegurarse que la computadora que está utilizando esté asegurada y protegida adecuadamente contra software malicioso, como virus trojanos, virus de cómputo y programas dañinos. El Usuario está enterado de que sin medidas de seguridad adecuadas (por ejemplo, configuración segura del browser web, software antivirus actualizado, software firewall personal, no usar software de fuentes dudosas) existe un riesgo de que los datos y contraseñas que el Usuario utiliza para proteger el acceso a sus datos, podrían ser descubiertos por terceros no autorizados.\n\nNota para Usuarios de Sitios de Internet de Negocios o Profesionales.- Si el Usuario tiene una relación de negocios o profesional con GREENPOINT, podemos utilizar la información que el Usuario proporciona en nuestros sitios, incluyendo el Sitio y sitios específicamente dedicados a usuarios de negocios y profesionales, para satisfacer sus solicitudes y desarrollar nuestra relación de negocios con el Usuario y las entidades que este último representa. También podemos compartir dicha información con terceros que actúan en nuestra representación.\n\nOpciones del Usuario.- El Usuario tiene varias opciones referentes al uso de nuestros sitios de Internet, incluyendo el Sitio. El Usuario deberá proporcionar información personalmente identificable para entrar a las formas o campos de datos de nuestros sitios, incluyendo el Sitio y así poder utilizar los servicios personalizados disponibles. Si el Usuario proporciona sus datos personales, tiene derecho a ver y a corregir sus datos en cualquier momento accesando a la aplicación que corresponda. Determinados sitios pueden solicitar el permiso del Usuario para ciertos usos de su información y el Usuario puede aceptar o rechazar esos usos. Si el Usuario decide solicitar servicios o comunicaciones particulares, como un boletín o e-newsletter, podrá anular su suscripción en cualquier momento siguiendo las instrucciones incluidas en cada comunicación. Si el Usuario decide anular su suscripción de un servicio o comunicación, trabajaremos para eliminar su información oportunamente, aunque es posible que solicitemos información adicional al Usuario antes de poder procesar su petición.\n\nDatos de menores de edad o incapaces.- En caso de que pudieran recabarse datos de menores de edad o incapaces en función de la información que hubiera sido proporcionada respecto a su edad o año de nacimiento por el propio usuario, “GREENPOINT” hará sus mejores esfuerzos para no utilizar estos datos para fines inadecuados para la edad del menor o en relación con el incapaz. En todo caso, “GREENPOINT” garantiza que gestionará las solicitudes derivadas del ejercicio de los derechos de acceso, cancelación, rectificación y oposición de los datos de los menores o incapaces por los padres o tutores.\n\nAutoridad encargada de la Protección de sus Datos.- Si considera que su derecho a la protección de sus datos personales ha sido vulnerado o lesionado por alguna conducta u omisión por parte de GREENPOINT, o presume alguna violación a las disposiciones previstas en la Ley, podrá interponer su inconformidad o denuncia ante el Instituto Nacional de Transparencia, Acceso a la Información y Protección de Datos Personales (INAI). Para mayores informes, visite su página web: www.inai.org.mx.\n\nModificaciones al Aviso de Privacidad.- De igual forma, GREENPOINT se reserva el derecho de efectuar en cualquier momento modificaciones o actualizaciones al presente Aviso de Privacidad, derivado de cualquier reforma o modificación de la Ley, por política interna o por algún requerimiento para la prestación de nuestros servicios, en cuyo caso lo podrán verificar en el presente Aviso de Privacidad en este el sitio www.greenpoint.mx\n\nSi el Usuario continúa utilizando nuestros sitios y/o servicios, incluyendo el Sitio, dicha conducta indica que el Usuario acepta el uso de la información recién proporcionada de conformidad con el presente Aviso de Privacidad.\n\nSi usted tiene cualquier duda acerca de nuestras prácticas de privacidad y protección de datos personales le sugerimos nos contacte a través de la dirección de correo electrónico:",
                 'listas' => [],
             ],
         ];
