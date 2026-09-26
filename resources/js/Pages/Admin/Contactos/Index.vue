@@ -42,6 +42,7 @@ const isEdit = computed(() => !!editing.value?.id);
 const form = useForm({
     ubicacion: '',
     subtitulo: '',
+    region: '',
     direccion: '',
     telefono: '',
     email: '',
@@ -55,6 +56,7 @@ const resetForm = (record = null) => {
     form.reset();
     form.ubicacion = record?.ubicacion ?? '';
     form.subtitulo = record?.subtitulo ?? '';
+    form.region = record?.region ?? '';
     form.direccion = record?.direccion ?? '';
     form.telefono = record?.telefono ?? '';
     form.email = record?.email ?? '';
@@ -118,15 +120,15 @@ watch(showFormModal, (open) => {
 </script>
 
 <template>
-    <Head title="Contactos — GreenPoint" />
+    <Head title="Oficinas — GreenPoint" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h3 class="mb-0">Contactos</h3>
+            <h3 class="mb-0">Oficinas de contacto</h3>
         </template>
         <template #breadcrumb>
             <li class="breadcrumb-item"><Link :href="route('dashboard')">Home</Link></li>
-            <li class="breadcrumb-item active">Contactos</li>
+            <li class="breadcrumb-item active">Oficinas</li>
         </template>
 
         <div class="card">
@@ -245,6 +247,20 @@ watch(showFormModal, (open) => {
                     </div>
                 </div>
                 <div class="mb-3">
+                    <label class="form-label">Región / Estado (H2)</label>
+                    <input
+                        v-model="form.region"
+                        type="text"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.region }"
+                        placeholder="Ej. Campeche, Tabasco, Veracruz"
+                    />
+                    <div v-if="form.errors.region" class="invalid-feedback">
+                        {{ form.errors.region }}
+                    </div>
+                    <div class="form-text">Título grande de la sección (carmen.html → Campeche).</div>
+                </div>
+                <div class="mb-3">
                     <label class="form-label">Dirección</label>
                     <textarea
                         v-model="form.direccion"
@@ -258,12 +274,14 @@ watch(showFormModal, (open) => {
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Teléfono</label>
-                    <input
+                    <textarea
                         v-model="form.telefono"
-                        type="text"
                         class="form-control"
                         :class="{ 'is-invalid': form.errors.telefono }"
-                    />
+                        rows="2"
+                        placeholder="Un teléfono por línea"
+                    ></textarea>
+                    <div class="form-text">Varios números: uno por línea.</div>
                     <div v-if="form.errors.telefono" class="invalid-feedback">
                         {{ form.errors.telefono }}
                     </div>

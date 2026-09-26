@@ -17,6 +17,7 @@ class UpdateContactoRequest extends FormRequest
         return [
             'ubicacion' => ['sometimes', 'required', 'string', 'max:255'],
             'subtitulo' => ['nullable', 'string', 'max:255'],
+            'region' => ['nullable', 'string', 'max:255'],
             'direccion' => ['nullable', 'string'],
             'telefono' => ['sometimes', 'required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],

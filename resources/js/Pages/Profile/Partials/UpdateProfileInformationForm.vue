@@ -1,16 +1,14 @@
 <script setup>
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 
 defineProps({
     mustVerifyEmail: {
         type: Boolean,
+        default: false,
     },
     status: {
         type: String,
+        default: '',
     },
 });
 
@@ -23,90 +21,80 @@ const form = useForm({
 </script>
 
 <template>
-    <section>
-        <header>
-            <h2 class="text-lg font-medium text-gray-900">
-                Profile Information
-            </h2>
+    <form @submit.prevent="form.patch(route('profile.update'))">
+        <p class="text-muted small mb-3">
+            Actualiza tu nombre y correo electrónico de la cuenta.
+        </p>
 
-            <p class="mt-1 text-sm text-gray-600">
-                Update your account's profile information and email address.
-            </p>
-        </header>
+        <div class="mb-3">
+            <label for="profile-name" class="form-label">Nombre</label>
+            <input
+                id="profile-name"
+                v-model="form.name"
+                type="text"
+                class="form-control"
+                :class="{ 'is-invalid': form.errors.name }"
+                required
+                autofocus
+                autocomplete="name"
+            />
+            <div v-if="form.errors.name" class="invalid-feedback">
+                {{ form.errors.name }}
+            </div>
+        </div>
 
-        <form
-            @submit.prevent="form.patch(route('profile.update'))"
-            class="mt-6 space-y-6"
+        <div class="mb-3">
+            <label for="profile-email" class="form-label">Email</label>
+            <input
+                id="profile-email"
+                v-model="form.email"
+                type="email"
+                class="form-control"
+                :class="{ 'is-invalid': form.errors.email }"
+                required
+                autocomplete="username"
+            />
+            <div v-if="form.errors.email" class="invalid-feedback">
+                {{ form.errors.email }}
+            </div>
+        </div>
+
+        <div
+            v-if="mustVerifyEmail && user.email_verified_at === null"
+            class="alert alert-warning"
         >
-            <div>
-                <InputLabel for="name" value="Name" />
+            <p class="mb-2">Tu correo aún no está verificado.</p>
+            <Link
+                :href="route('verification.send')"
+                method="post"
+                as="button"
+                class="btn btn-sm btn-outline-warning"
+            >
+                Reenviar correo de verificación
+            </Link>
+            <div
+                v-if="status === 'verification-link-sent'"
+                class="mt-2 small text-success"
+            >
+                Se envió un nuevo enlace de verificación a tu correo.
+            </div>
+        </div>
 
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
+        <div class="d-flex align-items-center gap-3">
+            <button
+                type="submit"
+                class="btn btn-primary"
+                :disabled="form.processing"
+            >
+                <span
+                    v-if="form.processing"
+                    class="spinner-border spinner-border-sm me-1"
                 />
-
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
-
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div v-if="mustVerifyEmail && user.email_verified_at === null">
-                <p class="mt-2 text-sm text-gray-800">
-                    Your email address is unverified.
-                    <Link
-                        :href="route('verification.send')"
-                        method="post"
-                        as="button"
-                        class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        Click here to re-send the verification email.
-                    </Link>
-                </p>
-
-                <div
-                    v-show="status === 'verification-link-sent'"
-                    class="mt-2 text-sm font-medium text-green-600"
-                >
-                    A new verification link has been sent to your email address.
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
-
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <p
-                        v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600"
-                    >
-                        Saved.
-                    </p>
-                </Transition>
-            </div>
-        </form>
-    </section>
+                Guardar cambios
+            </button>
+            <span v-if="form.recentlySuccessful" class="text-success small">
+                Guardado.
+            </span>
+        </div>
+    </form>
 </template>

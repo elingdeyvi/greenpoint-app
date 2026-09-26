@@ -35,6 +35,7 @@ const isEdit = computed(() => !!editing.value?.id);
 
 const form = useForm({
     titulo: '',
+    descripcion: '',
     imagen: null,
     enlace: '',
     orden: 0,
@@ -47,6 +48,7 @@ const resetForm = (record = null) => {
     form.clearErrors();
     form.reset();
     form.titulo = record?.titulo ?? '';
+    form.descripcion = record?.descripcion ?? '';
     form.imagen = null;
     form.enlace = record?.enlace ?? '';
     form.orden = record?.orden ?? 0;
@@ -264,6 +266,17 @@ watch(showFormModal, (open) => {
                         required
                     />
                     <div v-if="form.errors.titulo" class="invalid-feedback">{{ form.errors.titulo }}</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea
+                        v-model="form.descripcion"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.descripcion }"
+                        rows="2"
+                        placeholder="Texto del banner (opcional)"
+                    ></textarea>
+                    <div v-if="form.errors.descripcion" class="invalid-feedback">{{ form.errors.descripcion }}</div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Imagen</label>

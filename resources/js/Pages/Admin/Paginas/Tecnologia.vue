@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AdminModal from '@/Components/Admin/AdminModal.vue';
+import PaginasTabs from '@/Components/Admin/PaginasTabs.vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -74,12 +75,7 @@ const submit = () => {
             <li class="breadcrumb-item active">Editar</li>
         </template>
 
-        <div class="card">
-            <div class="card-body text-muted">
-                Abriendo editor…
-                <Link :href="route('admin.paginas.index')" class="ms-2">Volver a páginas</Link>
-            </div>
-        </div>
+        <PaginasTabs active="tecnologia" />
 
         <AdminModal
             :show="true"

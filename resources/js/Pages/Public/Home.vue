@@ -31,8 +31,27 @@ const props = defineProps({
 
 const { getConfig } = usePublicSite();
 
+const cfg = (clave, fallback = '') => {
+    const fromProp = props.config?.[clave];
+    if (fromProp !== undefined && fromProp !== null && fromProp !== '') {
+        return fromProp;
+    }
+    return getConfig(clave, fallback);
+};
+
+const parseJson = (clave, fallback) => {
+    try {
+        const raw = cfg(clave, '');
+        if (!raw) return fallback;
+        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        return Array.isArray(parsed) && parsed.length ? parsed : fallback;
+    } catch {
+        return fallback;
+    }
+};
+
 // Tarjetas del index (cgi-bin): distintas del menú Servicios (Conexion / Soluciones / Hardware).
-const homeServiceCards = [
+const defaultHomeServiceCards = [
     {
         nombre: 'Internet Satelital',
         descripcion:
@@ -59,6 +78,8 @@ const homeServiceCards = [
     },
 ];
 
+const homeServiceCards = parseJson('home_service_cards', defaultHomeServiceCards);
+
 const featuredServicios = computed(() =>
     homeServiceCards.map((card, index) => ({
         ...card,
@@ -68,21 +89,13 @@ const featuredServicios = computed(() =>
 const galleryItems = computed(() => props.galeria.slice(0, 12));
 const hasBanners = computed(() => props.banners.length > 0);
 
-const cfg = (clave, fallback = '') => {
-    const fromProp = props.config?.[clave];
-    if (fromProp !== undefined && fromProp !== null && fromProp !== '') {
-        return fromProp;
-    }
-    return getConfig(clave, fallback);
-};
-
-const aboutChecks = [
+const aboutChecks = parseJson('home_about_checks', [
     'Mantén tu empresa o negocio siempre conectado',
     'Internet Satelital perfecto para todas sus necesidades',
     'Utilizamos las ultimas tecnologías de conectividad',
-];
+]);
 
-const whyLeft = [
+const whyLeft = parseJson('home_why_left', [
     {
         title: 'Alta Calidad',
         text: 'La banda ancha le proporciona una conexión de alta velocidad a Internet.',
@@ -98,9 +111,9 @@ const whyLeft = [
         text: 'Acompañamiento técnico continuo para mantener tu operación conectada.',
         icon: '/images/demo/icons/icon-09.png',
     },
-];
+]);
 
-const whyRight = [
+const whyRight = parseJson('home_why_right', [
     {
         title: 'El mejor Costo Calidad',
         text: 'Soluciones a la medida con el mejor balance entre desempeño e inversión.',
@@ -116,7 +129,7 @@ const whyRight = [
         text: 'Tecnología iDirect y enlaces de alto rendimiento en cualquier ubicación.',
         icon: '/images/demo/icons/icon-12.png',
     },
-];
+]);
 
 /** Márgenes cgi-bin WHY CHOOSE (mb-1-9 / mb-md-6 / ms-lg-6 / me-lg-6) */
 const whyLeftItemClass = (index) =>
@@ -133,12 +146,12 @@ const whyRightItemClass = (index) =>
         'me-lg-6',
     ][index] ?? 'mb-1-9';
 
-const featureCards = [
+const featureCards = parseJson('home_feature_cards', [
     { title: 'Servicios de Calidad', icon: 'ti-medall' },
     { title: 'Internet ilimitado', icon: 'ti-cloud-down' },
     { title: 'Garantía Greenpoint', icon: 'ti-calendar' },
     { title: 'Soporte Profesional', icon: 'ti-user' },
-];
+]);
 
 // Arte del about del index (cgi-bin nos1/nos2); no reutilizar imágenes de /nosotros (nos10/nos11).
 const nosotrosImagen = '/images/demo/home/nos1.jpg';
@@ -183,7 +196,12 @@ const videoUrl = computed(() =>
                             <div class="px-5">
                                 <div class="section-heading text-start mb-0">
                                     <span class="subtitle">{{ cfg('sitio_nombre', 'Greenpoint') }}</span>
-                                    <h2 class="mb-0 w-100">Internet Satelital <span class="font-weight-400">Expertos en comunicaciones</span></h2>
+                                    <h2 class="mb-0 w-100">
+                                        {{ cfg('home_servicios_titulo', 'Internet Satelital') }}
+                                        <span class="font-weight-400">{{
+                                            cfg('home_servicios_subtitulo', 'Expertos en comunicaciones')
+                                        }}</span>
+                                    </h2>
                                 </div>
                             </div>
                         </div>

@@ -24,12 +24,14 @@ const heroTitle = computed(() =>
         : props.contacto.ubicacion || 'Contacto',
 );
 
-/** cgi-bin section-heading: subtitle = ciudad, h2 = estado/ubicacion */
+/** cgi-bin section-heading: subtitle = ciudad, h2 = estado/region */
 const sectionSubtitle = computed(
     () => props.contacto.subtitulo || props.contacto.ubicacion || '',
 );
-const sectionHeading = computed(() =>
-    isCarmen.value ? 'Campeche' : props.contacto.ubicacion || '',
+const sectionHeading = computed(
+    () =>
+        props.contacto.region ||
+        (isCarmen.value ? 'Campeche' : props.contacto.ubicacion || ''),
 );
 
 /** Varios teléfonos separados por salto de línea (carmen.html) */

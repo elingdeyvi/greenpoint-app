@@ -1,12 +1,12 @@
 <script setup>
 import { computed } from 'vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
     status: {
         type: String,
+        default: '',
     },
 });
 
@@ -23,39 +23,31 @@ const verificationLinkSent = computed(
 
 <template>
     <GuestLayout>
-        <Head title="Email Verification" />
+        <Head title="Verificar correo" />
 
-        <div class="mb-4 text-sm text-gray-600">
-            Thanks for signing up! Before getting started, could you verify your
-            email address by clicking on the link we just emailed to you? If you
-            didn't receive the email, we will gladly send you another.
+        <p class="login-box-msg">
+            Gracias por registrarte. Revisa tu correo y haz clic en el enlace
+            de verificación. Si no llegó, puedes reenviarlo.
+        </p>
+
+        <div v-if="verificationLinkSent" class="alert alert-success py-2">
+            Se envió un nuevo enlace de verificación a tu correo.
         </div>
 
-        <div
-            class="mb-4 text-sm font-medium text-green-600"
-            v-if="verificationLinkSent"
-        >
-            A new verification link has been sent to the email address you
-            provided during registration.
-        </div>
-
-        <form @submit.prevent="submit">
-            <div class="mt-4 flex items-center justify-between">
-                <PrimaryButton
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Resend Verification Email
-                </PrimaryButton>
-
-                <Link
-                    :href="route('logout')"
-                    method="post"
-                    as="button"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >Log Out</Link
-                >
-            </div>
+        <form @submit.prevent="submit" class="mb-3">
+            <button
+                type="submit"
+                class="btn btn-primary w-100"
+                :disabled="form.processing"
+            >
+                Reenviar correo de verificación
+            </button>
         </form>
+
+        <p class="mb-0 text-center">
+            <Link :href="route('logout')" method="post" as="button" class="btn btn-link">
+                Cerrar sesión
+            </Link>
+        </p>
     </GuestLayout>
 </template>

@@ -195,7 +195,7 @@ watch(showFormModal, (open) => {
                                     title="Desactivar"
                                     @click="openDelete(user)"
                                 >
-                                    <i class="fa-solid fa-trash"></i>
+                                    <i class="fa-solid fa-user-slash"></i>
                                 </button>
                             </td>
                         </tr>

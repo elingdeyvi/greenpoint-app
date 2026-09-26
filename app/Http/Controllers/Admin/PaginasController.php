@@ -17,6 +17,14 @@ class PaginasController extends Controller
         return Inertia::render('Admin/Paginas/Index', [
             'pages' => [
                 [
+                    'key' => 'home',
+                    'titulo' => 'Inicio',
+                    'descripcion' => 'Portada: servicios, textos CTA y bloques destacados.',
+                    'route' => 'admin.paginas.home.edit',
+                    'permission' => 'modulos.home',
+                    'estado' => true,
+                ],
+                [
                     'key' => 'nosotros',
                     'titulo' => 'Nosotros',
                     'descripcion' => 'Quiénes somos, textos e indicadores.',

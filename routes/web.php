@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\FormularioContactoController;
 use App\Http\Controllers\Admin\GaleriaController as AdminGaleriaController;
 use App\Http\Controllers\Admin\PaginaAvisoController;
 use App\Http\Controllers\Admin\PaginaHistoriaController;
+use App\Http\Controllers\Admin\PaginaHomeController;
 use App\Http\Controllers\Admin\PaginaNosotrosController;
 use App\Http\Controllers\Admin\PaginaTecnologiaController;
 use App\Http\Controllers\Admin\PaginasController;
@@ -103,6 +104,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     });
 
     Route::get('paginas', [PaginasController::class, 'index'])->name('paginas.index');
+
+    Route::middleware('permission:modulos.home')->group(function () {
+        Route::get('paginas/home', [PaginaHomeController::class, 'edit'])->name('paginas.home.edit');
+        Route::put('paginas/home', [PaginaHomeController::class, 'update'])->name('paginas.home.update');
+    });
 
     Route::middleware('permission:modulos.nosotros')->group(function () {
         Route::get('paginas/nosotros', [PaginaNosotrosController::class, 'edit'])->name('paginas.nosotros.edit');

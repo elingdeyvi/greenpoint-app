@@ -7,7 +7,13 @@ import { usePublicImage } from '@/composables/usePublicImage';
 import { usePublicSite } from '@/composables/usePublicSite';
 
 const { resolveImage } = usePublicImage();
-const { telefonoPrincipal, emailPrincipal, direccionMatriz, redesSociales } = usePublicSite();
+const {
+    telefonoPrincipal,
+    emailPrincipal,
+    direccionMatriz,
+    redesSociales,
+    horarioLunesViernes,
+} = usePublicSite();
 
 const props = defineProps({
     pagina: {
@@ -20,11 +26,24 @@ const eventos = computed(() => props.pagina?.eventos ?? []);
 const pageTitle = computed(() => props.pagina?.titulo || 'Historia');
 const cvUrl = computed(() => (props.pagina?.cv_pdf ? route('public.cv') : null));
 const cvLabel = computed(() => props.pagina?.cv_etiqueta || 'Servicios Greenpoint');
-const infoImage = '/images/demo/historia/h1.jpg';
-const avatarImage = '/images/demo/historia/h2.jpg';
+const sidebarImages = computed(() => props.pagina?.imagenes ?? []);
+const infoImage = computed(
+    () =>
+        resolveImage(sidebarImages.value[0]?.ruta_imagen) ||
+        '/images/demo/historia/h1.jpg',
+);
+const avatarImage = computed(
+    () =>
+        resolveImage(sidebarImages.value[1]?.ruta_imagen) ||
+        '/images/demo/historia/h2.jpg',
+);
 const direccion = computed(
     () => direccionMatriz.value || 'Tabasco, Cd. del Carmen, Veracruz',
 );
+const horarioTexto = computed(() => {
+    const raw = horarioLunesViernes.value || '09:00 AM - 06:00 PM';
+    return `Lun a Vie - ${raw.replace(/^0?(\d)/, '$1').replace(/\s*AM/gi, 'am').replace(/\s*PM/gi, 'pm')}`;
+});
 </script>
 
 <template>
@@ -93,7 +112,7 @@ const direccion = computed(
                                         </div>
                                         <div class="flex-grow-1 ms-3">
                                             <h6 class="mb-0">Horarios</h6>
-                                            <p class="mb-0">Lun a Vie - 9:00am a 6:00pm</p>
+                                            <p class="mb-0">{{ horarioTexto }}</p>
                                         </div>
                                     </div>
                                 </aside>

@@ -16,7 +16,7 @@ onMounted(() => {
                     height="56"
                     class="mb-3"
                 />
-                <p class="mb-0 text-muted">Panel administrativo</p>
+                <p class="mb-0 opacity-75 text-white">Panel administrativo</p>
             </div>
             <div class="card card-outline card-success shadow">
                 <div class="card-body login-card-body">

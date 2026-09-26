@@ -60,6 +60,73 @@ class DemoContentSeeder extends Seeder
             'home_cta_texto' => 'Greenpoint cuenta hoy en día con la tecnología para mantenerlo siempre conectado, ya sea a internet o incluso a su red corporativa, y con esto aprovechar las ventajas que tienes al estarlo. Poder realizar llamadas telefónicas, videoconferencias, transferencias de cualquier tipo de datos, acceso a internet y lo más importante, desde cualquier sitio, sin importar si estás en pozo petrolero de Tabasco o en una mina en Chihuahua, o bien en un barco en el Golfo de México.',
             'anos_experiencia' => '18',
             'home_video_url' => 'https://www.youtube.com/watch?v=yd1JhZzoS6A',
+            'home_service_cards' => json_encode([
+                [
+                    'nombre' => 'Internet Satelital',
+                    'descripcion' => 'Con la tecnología satelital de Greenpoint, usted puede contar con un servicio completo y en cualquier ubicación.',
+                    'icon' => '/images/demo/icons/icon-04.png',
+                ],
+                [
+                    'nombre' => 'Nube Satelital Dedicada',
+                    'descripcion' => 'Conexión permanente a internet de alta velocidad simétrica de subida y bajada, brindada por nuestra red.',
+                    'icon' => '/images/demo/icons/icon-02.png',
+                ],
+                [
+                    'nombre' => 'Red Privada IP',
+                    'descripcion' => 'La Telefonía IP que permite disfrutar de todas las características de nuestro sistema que está diseñado de manera inteligente.',
+                    'icon' => '/images/demo/icons/icon-03.png',
+                ],
+                [
+                    'nombre' => 'Internet fijo y movil',
+                    'descripcion' => 'Instalación en pozos y plataformas. Servicios satelitales dedicados. SCPC punto a punto Satelital. Enlaces microondas, etc.',
+                    'icon' => '/images/demo/icons/icon-01.png',
+                ],
+            ], JSON_UNESCAPED_UNICODE),
+            'home_about_checks' => json_encode([
+                'Mantén tu empresa o negocio siempre conectado',
+                'Internet Satelital perfecto para todas sus necesidades',
+                'Utilizamos las ultimas tecnologías de conectividad',
+            ], JSON_UNESCAPED_UNICODE),
+            'home_why_left' => json_encode([
+                [
+                    'title' => 'Alta Calidad',
+                    'text' => 'La banda ancha le proporciona una conexión de alta velocidad a Internet.',
+                    'icon' => '/images/demo/icons/icon-07.png',
+                ],
+                [
+                    'title' => 'Expertos',
+                    'text' => 'Especialistas en comunicaciones satelitales para el sector energético.',
+                    'icon' => '/images/demo/icons/icon-08.png',
+                ],
+                [
+                    'title' => 'Soporte 24/7',
+                    'text' => 'Acompañamiento técnico continuo para mantener tu operación conectada.',
+                    'icon' => '/images/demo/icons/icon-09.png',
+                ],
+            ], JSON_UNESCAPED_UNICODE),
+            'home_why_right' => json_encode([
+                [
+                    'title' => 'El mejor Costo Calidad',
+                    'text' => 'Soluciones a la medida con el mejor balance entre desempeño e inversión.',
+                    'icon' => '/images/demo/icons/icon-10.png',
+                ],
+                [
+                    'title' => 'Internet Privada',
+                    'text' => 'Enlaces dedicados y redes privadas IP para operaciones críticas.',
+                    'icon' => '/images/demo/icons/icon-11.png',
+                ],
+                [
+                    'title' => 'Conexión Ultrarápida',
+                    'text' => 'Tecnología iDirect y enlaces de alto rendimiento en cualquier ubicación.',
+                    'icon' => '/images/demo/icons/icon-12.png',
+                ],
+            ], JSON_UNESCAPED_UNICODE),
+            'home_feature_cards' => json_encode([
+                ['title' => 'Servicios de Calidad', 'icon' => 'ti-medall'],
+                ['title' => 'Internet ilimitado', 'icon' => 'ti-cloud-down'],
+                ['title' => 'Garantía Greenpoint', 'icon' => 'ti-calendar'],
+                ['title' => 'Soporte Profesional', 'icon' => 'ti-user'],
+            ], JSON_UNESCAPED_UNICODE),
         ];
 
         foreach ($defaults as $clave => $valor) {
@@ -208,6 +275,7 @@ class DemoContentSeeder extends Seeder
             [
                 'ubicacion' => 'Tabasco',
                 'subtitulo' => 'Villahermosa',
+                'region' => 'Tabasco',
                 'direccion' => 'Francisco Sarabia # 126, Col. Gil y Saenz, Tabasco. CP. 86080',
                 'telefono' => '(+52) (993) 161 6064',
                 'email' => 'villahermosa@greenpoint.mx',
@@ -217,6 +285,7 @@ class DemoContentSeeder extends Seeder
             [
                 'ubicacion' => 'Veracruz',
                 'subtitulo' => 'Veracruz',
+                'region' => 'Veracruz',
                 'direccion' => 'Sandoval # 174, Fracc. Reforma, Veracruz. CP. 91919',
                 'telefono' => '(+52) (229) 932 6060',
                 'email' => 'veracruz@greenpoint.mx',
@@ -226,6 +295,7 @@ class DemoContentSeeder extends Seeder
             [
                 'ubicacion' => 'Cd. del Carmen',
                 'subtitulo' => 'Ciudad del Carmen',
+                'region' => 'Campeche',
                 'direccion' => 'Calle 53 # 74, Col. Morelos, Cd. del Carmen, Campeche.',
                 'telefono' => "(+52) (999) 122 3651\n(+52) (938) 160 4654",
                 'email' => 'cdcarmen@greenpoint.mx',
